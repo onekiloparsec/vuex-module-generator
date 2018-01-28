@@ -210,7 +210,7 @@ function makeTreeModule (api, baseName, idKey, lcrud = 'lcrud') {
   return makeModule(true, api, baseName, idKey, lcrud)
 }
 
-export default {
+export {
   makeListModule,
   makeTreeModule
 }
