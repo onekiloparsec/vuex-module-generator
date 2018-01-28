@@ -1,15 +1,22 @@
 import Vue from 'vue'
 import _ from 'lodash'
-import * as types from './mutation-types'
+
+export const TREE_PARENT_ID = 'tree_parent_id'
 
 const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
 
+export const createAsyncMutation = (type) => ({
+  SUCCESS: `${type}_SUCCESS`,
+  FAILURE: `${type}_FAILURE`,
+  PENDING: `${type}_PENDING`
+})
+
 const createMutationNames = (listNameUppercase) => ({
-  list: types.createAsyncMutation(`${listNameUppercase}_LIST_FETCH`),
-  create: types.createAsyncMutation(`${listNameUppercase}_SINGLE_CREATE`),
-  read: types.createAsyncMutation(`${listNameUppercase}_SINGLE_READ`),
-  update: types.createAsyncMutation(`${listNameUppercase}_SINGLE_UPDATE`),
-  delete: types.createAsyncMutation(`${listNameUppercase}_SINGLE_DELETE`)
+  list: createAsyncMutation(`${listNameUppercase}_LIST_FETCH`),
+  create: createAsyncMutation(`${listNameUppercase}_SINGLE_CREATE`),
+  read: createAsyncMutation(`${listNameUppercase}_SINGLE_READ`),
+  update: createAsyncMutation(`${listNameUppercase}_SINGLE_UPDATE`),
+  delete: createAsyncMutation(`${listNameUppercase}_SINGLE_DELETE`)
 })
 
 const createFuncNames = (word) => ({
@@ -86,11 +93,11 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
 const createApiActions = (api, idKey, dataKey) => ({
   list: (obj) => api.get(obj), // obj is assumed to be an object. Used a URL parameters.
   create: (obj) => {
-    console.log('POST', types.TREE_PARENT_ID, obj, _.isNil(obj[types.TREE_PARENT_ID]))
-    if (_.isNil(obj[types.TREE_PARENT_ID])) {
+    console.log('POST', TREE_PARENT_ID, obj, _.isNil(obj[TREE_PARENT_ID]))
+    if (_.isNil(obj[TREE_PARENT_ID])) {
       return api.post(obj) // obj is assumed to be an object. Used as new Object properties
     } else {
-      return api.subresource(obj[types.TREE_PARENT_ID].toString() + '/').post(obj[dataKey])
+      return api.subresource(obj[TREE_PARENT_ID].toString() + '/').post(obj[dataKey])
     }
   },
   read: (obj) => api.get(obj), // obj is assumed to be a id string.
