@@ -78,7 +78,7 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
   delete: (state, obj, dataOrPayloadOrString) => {
     if (state.allowTree) {
       recurseDown(state[listName], obj[idKey], (a, pk) => {
-        let index = _.findIndex(a, item => item[idKey] === pk)
+        const index = _.findIndex(a, item => item[idKey] === pk)
         if (index !== -1) {
           a.splice(index, 1)
           return false
@@ -93,7 +93,6 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
 const createApiActions = (api, idKey, dataKey) => ({
   list: (obj) => api.get(obj), // obj is assumed to be an object. Used a URL parameters.
   create: (obj) => {
-    console.log('POST', TREE_PARENT_ID, obj, _.isNil(obj[TREE_PARENT_ID]))
     if (_.isNil(obj[TREE_PARENT_ID])) {
       return api.post(obj) // obj is assumed to be an object. Used as new Object properties
     } else {
@@ -126,10 +125,10 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   /* ------------ Vuex------------ */
 
-  let state = {}
-  let getters = {}
-  let mutations = {}
-  let actions = {}
+  const state = {}
+  const getters = {}
+  const mutations = {}
+  const actions = {}
 
   /* ------------ State ------------ */
 
