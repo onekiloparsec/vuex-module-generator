@@ -42,7 +42,7 @@ const recurseDown = (array, pk, iteratee) => {
 }
 
 const createMutationSuccesses = (listName, activeName, idKey) => ({
-  list: (state, obj, dataOrPayloadOrString) => {
+  list: (state, obj, idOrData) => {
     state[listName] = obj
   },
   create: (state, obj) => {
