@@ -119,7 +119,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   const mutationSuccesses = createMutationSuccesses(listName, selectName, idKey)
 
   const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
-  const defaultActionStates = [false, false, false, false, false]
+  const defaultActionStates = [null, null, null, null, null]
   const actionFuncNames = createFuncNames(word)
   const apiActions = createApiActions(api, idKey, dataKey)
 
@@ -142,15 +142,15 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     _.merge(mutations, {
-      [mutationNames[actionName].PENDING] (state) {
-        state[crudName][actionName] = true
+      [mutationNames[actionName].PENDING] (state, idOrData) {
+        state[crudName][actionName] = idOrData
       },
-        state[crudName][actionName] = false
       [mutationNames[actionName].SUCCESS] (state, obj, idOrData) {
         mutationSuccesses[actionName](state, obj, idOrData)
+        state[crudName][actionName] = null
       },
       [mutationNames[actionName].FAILURE] (state) {
-        state[crudName][actionName] = false
+        state[crudName][actionName] = null
       }
     })
   })
@@ -175,7 +175,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
     if (lcrud.includes(actionName.charAt(0))) {
       actions[actionFuncNames[actionName]] = ({ commit }, idOrData) => {
         return new Promise((resolve, reject) => {
-          commit(mutationNames[actionName].PENDING)
+          commit(mutationNames[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData).then(
             response => {
               const obj = response.body || response.data
