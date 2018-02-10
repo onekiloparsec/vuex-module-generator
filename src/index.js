@@ -52,8 +52,8 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
       state[listName] = _.concat(state[listName], obj)
     }
   },
-  read: (state, obj, dataOrPayloadOrString) => {
     if (state.allowTree && state[activeName]) {
+  read: (state, obj, idOrData) => {
     } else {
       const currentIndex = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
       if (currentIndex !== -1) {
@@ -61,7 +61,7 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
       }
     }
   },
-  update: (state, obj, dataOrPayloadOrString) => {
+  update: (state, obj, idOrData) => {
     if (state.allowTree) {
       if (state[activeName]) {
 
@@ -75,7 +75,7 @@ const createMutationSuccesses = (listName, activeName, idKey) => ({
       }
     }
   },
-  delete: (state, obj, dataOrPayloadOrString) => {
+  delete: (state, obj, idOrData) => {
     if (state.allowTree) {
       recurseDown(state[listName], obj[idKey], (a, pk) => {
         const index = _.findIndex(a, item => item[idKey] === pk)
@@ -101,7 +101,7 @@ const createApiActions = (api, idKey, dataKey) => ({
   },
   read: (obj) => api.get(obj), // obj is assumed to be a id string.
   update: (obj) => api.put(obj[idKey], obj[dataKey]), // obj is assumed to be an object, inside wihch we have an id, and a data payload.
-  delete: (obj) => api.delete(obj) // // dataOrPayloadOrString is assumed to be a id string.
+  delete: (obj) => api.delete(obj) // // idOrData is assumed to be a id string.
 })
 
 function makeModule (allowTree, api, root, idKey, lcrud) {
@@ -145,9 +145,9 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
       [mutationNames[actionName].PENDING] (state) {
         state[crudName][actionName] = true
       },
-      [mutationNames[actionName].SUCCESS] (state, obj, dataOrPayloadOrString) {
-        mutationSuccesses[actionName](state, obj, dataOrPayloadOrString)
         state[crudName][actionName] = false
+      [mutationNames[actionName].SUCCESS] (state, obj, idOrData) {
+        mutationSuccesses[actionName](state, obj, idOrData)
       },
       [mutationNames[actionName].FAILURE] (state) {
         state[crudName][actionName] = false
@@ -173,13 +173,13 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
-      actions[actionFuncNames[actionName]] = ({commit}, dataOrPayloadOrString) => {
+      actions[actionFuncNames[actionName]] = ({ commit }, idOrData) => {
         return new Promise((resolve, reject) => {
           commit(mutationNames[actionName].PENDING)
-          apiActions[actionName](dataOrPayloadOrString).then(
+          apiActions[actionName](idOrData).then(
             response => {
               const obj = response.body || response.data
-              commit(mutationNames[actionName].SUCCESS, obj, dataOrPayloadOrString)
+              commit(mutationNames[actionName].SUCCESS, obj, idOrData)
               resolve(obj)
             },
             error => {
