@@ -175,7 +175,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
-      actions[actionFuncNames[actionName]] = ({commit}, idOrData) => {
+      actions[actionFuncNames[actionName]] = ({ commit }, idOrData) => {
         return new Promise((resolve, reject) => {
           commit(mutationNames[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData).then(
