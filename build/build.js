@@ -22,7 +22,7 @@ const {
   // processStyle
 } = require('./utils')
 
-function rollupBundle ({env}) {
+function rollupBundle ({ env }) {
   return rollup({
     entry: 'src/index.js',
     globals: {
@@ -55,7 +55,7 @@ function rollupBundle ({env}) {
         //   }
         // }
       }),
-      jsx({factory: 'h'}),
+      jsx({ factory: 'h' }),
       replace(Object.assign({
         __VERSION__: version
       }, env)),
@@ -73,7 +73,7 @@ const bundleOptions = {
   moduleName
 }
 
-function createBundle ({name, env, format}) {
+function createBundle ({ name, env, format }) {
   return rollupBundle({
     env
   }).then(function (bundle) {
