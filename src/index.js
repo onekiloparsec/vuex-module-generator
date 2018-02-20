@@ -65,9 +65,9 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
   update: (state, obj, idOrData) => {
     if (state.allowTree) {
       if (state[selectName]) {
-
-      } else {
         Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
+      } else {
+        state[listName] = new Array(...state[listName])
       }
     } else {
       const index = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
@@ -85,6 +85,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
           return false
         }
       })
+      state[listName] = new Array(...state[listName])
     } else {
       state[listName] = state[listName].filter(item => item[idKey] !== obj)
     }
