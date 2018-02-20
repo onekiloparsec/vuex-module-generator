@@ -7,7 +7,7 @@ const replace = require('rollup-plugin-replace')
 const cjs = require('rollup-plugin-commonjs')
 const node = require('rollup-plugin-node-resolve')
 const uglify = require('uglify-js')
-const CleanCSS = require('clean-css')
+// const CleanCSS = require('clean-css')
 
 // Make sure dist dir exists
 mkdirp('dist')
@@ -18,8 +18,8 @@ const {
   banner,
   name,
   moduleName,
-  version,
-  processStyle
+  version
+  // processStyle
 } = require('./utils')
 
 function rollupBundle ({env}) {
@@ -37,23 +37,23 @@ function rollupBundle ({env}) {
       }),
       cjs(),
       vue({
-        compileTemplate: true,
-        css (styles, stylesNodes) {
-          // Only generate the styles once
-          if (env['process.env.NODE_ENV'] === '"production"') {
-            Promise.all(
-              stylesNodes.map(processStyle)
-            ).then(css => {
-              const result = css.map(c => c.css).join('')
-              // write the css for every component
-              // TODO add it back if we extract all components to individual js
-              // files too
-              // css.forEach(writeCss)
-              write(`dist/${name}.css`, result)
-              write(`dist/${name}.min.css`, new CleanCSS().minify(result).styles)
-            }).catch(logError)
-          }
-        }
+        compileTemplate: true
+        // css (styles, stylesNodes) {
+        //   // Only generate the styles once
+        //   if (env['process.env.NODE_ENV'] === '"production"') {
+        //     Promise.all(
+        //       stylesNodes.map(processStyle)
+        //     ).then(css => {
+        //       const result = css.map(c => c.css).join('')
+        //       // write the css for every component
+        //       // TODO add it back if we extract all components to individual js
+        //       // files too
+        //       // css.forEach(writeCss)
+        //       write(`dist/${name}.css`, result)
+        //       write(`dist/${name}.min.css`, new CleanCSS().minify(result).styles)
+        //     }).catch(logError)
+        //   }
+        // }
       }),
       jsx({factory: 'h'}),
       replace(Object.assign({
