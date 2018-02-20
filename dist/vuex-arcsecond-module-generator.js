@@ -1,5 +1,5 @@
 /*!
- * vuex-arcsecond-module-generator v0.2.1
+ * vuex-arcsecond-module-generator v0.2.2
  * (c) 2018 Cédric Foellmi
  * Released under the MIT License.
  */
