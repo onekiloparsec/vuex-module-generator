@@ -1,5 +1,5 @@
 /*!
- * vuex-arcsecond-module-generator v0.3.0
+ * vuex-arcsecond-module-generator v0.3.1
  * (c) 2018 Cédric Foellmi
  * Released under the MIT License.
  */
@@ -121,9 +121,9 @@ var createApiActions = function (api, idKey, dataKey) { return ({
       return api.subresource(obj[TREE_PARENT_ID].toString() + '/').post(obj[dataKey])
     }
   },
-  read: function (obj) { return api.get(obj); }, // obj is assumed to be a id string.
-  update: function (obj) { return api.put(obj[idKey], obj[dataKey]); }, // obj is assumed to be an object, inside wihch we have an id, and a data payload.
-  delete: function (obj) { return api.delete(obj); } // // idOrData is assumed to be a id string.
+  read: function (obj) { return api.get(obj.toString()); }, // obj is assumed to be a id string.
+  update: function (obj) { return api.put(obj[idKey].toString(), obj[dataKey]); }, // obj is assumed to be an object, inside which we have an id, and a data payload.
+  delete: function (obj) { return api.delete(obj.toString()); } // // idOrData is assumed to be a id.
 }); };
 
 function makeModule (allowTree, api, root, idKey, lcrud) {
