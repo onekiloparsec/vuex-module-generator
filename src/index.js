@@ -109,9 +109,9 @@ const createApiActions = (api, idKey, dataKey) => ({
       return api.subresource(obj[TREE_PARENT_ID].toString() + '/').post(obj[dataKey])
     }
   },
-  read: (obj) => api.get(obj), // obj is assumed to be a id string.
-  update: (obj) => api.put(obj[idKey], obj[dataKey]), // obj is assumed to be an object, inside wihch we have an id, and a data payload.
-  delete: (obj) => api.delete(obj) // // idOrData is assumed to be a id string.
+  read: (obj) => api.get(obj.toString()), // obj is assumed to be a id string.
+  update: (obj) => api.put(obj[idKey].toString(), obj[dataKey]), // obj is assumed to be an object, inside which we have an id, and a data payload.
+  delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
 function makeModule (allowTree, api, root, idKey, lcrud) {
