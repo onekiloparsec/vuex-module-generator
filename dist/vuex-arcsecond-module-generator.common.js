@@ -1,5 +1,5 @@
 /*!
- * vuex-arcsecond-module-generator v0.2.2
+ * vuex-arcsecond-module-generator v0.3.0
  * (c) 2018 Cédric Foellmi
  * Released under the MIT License.
  */
@@ -59,6 +59,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
   },
   create: function (state, obj) {
     if (state.allowTree && state[selectName]) {
+      // Using Vue.set() to ensure reactivity when changing a nested array
       Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj));
     } else {
       state[listName] = _.concat(state[listName], obj);
@@ -66,6 +67,14 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
   },
   read: function (state, obj, idOrData) {
     if (state.allowTree && state[selectName]) {
+      recurseDown(state[listName], obj[idKey], function (a, pk) {
+        var index = _.findIndex(a, function (item) { return item[idKey] === pk; });
+        if (index !== -1) {
+          a.splice(index, 1, obj);
+          return false
+        }
+        state[listName] = new (Function.prototype.bind.apply( Array, [ null ].concat( state[listName]) ));
+      });
     } else {
       var currentIndex = _.findIndex(state[listName], function (item) { return item[idKey] === obj[idKey]; });
       if (currentIndex !== -1) {
@@ -76,9 +85,9 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
   update: function (state, obj, idOrData) {
     if (state.allowTree) {
       if (state[selectName]) {
-
-      } else {
         Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj));
+      } else {
+        state[listName] = new (Function.prototype.bind.apply( Array, [ null ].concat( state[listName]) ));
       }
     } else {
       var index = _.findIndex(state[listName], function (item) { return item[idKey] === obj[idKey]; });
@@ -96,6 +105,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
           return false
         }
       });
+      state[listName] = new (Function.prototype.bind.apply( Array, [ null ].concat( state[listName]) ));
     } else {
       state[listName] = state[listName].filter(function (item) { return item[idKey] !== obj; });
     }
