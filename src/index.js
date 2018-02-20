@@ -47,6 +47,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
   },
   create: (state, obj) => {
     if (state.allowTree && state[selectName]) {
+      // Using Vue.set() to ensure reactivity when changing a nested array
       Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
     } else {
       state[listName] = _.concat(state[listName], obj)
