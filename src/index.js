@@ -55,6 +55,14 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
   },
   read: (state, obj, idOrData) => {
     if (state.allowTree && state[selectName]) {
+      recurseDown(state[listName], obj[idKey], (a, pk) => {
+        const index = _.findIndex(a, item => item[idKey] === pk)
+        if (index !== -1) {
+          a.splice(index, 1, obj)
+          return false
+        }
+        state[listName] = new Array(...state[listName])
+      })
     } else {
       const currentIndex = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
       if (currentIndex !== -1) {
