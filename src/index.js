@@ -124,9 +124,12 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   const selectName = `selected${word}`
 
   const mutationNames = createMutationNames(listName.toUpperCase())
-  const selectMutationName = `select${word}`
-  const changeNameMutationName = `changeSelected${word}Name`
   const mutationSuccesses = createMutationSuccesses(listName, selectName, idKey)
+
+  // other mutations
+  const selectMutationName = `select${word}`
+  const updateListMutationName = `update${word}sList`
+  const changeNameMutationName = `changeSelected${word}Name`
 
   const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
   const defaultActionStates = [false, false, null, null, null]
@@ -178,6 +181,10 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   mutations[changeNameMutationName] = (state, newName) => {
     state[selectName].name = newName
+  }
+
+  mutations[updateListMutationName] = (state, newList) => {
+    state[listName] = newList
   }
 
   /* ------------ Actions ------------ */
