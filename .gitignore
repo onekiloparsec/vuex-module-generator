@@ -5,3 +5,4 @@ test/coverage
 yarn-error.log
 reports
 .idea
+/coverage

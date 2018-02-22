@@ -1,4 +1,4 @@
-import { makeListModule } from '@/index'
+import { makeTreeModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -6,7 +6,7 @@ import nock from 'nock'
 
 Vue.use(Vuex)
 
-let items = null
+let tree = null
 
 const api = nock('http://api.lvh/me:8000').get('/items/').reply(200, [])
 
@@ -44,15 +44,15 @@ const testAction = (action, payload, state, expectedMutations, done) => {
 
 describe('test async api actions', () => {
   beforeEach(() => {
-    items = makeListModule(api, 'item', 'uuid', 'lcrud')
+    tree = makeTreeModule(api, 'item', 'uuid', 'lcrud')
   })
 
   afterEach(() => {
-    items = null
+    tree = null
   })
 
   test('the list is empty at start', done => {
-    testAction(items.actions.listItems, null, {}, [
+    testAction(tree.actions.listItems, null, {}, [
       { type: 'ITEMS_LIST_FETCH_PENDING' }
     ], done)
   })

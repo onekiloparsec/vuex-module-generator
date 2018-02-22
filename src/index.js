@@ -46,7 +46,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
     state[listName] = obj
   },
   create: (state, obj) => {
-    if (state.allowTree && state[selectName]) {
+    if (state.__allowTree__ && state[selectName]) {
       // Using Vue.set() to ensure reactivity when changing a nested array
       Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
     } else {
@@ -54,7 +54,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
     }
   },
   read: (state, obj, idOrData) => {
-    if (state.allowTree && state[selectName]) {
+    if (state.__allowTree__ && state[selectName]) {
       recurseDown(state[listName], obj[idKey], (a, pk) => {
         const index = _.findIndex(a, item => item[idKey] === pk)
         if (index !== -1) {
@@ -71,7 +71,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
     }
   },
   update: (state, obj, idOrData) => {
-    if (state.allowTree) {
+    if (state.__allowTree__) {
       if (state[selectName]) {
         Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
       } else {
@@ -85,7 +85,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
     }
   },
   delete: (state, obj, idOrData) => {
-    if (state.allowTree) {
+    if (state.__allowTree__) {
       recurseDown(state[listName], obj[idKey], (a, pk) => {
         const index = _.findIndex(a, item => item[idKey] === pk)
         if (index !== -1) {
@@ -121,7 +121,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   const listName = `${baseName}s`
   const crudName = `${baseName}Crud`
-  const selectName = `selected${word}`
+  const selectName = `selected${word}s`
 
   const mutationNames = createMutationNames(listName.toUpperCase())
   const mutationSuccesses = createMutationSuccesses(listName, selectName, idKey)
@@ -129,7 +129,6 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   // other mutations
   const selectMutationName = `select${word}`
   const updateListMutationName = `update${word}sList`
-  const changeNameMutationName = `changeSelected${word}Name`
 
   const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
   const defaultActionStates = [false, false, null, null, null]
@@ -145,12 +144,17 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   /* ------------ State ------------ */
 
-  state.allowTree = allowTree
+  state.__allowTree__ = allowTree
   state[listName] = []
   state[crudName] = _.zipObject(actionNames, defaultActionStates)
-  state[selectName] = null
+  state[selectName] = []
 
   /* ------------ Getters ------------ */
+
+  getters['isSelected'] = (state) => (selectedItem) => {
+    return (_.findIndex(state[selectName], item => item === selectedItem) !== -1)
+  }
+
   /* ------------ Mutations ------------ */
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
@@ -172,15 +176,20 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   // Non-(L)CRUD mutations :
 
   mutations[selectMutationName] = (state, selectedItem) => {
-    state[selectName] = selectedItem
+    if (selectedItem) {
+      state[selectName] = _.concat(state[selectName], selectedItem)
+    }
   }
 
-  mutations['de' + selectMutationName] = (state) => {
-    state[selectName] = null
-  }
-
-  mutations[changeNameMutationName] = (state, newName) => {
-    state[selectName].name = newName
+  mutations['de' + selectMutationName] = (state, selectedItem) => {
+    if (selectedItem) {
+      const index = _.findIndex(state[selectName], item => item === selectedItem)
+      if (index !== -1) {
+        state[selectName].splice(index, 1)
+      }
+    } else {
+      state[selectName] = []
+    }
   }
 
   mutations[updateListMutationName] = (state, newList) => {
@@ -229,5 +238,6 @@ function makeTreeModule (api, baseName, idKey, lcrud = 'lcrud') {
 
 export {
   makeListModule,
-  makeTreeModule
+  makeTreeModule,
+  makeModule
 }
