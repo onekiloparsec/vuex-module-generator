@@ -128,6 +128,8 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   // other mutations
   const selectionMutationName = `select${word}`
+  const selectionSingleMutationName = `selectSingle${word}`
+  const ableMultipleSelectionMutationName = `ableMultiple${word}sSelection`
   const clearSelectionMutationName = `clear${word}sSelection`
   const updateListMutationName = `update${word}sList`
 
@@ -146,6 +148,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   /* ------------ State ------------ */
 
   state.__allowTree__ = allowTree
+  state.multipleSelection = false
   state[listName] = []
   state[crudName] = _.zipObject(actionNames, defaultActionStates)
   state[selectName] = []
@@ -178,10 +181,17 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   mutations[selectionMutationName] = (state, selectedItem) => {
     if (selectedItem) {
-      const index = _.findIndex(state[selectName], item => item === selectedItem)
-      if (index === -1) {
-        state[selectName] = _.concat(state[selectName], selectedItem)
+      if (state.multipleSelection) {
+        state[selectName] = _.uniq(_.concat(state[selectName], selectedItem))
+      } else {
+        state[selectName] = _.concat([], selectedItem)
       }
+    }
+  }
+
+  mutations[selectionSingleMutationName] = (state, selectedItem) => {
+    if (selectedItem) {
+      state[selectName] = _.concat([], selectedItem)
     }
   }
 
@@ -192,6 +202,14 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
         state[selectName].splice(index, 1)
       }
     }
+  }
+
+  mutations['en' + ableMultipleSelectionMutationName] = (state) => {
+    state.multipleSelection = true
+  }
+
+  mutations['dis' + ableMultipleSelectionMutationName] = (state) => {
+    state.multipleSelection = false
   }
 
   mutations[clearSelectionMutationName] = (state) => {

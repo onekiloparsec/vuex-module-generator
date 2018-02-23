@@ -10,12 +10,17 @@ describe('test actions creation based on last parameter', () => {
       expect(items.state.items).toEqual([])
       expect(items.state.itemCrud).toEqual(defaultCrud)
       expect(items.state.selectedItems).toEqual([])
+      expect(items.state.multipleSelection).toEqual(false)
 
       expect(items.getters.isSelected).toBeDefined()
 
       expect(items.mutations.selectItem).toBeDefined()
       expect(items.mutations.deselectItem).toBeDefined()
       expect(items.mutations.clearItemsSelection).toBeDefined()
+
+      expect(items.mutations.enableMultipleItemsSelection).toBeDefined()
+      expect(items.mutations.disableMultipleItemsSelection).toBeDefined()
+
       expect(items.mutations.updateItemsList).toBeDefined()
 
       expect(items.actions.listItems).toBeDefined()
