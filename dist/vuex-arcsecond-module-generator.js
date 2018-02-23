@@ -13,6 +13,99 @@
 Vue = 'default' in Vue ? Vue['default'] : Vue;
 _ = 'default' in _ ? _['default'] : _;
 
+var API_PROTOCOL = '';
+var API_HOSTNAME = '';
+var API_PORT = '';
+
+// URL and endpoint constants
+{
+  API_PROTOCOL = 'http';
+  API_HOSTNAME = 'api.lvh.me';
+  API_PORT = '8000';
+}
+
+var API_URL = API_PROTOCOL + '://' + API_HOSTNAME + ((API_PORT !== '') ? ':' + API_PORT : '') + '/';
+var LOGIN_URL = API_URL + 'auth-token/';
+var SIGNUP_URL = API_URL + 'auth/registration/';
+var VERIFY_EMAIL_URL = API_URL + 'auth/registration/verify-email/';
+var RESET_PASSWORD_URL = API_URL + 'auth/password/reset/';
+var RESET_PASSWORD_CONFIRM_URL = API_URL + 'auth/password/reset/confirm/';
+var CHANGE_PASSWORD_URL = API_URL + 'auth/password/change/';
+var LOGOUT_URL = API_URL + 'auth/logout/';
+
+var config = {
+  API_PROTOCOL: API_PROTOCOL,
+  API_HOSTNAME: API_HOSTNAME,
+  API_PORT: API_PORT,
+  API_URL: API_URL,
+  LOGIN_URL: LOGIN_URL,
+  SIGNUP_URL: SIGNUP_URL,
+  VERIFY_EMAIL_URL: VERIFY_EMAIL_URL,
+  RESET_PASSWORD_URL: RESET_PASSWORD_URL,
+  RESET_PASSWORD_CONFIRM_URL: RESET_PASSWORD_CONFIRM_URL,
+  CHANGE_PASSWORD_URL: CHANGE_PASSWORD_URL,
+  LOGOUT_URL: LOGOUT_URL
+};
+
+var makeResource = function (basePath, subPath, parent) {
+  if ( subPath === void 0 ) subPath = null;
+  if ( parent === void 0 ) parent = null;
+
+  var obj = {
+    _basePath: basePath,
+    _singleUUID: null,
+    _subPath: subPath,
+    _parent: parent,
+
+    url: function (uuid) {
+      var p = config.API_URL + obj._basePath;
+      if (obj._parent && obj._parent._singleUUID) {
+        p += obj._parent._singleUUID + '/';
+      }
+      if (obj._subPath) {
+        p += obj._subPath;
+      }
+      if (uuid) {
+        if (_.isString(uuid)) {
+          p += uuid + '/';
+        } else if (_.isNumber(uuid)) {
+          p += uuid.toString() + '/';
+        } else if (_.isObject(uuid)) {
+          var index = 0;
+          _.forEach(uuid, function (value, key) {
+            var letter = (index === 0) ? '?' : '&';
+            p += letter + key + '=' + value;
+            index += 1;
+          });
+        }
+      }
+      return p
+    },
+
+    get: function (uuid) { return Vue.http.get(obj.url(uuid)); },
+    options: function (uuid) { return Vue.http.options(obj.url(uuid)); },
+    post: function (data) { return Vue.http.post(obj.url(), data); },
+    put: function (uuid, data) { return Vue.http.put(obj.url(uuid), data); },
+    delete: function (uuid) { return Vue.http.delete(obj.url(uuid)); }
+  };
+
+  obj.subresource = function (subpath) {
+    return makeResource(obj._basePath, subpath, obj)
+  };
+
+  obj.addSubresource = function (subpath) {
+    obj[subpath.slice(0, -1)] = makeResource(obj._basePath, subpath, obj);
+    return obj
+  };
+
+  obj.single = function (uuid) {
+    obj._singleUUID = uuid;
+    return obj
+  };
+
+  return obj
+};
+
 var TREE_PARENT_ID = 'tree_parent_id';
 
 var capitalizeFirstChar = function (str) { return str.charAt(0).toUpperCase() + str.substring(1); };
@@ -139,7 +232,8 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   var mutationSuccesses = createMutationSuccesses(listName, selectName, idKey);
 
   // other mutations
-  var selectMutationName = "select" + word;
+  var selectionMutationName = "select" + word;
+  var clearSelectionMutationName = "clear" + word + "sSelection";
   var updateListMutationName = "update" + word + "sList";
 
   var actionNames = ['list', 'create', 'read', 'update', 'delete']; // lcrud
@@ -184,21 +278,26 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   // Non-(L)CRUD mutations :
 
-  mutations[selectMutationName] = function (state, selectedItem) {
+  mutations[selectionMutationName] = function (state, selectedItem) {
     if (selectedItem) {
-      state[selectName] = _.concat(state[selectName], selectedItem);
+      var index = _.findIndex(state[selectName], function (item) { return item === selectedItem; });
+      if (index === -1) {
+        state[selectName] = _.concat(state[selectName], selectedItem);
+      }
     }
   };
 
-  mutations['de' + selectMutationName] = function (state, selectedItem) {
+  mutations['de' + selectionMutationName] = function (state, selectedItem) {
     if (selectedItem) {
       var index = _.findIndex(state[selectName], function (item) { return item === selectedItem; });
       if (index !== -1) {
         state[selectName].splice(index, 1);
       }
-    } else {
-      state[selectName] = [];
     }
+  };
+
+  mutations[clearSelectionMutationName] = function (state) {
+    state[selectName] = [];
   };
 
   mutations[updateListMutationName] = function (state, newList) {
@@ -214,17 +313,18 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
         return new Promise(function (resolve, reject) {
           commit(mutationNames[actionName].PENDING, idOrData);
-          apiActions[actionName](idOrData).then(
-            function (response) {
-              var obj = response.body || response.data;
-              commit(mutationNames[actionName].SUCCESS, obj, idOrData);
-              resolve(obj);
-            },
-            function (error) {
-              commit(mutationNames[actionName].FAILURE);
-              reject(error);
-            }
-          );
+          apiActions[actionName](idOrData)
+            .then(
+              function (response) {
+                var obj = response.body || response.data;
+                commit(mutationNames[actionName].SUCCESS, obj, idOrData);
+                resolve(obj);
+              },
+              function (error) {
+                commit(mutationNames[actionName].FAILURE, error);
+                reject(error);
+              }
+            );
         })
       };
     }
@@ -251,8 +351,10 @@ function makeTreeModule (api, baseName, idKey, lcrud) {
   return makeModule(true, api, baseName, idKey, lcrud)
 }
 
+exports.makeResource = makeResource;
 exports.TREE_PARENT_ID = TREE_PARENT_ID;
 exports.createAsyncMutation = createAsyncMutation;
+exports.createMutationNames = createMutationNames;
 exports.makeListModule = makeListModule;
 exports.makeTreeModule = makeTreeModule;
 exports.makeModule = makeModule;
