@@ -1,5 +1,5 @@
 /*!
- * vuex-arcsecond-module-generator v0.3.1
+ * vuex-arcsecond-module-generator v0.4.0
  * (c) 2018 Cédric Foellmi
  * Released under the MIT License.
  */
@@ -58,7 +58,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
     state[listName] = obj;
   },
   create: function (state, obj) {
-    if (state.allowTree && state[selectName]) {
+    if (state.__allowTree__ && state[selectName]) {
       // Using Vue.set() to ensure reactivity when changing a nested array
       Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj));
     } else {
@@ -66,7 +66,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
     }
   },
   read: function (state, obj, idOrData) {
-    if (state.allowTree && state[selectName]) {
+    if (state.__allowTree__ && state[selectName]) {
       recurseDown(state[listName], obj[idKey], function (a, pk) {
         var index = _.findIndex(a, function (item) { return item[idKey] === pk; });
         if (index !== -1) {
@@ -83,7 +83,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
     }
   },
   update: function (state, obj, idOrData) {
-    if (state.allowTree) {
+    if (state.__allowTree__) {
       if (state[selectName]) {
         Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj));
       } else {
@@ -97,7 +97,7 @@ var createMutationSuccesses = function (listName, selectName, idKey) { return ({
     }
   },
   delete: function (state, obj, idOrData) {
-    if (state.allowTree) {
+    if (state.__allowTree__) {
       recurseDown(state[listName], obj[idKey], function (a, pk) {
         var index = _.findIndex(a, function (item) { return item[idKey] === pk; });
         if (index !== -1) {
@@ -133,12 +133,14 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   var listName = baseName + "s";
   var crudName = baseName + "Crud";
-  var selectName = "selected" + word;
+  var selectName = "selected" + word + "s";
 
   var mutationNames = createMutationNames(listName.toUpperCase());
-  var selectMutationName = "select" + word;
-  var changeNameMutationName = "changeSelected" + word + "Name";
   var mutationSuccesses = createMutationSuccesses(listName, selectName, idKey);
+
+  // other mutations
+  var selectMutationName = "select" + word;
+  var updateListMutationName = "update" + word + "sList";
 
   var actionNames = ['list', 'create', 'read', 'update', 'delete']; // lcrud
   var defaultActionStates = [false, false, null, null, null];
@@ -154,12 +156,17 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
 
   /* ------------ State ------------ */
 
-  state.allowTree = allowTree;
+  state.__allowTree__ = allowTree;
   state[listName] = [];
   state[crudName] = _.zipObject(actionNames, defaultActionStates);
-  state[selectName] = null;
+  state[selectName] = [];
 
   /* ------------ Getters ------------ */
+
+  getters['isSelected'] = function (state) { return function (selectedItem) {
+    return (_.findIndex(state[selectName], function (item) { return item === selectedItem; }) !== -1)
+  }; };
+
   /* ------------ Mutations ------------ */
 
   _.forEach(actionNames.filter(function (a) { return lcrud.includes(a.charAt(0)); }), function (actionName) {
@@ -178,15 +185,24 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   // Non-(L)CRUD mutations :
 
   mutations[selectMutationName] = function (state, selectedItem) {
-    state[selectName] = selectedItem;
+    if (selectedItem) {
+      state[selectName] = _.concat(state[selectName], selectedItem);
+    }
   };
 
-  mutations['de' + selectMutationName] = function (state) {
-    state[selectName] = null;
+  mutations['de' + selectMutationName] = function (state, selectedItem) {
+    if (selectedItem) {
+      var index = _.findIndex(state[selectName], function (item) { return item === selectedItem; });
+      if (index !== -1) {
+        state[selectName].splice(index, 1);
+      }
+    } else {
+      state[selectName] = [];
+    }
   };
 
-  mutations[changeNameMutationName] = function (state, newName) {
-    state[selectName].name = newName;
+  mutations[updateListMutationName] = function (state, newList) {
+    state[listName] = newList;
   };
 
   /* ------------ Actions ------------ */
@@ -239,6 +255,7 @@ exports.TREE_PARENT_ID = TREE_PARENT_ID;
 exports.createAsyncMutation = createAsyncMutation;
 exports.makeListModule = makeListModule;
 exports.makeTreeModule = makeTreeModule;
+exports.makeModule = makeModule;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

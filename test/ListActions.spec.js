@@ -1,46 +1,36 @@
-import { makeListModule } from '@/index'
+import { createMutationNames, makeListModule, makeResource } from '@/index'
+import * as config from '@/config'
+import testAction from './ActionHelper'
 
 import Vue from 'vue'
-import Vuex from 'vuex'
-import nock from 'nock'
+import VueResource from 'vue-resource'
 
-Vue.use(Vuex)
+Vue.use(VueResource)
+Vue.http.options.root = 'https://api.arcsecond.io'
+
+const routes = [
+  {
+    method: 'GET',
+    url: 'items/',
+    response: []
+  }
+]
+
+Vue.http.interceptors.unshift((request, next) => {
+  const route = routes.find((item) => {
+    return (request.method === item.method && request.url === config.default.API_URL + item.url)
+  })
+  if (route) {
+    next(request.respondWith(route.response, { status: 200 }))
+  } else {
+    next(request.respondWith({ status: 404, statusText: 'Oh no! Not found!' }))
+  }
+})
 
 let items = null
+const mutationNames = createMutationNames('ITEMS')
 
-const api = nock('http://api.lvh/me:8000').get('/items/').reply(200, [])
-
-const testAction = (action, payload, state, expectedMutations, done) => {
-  let count = 0
-
-  // mock commit
-  const commit = (type, payload) => {
-    const mutation = expectedMutations[count]
-
-    try {
-      expect(mutation.type).toEqual(type)
-      if (payload) {
-        expect(mutation.payload).toEqual(payload)
-      }
-    } catch (error) {
-      done(error)
-    }
-
-    count++
-    if (count >= expectedMutations.length) {
-      done()
-    }
-  }
-
-  // call the action with mocked store and arguments
-  action({ commit, state }, payload)
-
-  // check if no mutations should have been dispatched
-  if (expectedMutations.length === 0) {
-    expect(count).toEqual(0)
-    done()
-  }
-}
+const api = makeResource('items/')
 
 describe('test async api actions', () => {
   beforeEach(() => {
@@ -51,9 +41,12 @@ describe('test async api actions', () => {
     items = null
   })
 
+  // action, payload, state, expectedMutations, done
+
   test('the list is empty at start', done => {
     testAction(items.actions.listItems, null, {}, [
-      { type: 'ITEMS_LIST_FETCH_PENDING' }
+      { type: mutationNames['list'].PENDING },
+      { type: mutationNames['list'].SUCCESS, payload: [] }
     ], done)
   })
 })
