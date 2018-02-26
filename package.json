@@ -26,6 +26,9 @@
     "dev:coverage": "cross-env BABEL_ENV=test karma start test/karma.conf.js",
     "prepublish": "yon run build"
   },
+  "publishConfig": {
+    "registry": "https://arcsecond-verdaccio.herokuapp.com"
+  },
   "lint-staged": {
     "*.{vue,jsx,js}": [
       "eslint --fix"
