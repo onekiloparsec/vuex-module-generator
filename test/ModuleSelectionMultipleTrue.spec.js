@@ -19,13 +19,13 @@ describe('test selection of items Multiple = True', () => {
       modules: {
         items: makeListModule(null, 'item', 'uuid', 'lcrud')
       },
-      strict: false
+      strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
         items: makeTreeModule(null, 'item', 'uuid', 'lcrud')
       },
-      strict: false
+      strict: true
     })
     listStore.commit('items/enableMultipleItemsSelection')
     treeStore.commit('items/enableMultipleItemsSelection')
@@ -58,6 +58,14 @@ describe('test selection of items Multiple = True', () => {
       store.commit('items/selectItem', mock3)
       expect(store.getters['items/isSelected'](mock1)).toEqual(true)
       expect(store.getters['items/isSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      store.commit('items/selectItem', mock3)
+      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      store.commit('items/selectItem', mock2)
+      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isSelected'](mock2)).toEqual(true)
       expect(store.getters['items/isSelected'](mock3)).toEqual(true)
     }
   })
