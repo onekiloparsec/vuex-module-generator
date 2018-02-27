@@ -198,6 +198,9 @@ function makeModule (allowTree, apiPath, root, idKey, lcrud) {
           apiActions[actionName](idOrData)
             .then(
               response => {
+                if (actionName === 'delete') {
+                  commit('de' + selectionMutationName, obj)
+                }
                 const obj = response.body || response.data
                 commit(mutationNames[actionName].SUCCESS, obj, idOrData)
                 resolve(obj)
