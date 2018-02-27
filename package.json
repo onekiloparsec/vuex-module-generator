@@ -27,7 +27,7 @@
     "prepublish": "yon run build"
   },
   "publishConfig": {
-    "registry": "https://arcsecond-verdaccio.herokuapp.com"
+    "registry": "https://verdaccio.arcsecond.io"
   },
   "lint-staged": {
     "*.{vue,jsx,js}": [
