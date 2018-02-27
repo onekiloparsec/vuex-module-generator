@@ -6,27 +6,39 @@ import { capitalizeFirstChar, createMutationNames, createFuncNames, recurseDown 
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
-const createMutationSuccesses = (listName, selectName, idKey) => ({
+// idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
+const createMutationSuccesses = (listName, idKey) => ({
   list: (state, obj, idOrData) => {
+    // list is list, no need of idOrData here.
     state[listName] = obj
   },
-  create: (state, obj) => {
-    if (state.__allowTree__ && state[selectName]) {
-      // Using Vue.set() to ensure reactivity when changing a nested array
-      Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
+  create: (state, obj, idOrData) => {
+    if (state.__allowTree__) {
+      // Using idOrData[TREE_PARENT_ID] to find the correct array. TREE_PARENT_ID *must* be present.
+      recurseDown(state[listName], idOrData[TREE_PARENT_ID], (arr, id) => {
+        const index = _.findIndex(arr, item => item[idKey] === id)
+        if (index !== -1) {
+          arr.push(obj)
+          return false
+        }
+        // Using Vue.set() to ensure reactivity when changing a nested array
+        Vue.set(state, listName, new Array(...state[listName]))
+        // state[listName] = new Array(...state[listName])
+      })
     } else {
       state[listName] = _.concat(state[listName], obj)
     }
   },
   read: (state, obj, idOrData) => {
-    if (state.__allowTree__ && state[selectName]) {
+    if (state.__allowTree__) {
+      // Using obj[idKey]] to find the correct array, since obj already exists.
       recurseDown(state[listName], obj[idKey], (a, pk) => {
         const index = _.findIndex(a, item => item[idKey] === pk)
         if (index !== -1) {
           a.splice(index, 1, obj)
           return false
         }
-        state[listName] = new Array(...state[listName])
+        Vue.set(state, listName, new Array(...state[listName]))
       })
     } else {
       const currentIndex = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
@@ -37,11 +49,15 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
   },
   update: (state, obj, idOrData) => {
     if (state.__allowTree__) {
-      if (state[selectName]) {
-        Vue.set(state[selectName], 'children', _.concat(state[selectName]['children'] || [], obj))
-      } else {
-        state[listName] = new Array(...state[listName])
-      }
+      // Using obj[idKey]] to find the correct array, since obj already exists.
+      recurseDown(state[listName], obj[idKey], (a, pk) => {
+        const index = _.findIndex(a, item => item[idKey] === pk)
+        if (index !== -1) {
+          a.splice(index, 1, obj)
+          return false
+        }
+        Vue.set(state, listName, new Array(...state[listName]))
+      })
     } else {
       const index = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
       if (index !== -1) {
@@ -51,6 +67,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
   },
   delete: (state, obj, idOrData) => {
     if (state.__allowTree__) {
+      // Using obj[idKey]] to find the correct array, since obj already exists.
       recurseDown(state[listName], obj[idKey], (a, pk) => {
         const index = _.findIndex(a, item => item[idKey] === pk)
         if (index !== -1) {
@@ -91,7 +108,7 @@ function makeModule (allowTree, apiPath, root, idKey, lcrud) {
   const selectName = `selected${word}s`
 
   const mutationNames = createMutationNames(listName.toUpperCase())
-  const mutationSuccesses = createMutationSuccesses(listName, selectName, idKey)
+  const mutationSuccesses = createMutationSuccesses(listName, idKey)
 
   // other getters & mutations
   const selectionMutationName = `select${word}`
