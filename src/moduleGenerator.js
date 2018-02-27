@@ -68,6 +68,7 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
 const createApiActions = (api, idKey, dataKey) => ({
   list: (obj) => api.get(obj), // obj is assumed to be an object. Used a URL parameters.
   create: (obj) => {
+    // Here the presence of TREE_PARENT_ID decides whether one add a child to a tree, or simply an item to a list
     if (_.isNil(obj[TREE_PARENT_ID])) {
       return api.post(obj) // obj is assumed to be an object. Used as new Object properties
     } else {
