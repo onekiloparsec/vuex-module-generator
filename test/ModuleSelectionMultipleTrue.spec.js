@@ -17,13 +17,13 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(null, 'item', 'uuid', 'lcrud')
+        items: makeListModule('items/', 'item', 'uuid', 'lcrud')
       },
       strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(null, 'item', 'uuid', 'lcrud')
+        items: makeTreeModule('items/', 'item', 'uuid', 'lcrud')
       },
       strict: true
     })
@@ -47,8 +47,8 @@ describe('test selection of items Multiple = True', () => {
   test('Selection with valid item', () => {
     for (const store of stores) {
       store.commit('items/selectItem', mock1)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
     }
   })
 
@@ -56,17 +56,17 @@ describe('test selection of items Multiple = True', () => {
     for (const store of stores) {
       store.commit('items/selectItem', mock1)
       store.commit('items/selectItem', mock3)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
       store.commit('items/selectItem', mock3)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
       store.commit('items/selectItem', mock2)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
     }
   })
 
@@ -77,8 +77,8 @@ describe('test selection of items Multiple = True', () => {
     const dummy = { name: 'toto' }
     for (const store of stores) {
       store.commit('items/selectItem', dummy)
-      expect(store.getters['items/isSelected'](dummy)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](dummy)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(false)
     }
   })
 
@@ -122,16 +122,16 @@ describe('test selection of items Multiple = True', () => {
       store.commit('items/selectItem', mock1)
       store.commit('items/deselectItem', mock2)
       expect(store.state.items.selectedItems).toEqual([mock3, mock1])
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
 
       // Deselecting again...
       store.commit('items/deselectItem', mock2)
       expect(store.state.items.selectedItems).toEqual([mock3, mock1])
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
     }
   })
 
@@ -141,9 +141,9 @@ describe('test selection of items Multiple = True', () => {
       store.commit('items/selectItem', mock3)
       store.commit('items/deselectItem', undefined)
       expect(store.state.items.selectedItems).toEqual([mock1, mock3])
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
     }
   })
 
@@ -153,9 +153,9 @@ describe('test selection of items Multiple = True', () => {
       store.commit('items/selectItem', mock3)
       store.commit('items/deselectItem', null)
       expect(store.state.items.selectedItems).toEqual([mock1, mock3])
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
     }
   })
 
@@ -180,13 +180,13 @@ describe('test selection of items Multiple = True', () => {
     for (const store of stores) {
       store.commit('items/selectSingleItem', mock1)
       store.commit('items/selectSingleItem', mock3)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
       store.commit('items/selectSingleItem', mock1)
-      expect(store.getters['items/isSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isSelected'](mock3)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(false)
     }
   })
 })

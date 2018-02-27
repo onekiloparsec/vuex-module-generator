@@ -1,4 +1,6 @@
-import { createMutationNames, makeListModule, makeResource } from '@/index'
+import { makeListModule } from '@/index'
+import { createMutationNames } from '@/utils'
+
 import * as config from '@/config'
 import testAction from './ActionHelper'
 
@@ -30,11 +32,9 @@ Vue.http.interceptors.unshift((request, next) => {
 let items = null
 const mutationNames = createMutationNames('ITEMS')
 
-const api = makeResource('items/')
-
 describe('test async api actions', () => {
   beforeEach(() => {
-    items = makeListModule(api, 'item', 'uuid', 'lcrud')
+    items = makeListModule('items/', 'item', 'uuid', 'lcrud')
   })
 
   afterEach(() => {

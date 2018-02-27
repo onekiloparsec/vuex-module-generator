@@ -1,45 +1,10 @@
-import Vue from 'vue'
 import _ from 'lodash'
+import Vue from 'vue'
+
+import { makeResource } from './resourceGenerator'
+import { capitalizeFirstChar, createMutationNames, createFuncNames, recurseDown } from './utils'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
-
-const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
-
-export const createAsyncMutation = (type) => ({
-  SUCCESS: `${type}_SUCCESS`,
-  FAILURE: `${type}_FAILURE`,
-  PENDING: `${type}_PENDING`
-})
-
-export const createMutationNames = (listNameUppercase) => ({
-  list: createAsyncMutation(`${listNameUppercase}_LIST_FETCH`),
-  create: createAsyncMutation(`${listNameUppercase}_SINGLE_CREATE`),
-  read: createAsyncMutation(`${listNameUppercase}_SINGLE_READ`),
-  update: createAsyncMutation(`${listNameUppercase}_SINGLE_UPDATE`),
-  delete: createAsyncMutation(`${listNameUppercase}_SINGLE_DELETE`)
-})
-
-const createFuncNames = (word) => ({
-  list: `list${word}s`,
-  create: `create${word}`,
-  read: `read${word}`,
-  update: `update${word}`,
-  delete: `delete${word}`
-})
-
-const recurseDown = (array, pk, iteratee) => {
-  let res
-  res = iteratee(array, pk)
-  if (res !== false) {
-    _.each(array, (node) => {
-      if (res !== false && !_.isNil(node['children'])) {
-        res = recurseDown(node['children'], pk, iteratee)
-      }
-      return res
-    })
-  }
-  return res
-}
 
 const createMutationSuccesses = (listName, selectName, idKey) => ({
   list: (state, obj, idOrData) => {
@@ -114,10 +79,11 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule (allowTree, api, root, idKey, lcrud) {
+function makeModule (allowTree, apiPath, root, idKey, lcrud) {
   const dataKey = 'data'
   const baseName = root.toLowerCase()
   const word = capitalizeFirstChar(baseName)
+  const api = makeResource(apiPath)
 
   const listName = `${baseName}s`
   const crudName = `${baseName}Crud`
@@ -126,9 +92,10 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   const mutationNames = createMutationNames(listName.toUpperCase())
   const mutationSuccesses = createMutationSuccesses(listName, selectName, idKey)
 
-  // other mutations
+  // other getters & mutations
   const selectionMutationName = `select${word}`
   const selectionSingleMutationName = `selectSingle${word}`
+  const isSelectedGetterName = `is${word}Selected`
   const ableMultipleSelectionMutationName = `ableMultiple${word}sSelection`
   const clearSelectionMutationName = `clear${word}sSelection`
   const updateListMutationName = `update${word}sList`
@@ -138,14 +105,14 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   const actionFuncNames = createFuncNames(word)
   const apiActions = createApiActions(api, idKey, dataKey)
 
-  /* ------------ Vuex------------ */
+  /* ------------ Vuex Elements ------------ */
 
   const state = {}
   const getters = {}
   const mutations = {}
   const actions = {}
 
-  /* ------------ State ------------ */
+  /* ------------ Vuex State ------------ */
 
   state.__allowTree__ = allowTree
   state.multipleSelection = false
@@ -153,13 +120,13 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   state[crudName] = _.zipObject(actionNames, defaultActionStates)
   state[selectName] = []
 
-  /* ------------ Getters ------------ */
+  /* ------------ Vuex Getters ------------ */
 
-  getters['isSelected'] = (state) => (selectedItem) => {
+  getters[isSelectedGetterName] = (state) => (selectedItem) => {
     return (_.findIndex(state[selectName], item => item === selectedItem) !== -1)
   }
 
-  /* ------------ Mutations ------------ */
+  /* ------------ Vuex Mutations ------------ */
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     const boolActionNames = ['list', 'create']
@@ -220,7 +187,7 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
     state[listName] = newList
   }
 
-  /* ------------ Actions ------------ */
+  /* ------------ Vuex Actions ------------ */
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
@@ -253,12 +220,12 @@ function makeModule (allowTree, api, root, idKey, lcrud) {
   }
 }
 
-function makeListModule (api, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(false, api, baseName, idKey, lcrud)
+function makeListModule (apiPath, baseName, idKey, lcrud = 'lcrud') {
+  return makeModule(false, apiPath, baseName, idKey, lcrud)
 }
 
-function makeTreeModule (api, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(true, api, baseName, idKey, lcrud)
+function makeTreeModule (apiPath, baseName, idKey, lcrud = 'lcrud') {
+  return makeModule(true, apiPath, baseName, idKey, lcrud)
 }
 
 export {

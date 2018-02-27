@@ -12,7 +12,7 @@ describe('test actions creation based on last parameter', () => {
       expect(items.state.selectedItems).toEqual([])
       expect(items.state.multipleSelection).toEqual(false)
 
-      expect(items.getters.isSelected).toBeDefined()
+      expect(items.getters.isItemSelected).toBeDefined()
 
       expect(items.mutations.selectItem).toBeDefined()
       expect(items.mutations.deselectItem).toBeDefined()
