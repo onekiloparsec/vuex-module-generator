@@ -24,13 +24,13 @@ export const createFuncNames = (word) => ({
   delete: `delete${word}`
 })
 
-export const recurseDown = (array, pk, iteratee) => {
+export const recurseDown = (array, id, iteratee) => {
   let res
-  res = iteratee(array, pk)
+  res = iteratee(array, id)
   if (res !== false) {
     _.each(array, (node) => {
       if (res !== false && !_.isNil(node['children'])) {
-        res = recurseDown(node['children'], pk, iteratee)
+        res = recurseDown(node['children'], id, iteratee)
       }
       return res
     })
