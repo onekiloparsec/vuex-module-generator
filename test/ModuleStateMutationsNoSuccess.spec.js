@@ -37,7 +37,6 @@ afterEach(() => {
 })
 
 describe('test boolean actions', () => {
-
   test('failure crud state for bool actions', () => {
     for (const store of stores) {
       for (const actionName of boolActionNames) {
