@@ -2,83 +2,53 @@ import _ from 'lodash'
 import Vue from 'vue'
 
 import { makeResource } from './resourceGenerator'
-import { capitalizeFirstChar, createMutationNames, createFuncNames, recurseDown } from './utils'
+import { createModuleNames, recurseDown, mutationSuccessRUD } from './utils'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
-const createMutationSuccesses = (listName, idKey) => ({
-  list: (state, obj, idOrData) => {
+const createMutationSuccesses = (listName, selectName, idKey) => ({
+  list: (state, itemsList) => {
     // list is list, no need of idOrData here.
-    state[listName] = obj
+    state[listName] = itemsList
+    // filter out items that are not known anymore.
+    // do not use IDs! objects may have changed
+    state[selectName] = state[selectName].filter(item => itemsList.includes(item))
   },
   create: (state, obj, idOrData) => {
     if (state.__allowTree__) {
-      // Using idOrData[TREE_PARENT_ID] to find the correct array. TREE_PARENT_ID *must* be present.
+      // obj is newly created object.
+      // idOrData is an object containing:
+      // -- the data with which obj has been created, and
+      // -- the TREE_PARENT_ID to attach to. TREE_PARENT_ID *must* be present.
       recurseDown(state[listName], idOrData[TREE_PARENT_ID], (arr, id) => {
         const index = _.findIndex(arr, item => item[idKey] === id)
         if (index !== -1) {
           arr.push(obj)
           return false
         }
-        // Using Vue.set() to ensure reactivity when changing a nested array
-        Vue.set(state, listName, new Array(...state[listName]))
-        // state[listName] = new Array(...state[listName])
       })
+      // Using Vue.set() to ensure reactivity when changing a nested array
+      Vue.set(state, listName, new Array(...state[listName]))
+      // state[listName] = new Array(...state[listName])
     } else {
       state[listName] = _.concat(state[listName], obj)
     }
   },
-  read: (state, obj, idOrData) => {
-    if (state.__allowTree__) {
-      // Using obj[idKey]] to find the correct array, since obj already exists.
-      recurseDown(state[listName], obj[idKey], (a, pk) => {
-        const index = _.findIndex(a, item => item[idKey] === pk)
-        if (index !== -1) {
-          a.splice(index, 1, obj)
-          return false
-        }
-        Vue.set(state, listName, new Array(...state[listName]))
-      })
-    } else {
-      const currentIndex = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
-      if (currentIndex !== -1) {
-        state[listName].splice(currentIndex, 1, obj)
-      }
-    }
+  read: (state, obj) => {
+    mutationSuccessRUD(state, listName, selectName, idKey, obj[idKey], (list, index) => {
+      list.splice(index, 1, obj)
+    })
   },
-  update: (state, obj, idOrData) => {
-    if (state.__allowTree__) {
-      // Using obj[idKey]] to find the correct array, since obj already exists.
-      recurseDown(state[listName], obj[idKey], (a, pk) => {
-        const index = _.findIndex(a, item => item[idKey] === pk)
-        if (index !== -1) {
-          a.splice(index, 1, obj)
-          return false
-        }
-        Vue.set(state, listName, new Array(...state[listName]))
-      })
-    } else {
-      const index = _.findIndex(state[listName], item => item[idKey] === obj[idKey])
-      if (index !== -1) {
-        state[listName].splice(index, 1, obj)
-      }
-    }
+  update: (state, obj) => {
+    mutationSuccessRUD(state, listName, selectName, idKey, obj[idKey], (list, index) => {
+      list.splice(index, 1, obj)
+    })
   },
-  delete: (state, obj, idOrData) => {
-    if (state.__allowTree__) {
-      // Using obj[idKey]] to find the correct array, since obj already exists.
-      recurseDown(state[listName], obj[idKey], (a, pk) => {
-        const index = _.findIndex(a, item => item[idKey] === pk)
-        if (index !== -1) {
-          a.splice(index, 1)
-          return false
-        }
-      })
-      state[listName] = new Array(...state[listName])
-    } else {
-      state[listName] = state[listName].filter(item => item[idKey] !== obj)
-    }
+  delete: (state, id) => {
+    mutationSuccessRUD(state, listName, selectName, idKey, id, (list, index) => {
+      list.splice(index, 1)
+    })
   }
 })
 
@@ -98,30 +68,15 @@ const createApiActions = (api, idKey, dataKey) => ({
 })
 
 function makeModule (allowTree, apiPath, root, idKey, lcrud) {
-  const dataKey = 'data'
-  const baseName = root.toLowerCase()
-  const word = capitalizeFirstChar(baseName)
   const api = makeResource(apiPath)
+  const apiActions = createApiActions(api, idKey, 'data')
 
-  const listName = `${baseName}s`
-  const crudName = `${baseName}Crud`
-  const selectName = `selected${word}s`
+  const names = createModuleNames(root)
 
-  const mutationNames = createMutationNames(listName.toUpperCase())
-  const mutationSuccesses = createMutationSuccesses(listName, idKey)
-
-  // other getters & mutations
-  const selectionMutationName = `select${word}`
-  const selectionSingleMutationName = `selectSingle${word}`
-  const isSelectedGetterName = `is${word}Selected`
-  const ableMultipleSelectionMutationName = `ableMultiple${word}sSelection`
-  const clearSelectionMutationName = `clear${word}sSelection`
-  const updateListMutationName = `update${word}sList`
-
+  const mutationSuccesses = createMutationSuccesses(names.state.list, names.state.selection, idKey)
   const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
+  const boolActionNames = ['list', 'create']
   const defaultActionStates = [false, false, null, null, null]
-  const actionFuncNames = createFuncNames(word)
-  const apiActions = createApiActions(api, idKey, dataKey)
 
   /* ------------ Vuex Elements ------------ */
 
@@ -133,97 +88,98 @@ function makeModule (allowTree, apiPath, root, idKey, lcrud) {
   /* ------------ Vuex State ------------ */
 
   state.__allowTree__ = allowTree
+  state[names.state.list] = []
+  state[names.state.crud] = _.zipObject(actionNames, defaultActionStates)
+
+  // whatever the value of multipleSelection, selection is stored in an array.
   state.multipleSelection = false
-  state[listName] = []
-  state[crudName] = _.zipObject(actionNames, defaultActionStates)
-  state[selectName] = []
+  state[names.state.selection] = []
 
   /* ------------ Vuex Getters ------------ */
 
-  getters[isSelectedGetterName] = (state) => (selectedItem) => {
-    return (_.findIndex(state[selectName], item => item === selectedItem) !== -1)
+  getters[names.getters.isSelected] = (state) => (selectedItem) => {
+    return (_.findIndex(state[names.state.selection], item => item === selectedItem) !== -1)
   }
 
   /* ------------ Vuex Mutations ------------ */
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
-    const boolActionNames = ['list', 'create']
     _.merge(mutations, {
-      [mutationNames[actionName].PENDING] (state, idOrData) {
-        state[crudName][actionName] = (boolActionNames.includes(actionName)) ? true : idOrData
+      [names.mutations.crud[actionName].PENDING] (state, idOrData) {
+        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : idOrData
       },
-      [mutationNames[actionName].SUCCESS] (state, obj, idOrData) {
+      [names.mutations.crud[actionName].SUCCESS] (state, obj, idOrData) {
         mutationSuccesses[actionName](state, obj, idOrData)
-        state[crudName][actionName] = (boolActionNames.includes(actionName)) ? false : null
+        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       },
-      [mutationNames[actionName].FAILURE] (state) {
-        state[crudName][actionName] = (boolActionNames.includes(actionName)) ? false : null
+      [names.mutations.crud[actionName].FAILURE] (state) {
+        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
   })
 
   // Non-(L)CRUD mutations :
 
-  mutations[selectionMutationName] = (state, selectedItem) => {
+  mutations[names.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
       if (state.multipleSelection) {
-        state[selectName] = _.uniq(_.concat(state[selectName], selectedItem))
+        state[names.state.selection] = _.uniq(_.concat(state[names.state.selection], selectedItem))
       } else {
-        state[selectName] = _.concat([], selectedItem)
+        state[names.state.selection] = _.concat([], selectedItem)
       }
     }
   }
 
-  mutations[selectionSingleMutationName] = (state, selectedItem) => {
+  mutations['de' + names.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
-      state[selectName] = _.concat([], selectedItem)
-    }
-  }
-
-  mutations['de' + selectionMutationName] = (state, selectedItem) => {
-    if (selectedItem) {
-      const index = _.findIndex(state[selectName], item => item === selectedItem)
+      const index = _.findIndex(state[names.state.selection], item => item === selectedItem)
       if (index !== -1) {
-        state[selectName].splice(index, 1)
+        state[names.state.selection].splice(index, 1)
       }
     }
   }
 
-  mutations['en' + ableMultipleSelectionMutationName] = (state) => {
+  mutations[names.mutations.selectSingle] = (state, selectedItem) => {
+    if (selectedItem) {
+      state[names.state.selection] = _.concat([], selectedItem)
+    }
+  }
+
+  mutations['en' + names.mutations.ableMultipleSelection] = (state) => {
     state.multipleSelection = true
   }
 
-  mutations['dis' + ableMultipleSelectionMutationName] = (state) => {
+  mutations['dis' + names.mutations.ableMultipleSelection] = (state) => {
     state.multipleSelection = false
   }
 
-  mutations[clearSelectionMutationName] = (state) => {
-    state[selectName] = []
+  mutations[names.mutations.clearSelection] = (state) => {
+    state[names.state.selection] = []
   }
 
-  mutations[updateListMutationName] = (state, newList) => {
-    state[listName] = newList
+  mutations[names.mutations.updateList] = (state, newList) => {
+    state[names.state.list] = newList
   }
 
   /* ------------ Vuex Actions ------------ */
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
-      actions[actionFuncNames[actionName]] = ({ commit }, idOrData) => {
+      actions[names.actions[actionName]] = ({ commit }, idOrData) => {
         return new Promise((resolve, reject) => {
-          commit(mutationNames[actionName].PENDING, idOrData)
+          commit(names.mutations.crud[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData)
             .then(
               response => {
-                if (actionName === 'delete') {
-                  commit('de' + selectionMutationName, obj)
+                if (actionName === 'delete') { // De-select on delete
+                  commit('de' + names.mutations.select, obj)
                 }
                 const obj = response.body || response.data
-                commit(mutationNames[actionName].SUCCESS, obj, idOrData)
+                commit(names.mutations.crud[actionName].SUCCESS, obj, idOrData)
                 resolve(obj)
               },
               error => {
-                commit(mutationNames[actionName].FAILURE, error)
+                commit(names.mutations.crud[actionName].FAILURE, error)
                 reject(error)
               }
             )

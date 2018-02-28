@@ -1,4 +1,5 @@
-import { createMutationNames, makeListModule, makeTreeModule } from '@/index'
+import { makeListModule, makeTreeModule } from '@/index'
+import { createMutationNames } from '@/utils'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -16,13 +17,13 @@ let stores = []
 beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
-      items: makeListModule(null, 'item', 'uuid', 'lcrud')
+      items: makeListModule(null, 'item', 'id', 'lcrud')
     },
     strict: false
   })
   treeStore = new Vuex.Store({
     modules: {
-      items: makeTreeModule(null, 'item', 'uuid', 'lcrud')
+      items: makeTreeModule(null, 'item', 'id', 'lcrud')
     },
     strict: false
   })
@@ -36,18 +37,6 @@ afterEach(() => {
 })
 
 describe('test boolean actions', () => {
-  test('success crud state for bool actions', () => {
-    for (const store of stores) {
-      for (const actionName of boolActionNames) {
-        const mutNames = mutationNames[actionName]
-        expect(store.state.items.itemCrud[actionName]).toEqual(false)
-        store.commit('items/' + mutNames.PENDING)
-        expect(store.state.items.itemCrud[actionName]).toEqual(true)
-        store.commit('items/' + mutNames.SUCCESS)
-        expect(store.state.items.itemCrud[actionName]).toEqual(false)
-      }
-    }
-  })
 
   test('failure crud state for bool actions', () => {
     for (const store of stores) {
