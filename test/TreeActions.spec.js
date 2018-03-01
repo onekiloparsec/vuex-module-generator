@@ -2,7 +2,6 @@ import { makeTreeModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import nock from 'nock'
 
 Vue.use(Vuex)
 
