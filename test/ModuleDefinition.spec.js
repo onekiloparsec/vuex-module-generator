@@ -1,11 +1,12 @@
 import { makeModule } from '@/index'
 
 const defaultCrud = { list: false, create: false, read: null, update: null, delete: null }
+const API_URL = 'http://localhost:8080/'
 
 describe('test actions creation based on last parameter', () => {
   test('all state and mutations available', () => {
-    const listItems = makeModule(false, null, 'item', 'uuid', 'lcrud')
-    const treeItems = makeModule(true, null, 'item', 'uuid', 'lcrud')
+    const listItems = makeModule(false, API_URL, 'items/', 'item', 'uuid', 'lcrud')
+    const treeItems = makeModule(true, API_URL, 'items/', 'item', 'uuid', 'lcrud')
     for (const items of [listItems, treeItems]) {
       expect(items.state.items).toEqual([])
       expect(items.state.itemCrud).toEqual(defaultCrud)
@@ -32,8 +33,8 @@ describe('test actions creation based on last parameter', () => {
   })
 
   test('only specified lcrud actions are available', () => {
-    const listItems = makeModule(false, null, 'item', 'uuid', 'lrd')
-    const treeItems = makeModule(true, null, 'item', 'uuid', 'lrd')
+    const listItems = makeModule(false, API_URL, 'items/', 'item', 'uuid', 'lrd')
+    const treeItems = makeModule(true, API_URL, 'items/', 'item', 'uuid', 'lrd')
     for (const items of [listItems, treeItems]) {
       expect(items.mutations['ITEMS_LIST_FETCH_PENDING']).toBeDefined()
       expect(items.mutations['ITEMS_LIST_FETCH_SUCCESS']).toBeDefined()

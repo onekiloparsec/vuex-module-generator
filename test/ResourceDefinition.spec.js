@@ -1,12 +1,12 @@
 import { makeResource } from '@/index'
-import * as config from '@/config'
 
 describe('test actions creation based on last parameter', () => {
+  const API_URL = 'http://localhost:8080/'
   const path = 'items/'
   const uuid = '12345-67890'
 
   test('resource definition', () => {
-    const items = makeResource(path)
+    const items = makeResource(API_URL, path)
     expect(items.url()).toBeDefined()
     expect(items.get).toBeDefined()
     expect(items.options).toBeDefined()
@@ -15,8 +15,8 @@ describe('test actions creation based on last parameter', () => {
     expect(items.delete).toBeDefined()
   })
   test('resource urls', () => {
-    const items = makeResource(path)
-    expect(items.url()).toEqual(config.default.API_URL + path)
-    expect(items.url(uuid)).toEqual(config.default.API_URL + path + uuid + '/')
+    const items = makeResource(API_URL, path)
+    expect(items.url()).toEqual(API_URL + path)
+    expect(items.url(uuid)).toEqual(API_URL + path + uuid + '/')
   })
 })

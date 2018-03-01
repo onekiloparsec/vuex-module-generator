@@ -8,7 +8,7 @@ Vue.use(Vuex)
 
 let tree = null
 
-const api = nock('http://api.lvh/me:8000').get('/items/').reply(200, [])
+const API_URL = 'http://localhost:8080/'
 
 const testAction = (action, payload, state, expectedMutations, done) => {
   let count = 0
@@ -44,7 +44,7 @@ const testAction = (action, payload, state, expectedMutations, done) => {
 
 describe('test async api actions', () => {
   beforeEach(() => {
-    tree = makeTreeModule(api, 'item', 'uuid', 'lcrud')
+    tree = makeTreeModule(API_URL, 'items/', 'item', 'uuid', 'lcrud')
   })
 
   afterEach(() => {

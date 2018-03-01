@@ -1,9 +1,7 @@
 import Vue from 'vue'
 import _ from 'lodash'
 
-import config from './config'
-
-export const makeResource = (basePath, subPath = null, parent = null) => {
+export const makeResource = (API_URL, basePath, subPath = null, parent = null) => {
   const obj = {
     _basePath: basePath,
     _singleUUID: null,
@@ -11,7 +9,7 @@ export const makeResource = (basePath, subPath = null, parent = null) => {
     _parent: parent,
 
     url: (uuid) => {
-      let p = config.API_URL + obj._basePath
+      let p = API_URL + obj._basePath
       if (obj._parent && obj._parent._singleUUID) {
         p += obj._parent._singleUUID + '/'
       }
@@ -43,11 +41,11 @@ export const makeResource = (basePath, subPath = null, parent = null) => {
   }
 
   obj.subresource = (subpath) => {
-    return makeResource(obj._basePath, subpath, obj)
+    return makeResource(API_URL, obj._basePath, subpath, obj)
   }
 
   obj.addSubresource = (subpath) => {
-    obj[subpath.slice(0, -1)] = makeResource(obj._basePath, subpath, obj)
+    obj[subpath.slice(0, -1)] = makeResource(API_URL, obj._basePath, subpath, obj)
     return obj
   }
 

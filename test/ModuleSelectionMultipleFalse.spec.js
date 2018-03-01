@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const API_URL = 'http://localhost:8080/'
 const mock1 = { name: 'dummy1', id: 1 }
 const mock2 = { name: 'dummy2', id: 2 }
 const mock3 = { name: 'dummy3', id: 3 }
@@ -17,13 +18,13 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(null, 'item', 'id', 'lcrud')
+        items: makeListModule(API_URL, 'items/', 'item', 'id', 'lcrud')
       },
       strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(null, 'item', 'id', 'lcrud')
+        items: makeTreeModule(API_URL, 'items/', 'item', 'id', 'lcrud')
       },
       strict: true
     })

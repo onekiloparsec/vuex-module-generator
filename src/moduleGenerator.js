@@ -67,8 +67,8 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule (allowTree, apiPath, root, idKey, lcrud) {
-  const api = makeResource(apiPath)
+function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
+  const api = makeResource(apiURL, apiPath)
   const apiActions = createApiActions(api, idKey, 'data')
 
   const names = createModuleNames(root)
@@ -197,12 +197,12 @@ function makeModule (allowTree, apiPath, root, idKey, lcrud) {
   }
 }
 
-function makeListModule (apiPath, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(false, apiPath, baseName, idKey, lcrud)
+function makeListModule (apiURL, apiPath, baseName, idKey, lcrud = 'lcrud') {
+  return makeModule(false, apiURL, apiPath, baseName, idKey, lcrud)
 }
 
-function makeTreeModule (apiPath, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(true, apiPath, baseName, idKey, lcrud)
+function makeTreeModule (apiURL, apiPath, baseName, idKey, lcrud = 'lcrud') {
+  return makeModule(true, apiURL, apiPath, baseName, idKey, lcrud)
 }
 
 export {

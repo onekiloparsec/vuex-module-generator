@@ -6,6 +6,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+const API_URL = 'http://localhost:8080/'
 const mutationNames = createMutationNames('ITEMS')
 const objActionNames = ['read', 'update', 'delete']
 const boolActionNames = ['list', 'create']
@@ -17,13 +18,13 @@ let stores = []
 beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
-      items: makeListModule(null, 'item', 'id', 'lcrud')
+      items: makeListModule(API_URL, 'items/', 'item', 'id', 'lcrud')
     },
     strict: false
   })
   treeStore = new Vuex.Store({
     modules: {
-      items: makeTreeModule(null, 'item', 'id', 'lcrud')
+      items: makeTreeModule(API_URL, 'items/', 'item', 'id', 'lcrud')
     },
     strict: false
   })
