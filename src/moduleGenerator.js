@@ -7,13 +7,17 @@ import { createModuleNames, recurseDown, mutationSuccessRUD } from './utils'
 export const TREE_PARENT_ID = 'tree_parent_id'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
-const createMutationSuccesses = (listName, selectName, idKey) => ({
+const createMutationSuccesses = (listName, selectionName, singleSelectionName, idKey) => ({
   list: (state, itemsList) => {
     // list is list, no need of idOrData here.
     state[listName] = itemsList
     // filter out items that are not known anymore.
     // do not use IDs! objects may have changed
-    state[selectName] = state[selectName].filter(item => itemsList.includes(item))
+    state[selectionName] = state[selectionName].filter(item => itemsList.includes(item))
+    // also clear single selection if necessary
+    if (itemsList.includes(state[singleSelectionName]) === false) {
+      state[singleSelectionName] = null
+    }
   },
   create: (state, obj, idOrData) => {
     if (state.__allowTree__) {
@@ -36,17 +40,26 @@ const createMutationSuccesses = (listName, selectName, idKey) => ({
     }
   },
   read: (state, obj) => {
-    mutationSuccessRUD(state, listName, selectName, idKey, obj[idKey], (list, index) => {
+    mutationSuccessRUD(state, listName, selectionName, idKey, obj[idKey], (list, index) => {
+      if (state[singleSelectionName] === list[index]) {
+        state[singleSelectionName] = obj
+      }
       list.splice(index, 1, obj)
     })
   },
   update: (state, obj) => {
-    mutationSuccessRUD(state, listName, selectName, idKey, obj[idKey], (list, index) => {
+    mutationSuccessRUD(state, listName, selectionName, idKey, obj[idKey], (list, index) => {
+      if (state[singleSelectionName] === list[index]) {
+        state[singleSelectionName] = obj
+      }
       list.splice(index, 1, obj)
     })
   },
   delete: (state, id) => {
-    mutationSuccessRUD(state, listName, selectName, idKey, id, (list, index) => {
+    mutationSuccessRUD(state, listName, selectionName, idKey, id, (list, index) => {
+      if (state[singleSelectionName] === list[index]) {
+        state[singleSelectionName] = null
+      }
       list.splice(index, 1)
     })
   }
@@ -67,13 +80,13 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
+function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud) {
   const api = makeResource(apiURL, apiPath)
   const apiActions = createApiActions(api, idKey, 'data')
 
   const names = createModuleNames(root)
 
-  const mutationSuccesses = createMutationSuccesses(names.state.list, names.state.selection, idKey)
+  const mutationSuccesses = createMutationSuccesses(names.state.list, names.state.selection, names.state.singleSelection, idKey)
   const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
   const boolActionNames = ['list', 'create']
   const defaultActionStates = [false, false, null, null, null]
@@ -88,12 +101,13 @@ function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
   /* ------------ Vuex State ------------ */
 
   state.__allowTree__ = allowTree
+  state.__allowMultipleSelection__ = allowMultipleSelection
+
   state[names.state.list] = []
   state[names.state.crud] = _.zipObject(actionNames, defaultActionStates)
 
-  // whatever the value of multipleSelection, selection is stored in an array.
-  state.multipleSelection = false
   state[names.state.selection] = []
+  state[names.state.singleSelection] = null
 
   /* ------------ Vuex Getters ------------ */
 
@@ -122,9 +136,10 @@ function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
 
   mutations[names.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
-      if (state.multipleSelection) {
+      if (state.__allowMultipleSelection__) {
         state[names.state.selection] = _.uniq(_.concat(state[names.state.selection], selectedItem))
       } else {
+        state[names.state.singleSelection] = selectedItem
         state[names.state.selection] = _.concat([], selectedItem)
       }
     }
@@ -136,25 +151,15 @@ function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
       if (index !== -1) {
         state[names.state.selection].splice(index, 1)
       }
+      if (state[names.state.singleSelection] === selectedItem) {
+        state[names.state.singleSelection] = null
+      }
     }
-  }
-
-  mutations[names.mutations.selectSingle] = (state, selectedItem) => {
-    if (selectedItem) {
-      state[names.state.selection] = _.concat([], selectedItem)
-    }
-  }
-
-  mutations['en' + names.mutations.ableMultipleSelection] = (state) => {
-    state.multipleSelection = true
-  }
-
-  mutations['dis' + names.mutations.ableMultipleSelection] = (state) => {
-    state.multipleSelection = false
   }
 
   mutations[names.mutations.clearSelection] = (state) => {
     state[names.state.selection] = []
+    state[names.state.singleSelection] = null
   }
 
   mutations[names.mutations.updateList] = (state, newList) => {
@@ -197,12 +202,12 @@ function makeModule (allowTree, apiURL, apiPath, root, idKey, lcrud) {
   }
 }
 
-function makeListModule (apiURL, apiPath, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(false, apiURL, apiPath, baseName, idKey, lcrud)
+function makeListModule (apiURL, apiPath, baseName, idKey, allowMultipleSelection, lcrud = 'lcrud') {
+  return makeModule(apiURL, apiPath, baseName, idKey, false, allowMultipleSelection, lcrud)
 }
 
-function makeTreeModule (apiURL, apiPath, baseName, idKey, lcrud = 'lcrud') {
-  return makeModule(true, apiURL, apiPath, baseName, idKey, lcrud)
+function makeTreeModule (apiURL, apiPath, baseName, idKey, allowMultipleSelection, lcrud = 'lcrud') {
+  return makeModule(apiURL, apiPath, baseName, idKey, true, allowMultipleSelection, lcrud)
 }
 
 export {

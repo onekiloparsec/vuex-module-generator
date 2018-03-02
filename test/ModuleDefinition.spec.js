@@ -1,27 +1,23 @@
-import { makeModule } from '@/index'
+import { makeListModule, makeTreeModule } from '@/index'
 
 const defaultCrud = { list: false, create: false, read: null, update: null, delete: null }
 const API_URL = 'http://localhost:8080/'
 
 describe('test actions creation based on last parameter', () => {
   test('all state and mutations available', () => {
-    const listItems = makeModule(false, API_URL, 'items/', 'item', 'uuid', 'lcrud')
-    const treeItems = makeModule(true, API_URL, 'items/', 'item', 'uuid', 'lcrud')
+    const listItems = makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
+    const treeItems = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
     for (const items of [listItems, treeItems]) {
       expect(items.state.items).toEqual([])
       expect(items.state.itemCrud).toEqual(defaultCrud)
       expect(items.state.selectedItems).toEqual([])
-      expect(items.state.multipleSelection).toEqual(false)
+      expect(items.state.selectedItem).toEqual(null)
 
       expect(items.getters.isItemSelected).toBeDefined()
 
       expect(items.mutations.selectItem).toBeDefined()
       expect(items.mutations.deselectItem).toBeDefined()
       expect(items.mutations.clearItemsSelection).toBeDefined()
-
-      expect(items.mutations.enableMultipleItemsSelection).toBeDefined()
-      expect(items.mutations.disableMultipleItemsSelection).toBeDefined()
-
       expect(items.mutations.updateItemsList).toBeDefined()
 
       expect(items.actions.listItems).toBeDefined()
@@ -33,8 +29,8 @@ describe('test actions creation based on last parameter', () => {
   })
 
   test('only specified lcrud actions are available', () => {
-    const listItems = makeModule(false, API_URL, 'items/', 'item', 'uuid', 'lrd')
-    const treeItems = makeModule(true, API_URL, 'items/', 'item', 'uuid', 'lrd')
+    const listItems = makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lrd')
+    const treeItems = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lrd')
     for (const items of [listItems, treeItems]) {
       expect(items.mutations['ITEMS_LIST_FETCH_PENDING']).toBeDefined()
       expect(items.mutations['ITEMS_LIST_FETCH_SUCCESS']).toBeDefined()

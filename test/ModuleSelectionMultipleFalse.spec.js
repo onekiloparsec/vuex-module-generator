@@ -18,18 +18,16 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'id', 'lcrud')
+        items: makeListModule(API_URL, 'items/', 'item', 'id', false, 'lcrud')
       },
       strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'id', 'lcrud')
+        items: makeTreeModule(API_URL, 'items/', 'item', 'id', false, 'lcrud')
       },
       strict: true
     })
-    listStore.commit('items/disableMultipleItemsSelection')
-    treeStore.commit('items/disableMultipleItemsSelection')
     stores = [listStore, treeStore]
   })
 

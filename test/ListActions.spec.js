@@ -35,7 +35,7 @@ const mutationNames = createMutationNames('ITEMS')
 
 describe('test async api actions', () => {
   beforeEach(() => {
-    items = makeListModule(API_URL, 'items/', 'item', 'uuid', 'lcrud')
+    items = makeListModule(API_URL, 'items/', 'item', 'uuid', false, 'lcrud')
   })
 
   afterEach(() => {

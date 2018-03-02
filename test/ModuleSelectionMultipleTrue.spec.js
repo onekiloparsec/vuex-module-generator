@@ -18,13 +18,13 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'uuid', 'lcrud')
+        items: makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
       },
       strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'uuid', 'lcrud')
+        items: makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
       },
       strict: true
     })
@@ -174,20 +174,6 @@ describe('test selection of items Multiple = True', () => {
       expect(store.state.items.selectedItems).toEqual([mock1, mock3])
       store.commit('items/clearItemsSelection')
       expect(store.state.items.selectedItems).toEqual([])
-    }
-  })
-
-  test('Selection with single selection', () => {
-    for (const store of stores) {
-      store.commit('items/selectSingleItem', mock1)
-      store.commit('items/selectSingleItem', mock3)
-      expect(store.getters['items/isItemSelected'](mock1)).toEqual(false)
-      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
-      store.commit('items/selectSingleItem', mock1)
-      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
-      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
-      expect(store.getters['items/isItemSelected'](mock3)).toEqual(false)
     }
   })
 })

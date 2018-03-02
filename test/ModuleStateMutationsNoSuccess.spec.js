@@ -18,13 +18,13 @@ let stores = []
 beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
-      items: makeListModule(API_URL, 'items/', 'item', 'id', 'lcrud')
+      items: makeListModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
     },
     strict: false
   })
   treeStore = new Vuex.Store({
     modules: {
-      items: makeTreeModule(API_URL, 'items/', 'item', 'id', 'lcrud')
+      items: makeTreeModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
     },
     strict: false
   })

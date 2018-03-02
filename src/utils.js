@@ -25,7 +25,8 @@ export const createModuleNames = (root) => {
     state: {
       list: `${baseName}s`,
       crud: `${baseName}Crud`,
-      selection: `selected${word}s`
+      selection: `selected${word}s`,
+      singleSelection: `selected${word}`
     },
 
     getters: {
@@ -35,8 +36,6 @@ export const createModuleNames = (root) => {
     mutations: {
       crud: createMutationNames(baseName.toUpperCase() + 'S'),
       select: `select${word}`,
-      selectSingle: `selectSingle${word}`,
-      ableMultipleSelection: `ableMultiple${word}sSelection`,
       clearSelection: `clear${word}sSelection`,
       updateList: `update${word}sList`
     },

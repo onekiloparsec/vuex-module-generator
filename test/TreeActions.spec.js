@@ -43,7 +43,7 @@ const testAction = (action, payload, state, expectedMutations, done) => {
 
 describe('test async api actions', () => {
   beforeEach(() => {
-    tree = makeTreeModule(API_URL, 'items/', 'item', 'uuid', 'lcrud')
+    tree = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
   })
 
   afterEach(() => {
