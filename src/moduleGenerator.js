@@ -46,6 +46,7 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       }
       list.splice(index, 1, obj)
     })
+    Vue.set(state, listName, new Array(...state[listName]))
   },
   update: (state, obj) => {
     mutationSuccessRUD(state, listName, selectionName, idKey, obj[idKey], (list, index) => {
@@ -54,6 +55,7 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       }
       list.splice(index, 1, obj)
     })
+    Vue.set(state, listName, new Array(...state[listName]))
   },
   delete: (state, id) => {
     mutationSuccessRUD(state, listName, selectionName, idKey, id, (list, index) => {
@@ -62,6 +64,7 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       }
       list.splice(index, 1)
     })
+    Vue.set(state, listName, new Array(...state[listName]))
   }
 })
 
