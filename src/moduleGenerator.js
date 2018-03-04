@@ -19,13 +19,13 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       state[singleSelectionName] = null
     }
   },
-  create: (state, obj, idOrData) => {
+  create: (state, obj) => {
     if (state.__allowTree__) {
-      // obj is newly created object.
-      // idOrData is an object containing:
+      // obj is the newly created object.
+      // idOrData is the POST request payload object containing:
       // -- the data with which obj has been created, and
       // -- the TREE_PARENT_ID to attach to. TREE_PARENT_ID *must* be present.
-      recurseDown(state[listName], idOrData[TREE_PARENT_ID], (arr, id) => {
+      recurseDown(state[listName], obj[TREE_PARENT_ID], (arr, id) => {
         const index = _.findIndex(arr, item => item[idKey] === id)
         if (index !== -1) {
           arr.push(obj)
@@ -122,14 +122,16 @@ function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelec
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     _.merge(mutations, {
-      [names.mutations.crud[actionName].PENDING] (state, idOrData) {
-        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : idOrData
+      [names.mutations.crud[actionName].PENDING] (state, payload) {
+        // payload is only idOrData
+        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
       },
-      [names.mutations.crud[actionName].SUCCESS] (state, obj, idOrData) {
-        mutationSuccesses[actionName](state, obj, idOrData)
+      [names.mutations.crud[actionName].SUCCESS] (state, payload) {
+        mutationSuccesses[actionName](state, payload)
         state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       },
-      [names.mutations.crud[actionName].FAILURE] (state) {
+      [names.mutations.crud[actionName].FAILURE] (state, payload) {
+        // payload is only error object
         state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
@@ -179,12 +181,9 @@ function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelec
           apiActions[actionName](idOrData)
             .then(
               response => {
-                if (actionName === 'delete') { // De-select on delete
-                  commit('de' + names.mutations.select, obj)
-                }
-                const obj = response.body || response.data
-                commit(names.mutations.crud[actionName].SUCCESS, obj, idOrData)
-                resolve(obj)
+                const payload = (actionName === 'delete') ? idOrData : (response.body || response.data)
+                commit(names.mutations.crud[actionName].SUCCESS, payload)
+                resolve(payload)
               },
               error => {
                 commit(names.mutations.crud[actionName].FAILURE, error)

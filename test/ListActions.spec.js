@@ -4,18 +4,29 @@ import { createMutationNames } from '@/utils'
 import testAction from './ActionHelper'
 
 import Vue from 'vue'
+import Vuex from 'vuex'
 import VueResource from 'vue-resource'
 
+Vue.use(Vuex)
 Vue.use(VueResource)
 
 const API_URL = 'http://localhost:8080/'
 Vue.http.options.root = API_URL
 
+const mock1 = { name: 'dummy1', id: 1 }
+const mock2 = { name: 'dummy2', id: 2 }
+const mock3 = { name: 'dummy3', id: 3 }
+
 const routes = [
   {
     method: 'GET',
     url: 'items/',
-    response: []
+    response: { body: [], status: 200 }
+  },
+  {
+    method: 'DELETE',
+    url: 'items/2/',
+    response: { body: null, status: 204 }
   }
 ]
 
@@ -24,30 +35,38 @@ Vue.http.interceptors.unshift((request, next) => {
     return (request.method === item.method && request.url === API_URL + item.url)
   })
   if (route) {
-    next(request.respondWith(route.response, { status: 200 }))
+    next(request.respondWith(route.response.body, { status: route.response.status }))
   } else {
     next(request.respondWith({ status: 404, statusText: 'Oh no! Not found!' }))
   }
 })
 
-let items = null
 const mutationNames = createMutationNames('ITEMS')
 
-describe('test async api actions', () => {
+describe('test async api actions on module directly', () => {
+  let itemsModule = null
+
   beforeEach(() => {
-    items = makeListModule(API_URL, 'items/', 'item', 'uuid', false, 'lcrud')
+    itemsModule = makeListModule(API_URL, 'items/', 'item', 'uuid', false, 'lcrud')
   })
 
   afterEach(() => {
-    items = null
+    itemsModule = null
   })
 
-  // action, payload, state, expectedMutations, done
-
   test('the list is empty at start', done => {
-    testAction(items.actions.listItems, null, {}, [
+    testAction(itemsModule.actions.listItems, null, {}, [
       { type: mutationNames['list'].PENDING },
       { type: mutationNames['list'].SUCCESS, payload: [] }
     ], done)
   })
+
+  test('removal of an item in list after delete', done => {
+    itemsModule.state.items = [mock1, mock2, mock3]
+    testAction(itemsModule.actions.deleteItem, 2, itemsModule.state, [
+      { type: mutationNames['delete'].PENDING, payload: 2 },
+      { type: mutationNames['delete'].SUCCESS, payload: 2 }
+    ], done)
+  })
 })
+
