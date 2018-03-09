@@ -28,8 +28,6 @@ describe('test selection of items Multiple = True', () => {
       },
       strict: true
     })
-    listStore.commit('items/enableMultipleItemsSelection')
-    treeStore.commit('items/enableMultipleItemsSelection')
     stores = [listStore, treeStore]
   })
 
