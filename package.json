@@ -143,7 +143,6 @@
     "url": "http://www.opensource.org/licenses/mit-license.php"
   },
   "dependencies": {
-    "user": "0.0.0",
     "vue-resource": "^1.5.0",
     "vuex": "^3.0.1"
   }
