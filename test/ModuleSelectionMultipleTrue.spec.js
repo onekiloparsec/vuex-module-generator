@@ -1,9 +1,11 @@
-import { makeListModule, makeTreeModule } from '@/index'
+import { makeModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
+Vue.use(VueResource)
 
 const API_URL = 'http://localhost:8080/'
 const mock1 = { name: 'dummy1' }
@@ -18,13 +20,31 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'uuid',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: false
+        })
       },
       strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'uuid',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: true
+        })
       },
       strict: true
     })

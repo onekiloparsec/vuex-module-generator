@@ -1,4 +1,4 @@
-import { makeListModule, makeTreeModule } from '@/index'
+import { makeModule } from '@/index'
 import { createMutationNames } from '@/utils'
 
 import Vue from 'vue'
@@ -18,15 +18,33 @@ let stores = []
 beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
-      items: makeListModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+      items: makeModule({
+        http: Vue.http,
+        apiURL: API_URL,
+        apiPath: 'items/',
+        root: 'item',
+        idKey: 'id',
+        lcrud: 'lcrud',
+        allowMultipleSelection: true,
+        allowTree: false
+      })
     },
-    strict: false
+    strict: true
   })
   treeStore = new Vuex.Store({
     modules: {
-      items: makeTreeModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+      items: makeModule({
+        http: Vue.http,
+        apiURL: API_URL,
+        apiPath: 'items/',
+        root: 'item',
+        idKey: 'id',
+        lcrud: 'lcrud',
+        allowMultipleSelection: true,
+        allowTree: true
+      })
     },
-    strict: false
+    strict: true
   })
   stores = [listStore, treeStore]
 })

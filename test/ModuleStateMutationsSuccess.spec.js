@@ -1,10 +1,12 @@
-import { makeListModule, makeTreeModule } from '@/index'
+import { makeModule } from '@/index'
 import { createMutationNames } from '@/utils'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
+Vue.use(VueResource)
 
 const API_URL = 'http://localhost:8080/'
 const mutationNames = createMutationNames('ITEMS')
@@ -28,15 +30,33 @@ describe('test actions successes without selection', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: false
+        })
       },
-      strict: false
+      strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: true
+        })
       },
-      strict: false
+      strict: true
     })
     stores = [listStore, treeStore]
   })
@@ -88,15 +108,33 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: false
+        })
       },
-      strict: false
+      strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: true
+        })
       },
-      strict: false
+      strict: true
     })
     stores = [listStore, treeStore]
   })
@@ -200,15 +238,33 @@ describe('test actions successes WITH selection and update of list', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: false
+        })
       },
-      strict: false
+      strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'id', true, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: true
+        })
       },
-      strict: false
+      strict: true
     })
     stores = [listStore, treeStore]
   })
@@ -235,15 +291,33 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeListModule(API_URL, 'items/', 'item', 'id', false, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: false,
+          allowTree: false
+        })
       },
-      strict: false
+      strict: true
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeTreeModule(API_URL, 'items/', 'item', 'id', false, 'lcrud')
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: false,
+          allowTree: true
+        })
       },
-      strict: false
+      strict: true
     })
     stores = [listStore, treeStore]
   })

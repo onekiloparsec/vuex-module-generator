@@ -1,12 +1,36 @@
-import { makeListModule, makeTreeModule } from '@/index'
+import { makeModule } from '@/index'
+
+import Vue from 'vue'
+import VueResource from 'vue-resource'
+
+Vue.use(VueResource)
 
 const defaultCrud = { list: false, create: false, read: null, update: null, delete: null }
 const API_URL = 'http://localhost:8080/'
 
 describe('test actions creation based on last parameter', () => {
   test('all state and mutations available', () => {
-    const listItems = makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
-    const treeItems = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
+    const listItems = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lcrud',
+      allowMultipleSelection: true,
+      allowTree: false
+    })
+    const treeItems = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lcrud',
+      allowMultipleSelection: true,
+      allowTree: true
+    })
+
     for (const items of [listItems, treeItems]) {
       expect(items.state.items).toEqual([])
       expect(items.state.itemCrud).toEqual(defaultCrud)
@@ -29,8 +53,27 @@ describe('test actions creation based on last parameter', () => {
   })
 
   test('only specified lcrud actions are available', () => {
-    const listItems = makeListModule(API_URL, 'items/', 'item', 'uuid', true, 'lrd')
-    const treeItems = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lrd')
+    const listItems = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lrd',
+      allowMultipleSelection: true,
+      allowTree: false
+    })
+    const treeItems = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lrd',
+      allowMultipleSelection: true,
+      allowTree: true
+    })
+
     for (const items of [listItems, treeItems]) {
       expect(items.mutations['ITEMS_LIST_FETCH_PENDING']).toBeDefined()
       expect(items.mutations['ITEMS_LIST_FETCH_SUCCESS']).toBeDefined()

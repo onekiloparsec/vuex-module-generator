@@ -1,4 +1,4 @@
-import { makeListModule } from '@/index'
+import { makeModule } from '@/index'
 import { createMutationNames } from '@/utils'
 
 import testAction from './ActionHelper'
@@ -47,7 +47,16 @@ describe('test async api actions on module directly', () => {
   let itemsModule = null
 
   beforeEach(() => {
-    itemsModule = makeListModule(API_URL, 'items/', 'item', 'uuid', false, 'lcrud')
+    itemsModule = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lcrud',
+      allowMultipleSelection: false,
+      allowTree: false
+    })
   })
 
   afterEach(() => {

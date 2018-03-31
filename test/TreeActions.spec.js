@@ -1,9 +1,11 @@
-import { makeTreeModule } from '@/index'
+import { makeModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
+Vue.use(VueResource)
 
 let tree = null
 
@@ -43,7 +45,16 @@ const testAction = (action, payload, state, expectedMutations, done) => {
 
 describe('test async api actions', () => {
   beforeEach(() => {
-    tree = makeTreeModule(API_URL, 'items/', 'item', 'uuid', true, 'lcrud')
+    tree = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lcrud',
+      allowMultipleSelection: true,
+      allowTree: true
+    })
   })
 
   afterEach(() => {
