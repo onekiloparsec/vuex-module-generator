@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 
-import { makeResource } from './resourceGenerator'
+import { makeAPIPoint } from './resourceGenerator'
 import { createModuleNames, recurseDown, mutationSuccessRUD } from './utils'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
@@ -83,8 +83,8 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud) {
-  const api = makeResource(apiURL, apiPath)
+function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud }) {
+  const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
   const apiActions = createApiActions(api, idKey, 'data')
 
   const names = createModuleNames(root)
@@ -103,8 +103,8 @@ function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelec
 
   /* ------------ Vuex State ------------ */
 
-  state.__allowTree__ = allowTree
-  state.__allowMultipleSelection__ = allowMultipleSelection
+  state.__allowTree__ = allowTree || false
+  state.__allowMultipleSelection__ = allowMultipleSelection || false
 
   state[names.state.list] = []
   state[names.state.crud] = _.zipObject(actionNames, defaultActionStates)
@@ -204,16 +204,4 @@ function makeModule (apiURL, apiPath, root, idKey, allowTree, allowMultipleSelec
   }
 }
 
-function makeListModule (apiURL, apiPath, baseName, idKey, allowMultipleSelection, lcrud = 'lcrud') {
-  return makeModule(apiURL, apiPath, baseName, idKey, false, allowMultipleSelection, lcrud)
-}
-
-function makeTreeModule (apiURL, apiPath, baseName, idKey, allowMultipleSelection, lcrud = 'lcrud') {
-  return makeModule(apiURL, apiPath, baseName, idKey, true, allowMultipleSelection, lcrud)
-}
-
-export {
-  makeListModule,
-  makeTreeModule,
-  makeModule
-}
+export { makeModule }

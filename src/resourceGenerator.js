@@ -1,15 +1,14 @@
-import Vue from 'vue'
 import _ from 'lodash'
 
-export const makeResource = (API_URL, basePath, subPath = null, parent = null) => {
+export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   const obj = {
-    _basePath: basePath,
+    _resourcePath: resourcePath,
     _singleUUID: null,
-    _subPath: subPath,
-    _parent: parent,
+    _subPath: subPath || null,
+    _parent: parent || null,
 
     url: (uuid) => {
-      let p = API_URL + obj._basePath
+      let p = baseURL + obj._resourcePath
       if (obj._parent && obj._parent._singleUUID) {
         p += obj._parent._singleUUID + '/'
       }
@@ -33,19 +32,31 @@ export const makeResource = (API_URL, basePath, subPath = null, parent = null) =
       return p
     },
 
-    get: (uuid) => Vue.http.get(obj.url(uuid)),
-    options: (uuid) => Vue.http.options(obj.url(uuid)),
-    post: (data) => Vue.http.post(obj.url(), data),
-    put: (uuid, data) => Vue.http.put(obj.url(uuid), data),
-    delete: (uuid) => Vue.http.delete(obj.url(uuid))
+    get: (uuid) => http.get(obj.url(uuid)),
+    options: (uuid) => http.options(obj.url(uuid)),
+    post: (data) => http.post(obj.url(), data),
+    put: (uuid, data) => http.put(obj.url(uuid), data),
+    delete: (uuid) => http.delete(obj.url(uuid))
   }
 
   obj.subresource = (subpath) => {
-    return makeResource(API_URL, obj._basePath, subpath, obj)
+    return makeAPIPoint({
+      http: http,
+      baseURL: baseURL,
+      resourcePath: obj._resourcePath,
+      subPath: subpath,
+      parent: obj
+    })
   }
 
   obj.addSubresource = (subpath) => {
-    obj[subpath.slice(0, -1)] = makeResource(API_URL, obj._basePath, subpath, obj)
+    obj[subpath.slice(0, -1)] = makeAPIPoint({
+      http: http,
+      baseURL: baseURL,
+      resourcePath: obj._resourcePath,
+      subPath: subpath,
+      parent: obj
+    })
     return obj
   }
 
@@ -57,6 +68,4 @@ export const makeResource = (API_URL, basePath, subPath = null, parent = null) =
   return obj
 }
 
-export default {
-  makeResource
-}
+export default { makeAPIPoint }
