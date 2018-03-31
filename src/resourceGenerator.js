@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   const obj = {
+    _http: http,
     _resourcePath: resourcePath,
     _singleUUID: null,
     _subPath: subPath || null,
@@ -32,16 +33,16 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
       return p
     },
 
-    get: (uuid) => http.get(obj.url(uuid)),
-    options: (uuid) => http.options(obj.url(uuid)),
-    post: (data) => http.post(obj.url(), data),
-    put: (uuid, data) => http.put(obj.url(uuid), data),
-    delete: (uuid) => http.delete(obj.url(uuid))
+    get: (uuid) => obj._http.get(obj.url(uuid)),
+    options: (uuid) => obj._http.options(obj.url(uuid)),
+    post: (data) => obj._http.post(obj.url(), data),
+    put: (uuid, data) => obj._http.put(obj.url(uuid), data),
+    delete: (uuid) => obj._http.delete(obj.url(uuid))
   }
 
   obj.subresource = (subpath) => {
     return makeAPIPoint({
-      http: http,
+      http: obj._http,
       baseURL: baseURL,
       resourcePath: obj._resourcePath,
       subPath: subpath,
@@ -51,7 +52,7 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
 
   obj.addSubresource = (subpath) => {
     obj[subpath.slice(0, -1)] = makeAPIPoint({
-      http: http,
+      http: obj._http,
       baseURL: baseURL,
       resourcePath: obj._resourcePath,
       subPath: subpath,
