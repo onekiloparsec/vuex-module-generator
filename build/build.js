@@ -27,8 +27,6 @@ function rollupBundle ({ env }) {
     entry: 'src/index.js',
     globals: {
       vue: 'Vue',
-      vuex: 'vuex',
-      'vue-resource': 'vue-resource',
       '_': 'lodash'
     },
     external: Object.keys(require('../package.json').peerDependencies),
