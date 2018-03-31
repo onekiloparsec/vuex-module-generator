@@ -1,5 +1,5 @@
+import Vue from 'vue'
 import _ from 'lodash'
-import axios from 'axios'
 
 export const makeResource = (API_URL, basePath, subPath = null, parent = null) => {
   const obj = {
@@ -33,11 +33,11 @@ export const makeResource = (API_URL, basePath, subPath = null, parent = null) =
       return p
     },
 
-    get: (uuid) => axios.get(obj.url(uuid)),
-    options: (uuid) => axios.options(obj.url(uuid)),
-    post: (data) => axios.post(obj.url(), data),
-    put: (uuid, data) => axios.put(obj.url(uuid), data),
-    delete: (uuid) => axios.delete(obj.url(uuid))
+    get: (uuid) => Vue.http.get(obj.url(uuid)),
+    options: (uuid) => Vue.http.options(obj.url(uuid)),
+    post: (data) => Vue.http.post(obj.url(), data),
+    put: (uuid, data) => Vue.http.put(obj.url(uuid), data),
+    delete: (uuid) => Vue.http.delete(obj.url(uuid))
   }
 
   obj.subresource = (subpath) => {

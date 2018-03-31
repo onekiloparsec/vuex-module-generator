@@ -111,7 +111,6 @@
     "yarn-or-npm": "^2.0.0"
   },
   "peerDependencies": {
-    "axios": "^0.18.0",
     "lodash": "^4.17.4",
     "vue": "^2.5.13",
     "vue-resource": "^1.4.0",
@@ -144,7 +143,6 @@
     "url": "http://www.opensource.org/licenses/mit-license.php"
   },
   "dependencies": {
-    "axios": "^0.18.0",
     "vue-resource": "^1.5.0",
     "vuex": "^3.0.1"
   }
