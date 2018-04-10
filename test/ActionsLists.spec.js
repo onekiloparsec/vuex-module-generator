@@ -24,6 +24,11 @@ const routes = [
     response: { body: [], status: 200 }
   },
   {
+    method: 'GET',
+    url: 'items/3/',
+    response: { body: mock3, status: 200 }
+  },
+  {
     method: 'DELETE',
     url: 'items/2/',
     response: { body: null, status: 204 }
@@ -67,6 +72,13 @@ describe('test async api actions on module directly', () => {
     testAction(itemsModule.actions.listItems, null, {}, [
       { type: mutationNames['list'].PENDING },
       { type: mutationNames['list'].SUCCESS, payload: [] }
+    ], done)
+  })
+
+  test('reading an item', done => {
+    testAction(itemsModule.actions.readItem, 3, {}, [
+      { type: mutationNames['read'].PENDING, payload: 3 },
+      { type: mutationNames['read'].SUCCESS, payload: mock3 }
     ], done)
   })
 

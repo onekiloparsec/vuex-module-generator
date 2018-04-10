@@ -3,8 +3,10 @@ import { createMutationNames } from '@/utils'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
+Vue.use(VueResource)
 
 const API_URL = 'http://localhost:8080/'
 const mutationNames = createMutationNames('ITEMS')
