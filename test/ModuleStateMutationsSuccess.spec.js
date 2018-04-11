@@ -93,6 +93,16 @@ describe('test actions after successes without selection and WITHOUT list', () =
       expect(store.state.items.items).toEqual([])
     }
   })
+
+  test('success read then list', () => {
+    for (const store of stores) {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/' + mutationNames['read'].SUCCESS, readMock2)
+      expect(store.state.items.items).toEqual([readMock2])
+      store.commit('items/' + mutationNames['list'].SUCCESS, [mock1, mock2, mock3])
+      expect(store.state.items.items).toEqual([mock1, mock2, mock3])
+    }
+  })
 })
 
 // ----------------------------------------------------------------------------------------
