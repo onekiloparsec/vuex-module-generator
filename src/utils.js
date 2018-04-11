@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import Vue from 'vue'
 
 export const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
 
@@ -51,39 +50,34 @@ export const createModuleNames = (root) => {
 }
 
 export const recurseDown = (array, id, iteratee) => {
-  let res
-  res = iteratee(array, id)
-  if (res !== false) {
+  let result = null
+  result = iteratee(array, id)
+  if (_.isNil(result)) {
     _.each(array, (node) => {
-      if (res !== false && !_.isNil(node['children'])) {
-        res = recurseDown(node['children'], id, iteratee)
+      if (_.isNil(result) && !_.isNil(node['children'])) {
+        result = recurseDown(node['children'], id, iteratee)
       }
-      return res
+      return result
     })
   }
-  return res
+  return result
 }
 
-export const findInItemsAndSelection = (itemsList, selectionList, idKey, objId, callback) => {
+export const findObjInList = (itemsList, idKey, objId) => {
   const index = _.findIndex(itemsList, item => item[idKey] === objId)
-  if (index !== -1) {
-    callback(itemsList, index)
-    const selectIndex = _.findIndex(selectionList, item => item[idKey] === objId)
-    if (selectIndex !== -1) { // the object read/updated/deleted is also part of the selection list
-      callback(selectionList, selectIndex)
-    }
-    return false // to stop recurseDown func.
-  }
+  return (index > -1) ? { list: itemsList, index: index } : null
 }
 
-export const mutationSuccessRUD = (state, listName, selectName, idKey, idOrObj, callback) => {
-  const id = (typeof idOrObj === 'object') ? idOrObj[idKey] : idOrObj
-  if (state.__allowTree__) {
-    recurseDown(state[listName], id, (items, pk) => {
-      return findInItemsAndSelection(items, state[selectName], idKey, pk, callback)
-    })
-    Vue.set(state, listName, new Array(...state[listName]))
-  } else {
-    findInItemsAndSelection(state[listName], state[selectName], idKey, id, callback)
-  }
+export const findObjInListOrTree = (itemsList, idKey, objID) => {
+  return recurseDown(itemsList, objID, (items, pk) => {
+    return findObjInList(items, idKey, pk)
+  })
+}
+
+export const mutationsSuccessRUD = (itemsList, selectionList, singleSelection, idKey, idOrObj, callback) => {
+  const objID = (typeof idOrObj === 'object') ? idOrObj[idKey] : idOrObj
+  const listCursor = findObjInListOrTree(itemsList, idKey, objID)
+  const selectionCursor = findObjInList(selectionList, idKey, objID)
+  const updateSingleSelection = (!_.isNil(singleSelection) && singleSelection[idKey] === objID)
+  callback(listCursor, selectionCursor, updateSingleSelection)
 }

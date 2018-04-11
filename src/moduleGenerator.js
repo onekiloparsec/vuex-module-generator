@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Vue from 'vue'
 
 import { makeAPIPoint } from './resourceGenerator'
-import { createModuleNames, recurseDown, mutationSuccessRUD } from './utils'
+import { createModuleNames, recurseDown, mutationsSuccessRUD } from './utils'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
@@ -19,6 +19,8 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       state[singleSelectionName] = null
     }
   },
+
+  // CREATE mutation will append object to list.
   create: (state, obj) => {
     if (state.__allowTree__) {
       // obj is the newly created object.
@@ -39,32 +41,69 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
       state[listName] = _.concat(state[listName], obj)
     }
   },
+
+  // READ mutation will update the object if it exists already, or push it inside list if not yet present.
   read: (state, obj) => {
-    mutationSuccessRUD(state, listName, selectionName, idKey, obj[idKey], (list, index) => {
-      if (state[singleSelectionName] === list[index]) {
-        state[singleSelectionName] = obj
-      }
-      list.splice(index, 1, obj)
-    })
-    Vue.set(state, listName, new Array(...state[listName]))
+    mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey],
+      (listCursor, selectionCursor, updateSingleSelection) => {
+        if (listCursor !== null) {
+          listCursor.list.splice(listCursor.index, 1, obj)
+        } else {
+          state[listName].push(obj)
+        }
+        Vue.set(state, listName, new Array(...state[listName]))
+
+        if (selectionCursor !== null) {
+          selectionCursor.list.splice(selectionCursor.index, 1, obj)
+          Vue.set(state, selectionName, new Array(...state[selectionName]))
+        }
+
+        if (updateSingleSelection) {
+          state[singleSelectionName] = obj
+        }
+      })
   },
+
+  // UPDATE mutation will do the same as READ
   update: (state, obj) => {
-    mutationSuccessRUD(state, listName, selectionName, idKey, obj[idKey], (list, index) => {
-      if (state[singleSelectionName] === list[index]) {
-        state[singleSelectionName] = obj
-      }
-      list.splice(index, 1, obj)
-    })
-    Vue.set(state, listName, new Array(...state[listName]))
+    mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey],
+      (listCursor, selectionCursor, updateSingleSelection) => {
+        if (listCursor !== null) {
+          listCursor.list.splice(listCursor.index, 1, obj)
+        } else {
+          state[listName].push(obj)
+        }
+        Vue.set(state, listName, new Array(...state[listName]))
+
+        if (selectionCursor !== null) {
+          selectionCursor.list.splice(selectionCursor.index, 1, obj)
+          Vue.set(state, selectionName, new Array(...state[selectionName]))
+        }
+
+        if (updateSingleSelection) {
+          state[singleSelectionName] = obj
+        }
+      })
   },
-  delete: (state, id) => {
-    mutationSuccessRUD(state, listName, selectionName, idKey, id, (list, index) => {
-      if (state[singleSelectionName] === list[index]) {
-        state[singleSelectionName] = null
-      }
-      list.splice(index, 1)
-    })
-    Vue.set(state, listName, new Array(...state[listName]))
+
+  // DELETE mutation will...
+  delete: (state, objID) => {
+    mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, objID,
+      (listCursor, selectionCursor, updateSingleSelection) => {
+        if (listCursor !== null) {
+          listCursor.list.splice(listCursor.index, 1)
+          Vue.set(state, listName, new Array(...state[listName]))
+        }
+
+        if (selectionCursor !== null) {
+          selectionCursor.list.splice(selectionCursor.index, 1)
+          Vue.set(state, selectionName, new Array(...state[selectionName]))
+        }
+
+        if (updateSingleSelection) {
+          state[singleSelectionName] = null
+        }
+      })
   }
 })
 

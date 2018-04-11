@@ -26,7 +26,78 @@ const newMock3 = { name: 'new dummy3', id: 3 }
 
 // ----------------------------------------------------------------------------------------
 
-describe('test actions successes without selection', () => {
+describe('test actions after successes without selection and WITHOUT list', () => {
+  beforeEach(() => {
+    listStore = new Vuex.Store({
+      modules: {
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: false
+        })
+      },
+      strict: true
+    })
+    treeStore = new Vuex.Store({
+      modules: {
+        items: makeModule({
+          http: Vue.http,
+          apiURL: API_URL,
+          apiPath: 'items/',
+          root: 'item',
+          idKey: 'id',
+          lcrud: 'lcrud',
+          allowMultipleSelection: true,
+          allowTree: true
+        })
+      },
+      strict: true
+    })
+    stores = [listStore, treeStore]
+  })
+
+  afterEach(() => {
+    stores = []
+    listStore = null
+    treeStore = null
+  })
+
+  test('success read actions on state without list', () => {
+    for (const store of stores) {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/' + mutationNames['read'].SUCCESS, mock2)
+      expect(store.state.items.items).toEqual([mock2])
+    }
+  })
+
+  test('success update actions on state without list', () => {
+    for (const store of stores) {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/' + mutationNames['read'].SUCCESS, mock2)
+      store.commit('items/' + mutationNames['update'].SUCCESS, readMock2)
+      expect(store.state.items.items).toEqual([readMock2])
+    }
+  })
+
+  test('success delete actions on state after list', () => {
+    for (const store of stores) {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/' + mutationNames['read'].SUCCESS, mock2)
+      expect(store.state.items.items).toEqual([mock2])
+      store.commit('items/' + mutationNames['delete'].SUCCESS, 2)
+      expect(store.state.items.items).toEqual([])
+    }
+  })
+})
+
+// ----------------------------------------------------------------------------------------
+
+describe('test actions after LIST successes without selection', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
@@ -74,7 +145,7 @@ describe('test actions successes without selection', () => {
     }
   })
 
-  test('success read actions on state', () => {
+  test('success read actions on state after list', () => {
     for (const store of stores) {
       store.commit('items/' + mutationNames['list'].SUCCESS, [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
@@ -83,7 +154,7 @@ describe('test actions successes without selection', () => {
     }
   })
 
-  test('success update actions on state', () => {
+  test('success update actions on state after list', () => {
     for (const store of stores) {
       store.commit('items/' + mutationNames['list'].SUCCESS, [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
@@ -92,7 +163,7 @@ describe('test actions successes without selection', () => {
     }
   })
 
-  test('success delete actions on state', () => {
+  test('success delete actions on state after list', () => {
     for (const store of stores) {
       store.commit('items/' + mutationNames['list'].SUCCESS, [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
