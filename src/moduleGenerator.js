@@ -217,13 +217,12 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
         return new Promise((resolve, reject) => {
           commit(names.mutations.crud[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData)
-            .then(
-              response => {
-                const payload = (actionName === 'delete') ? idOrData : (response.body || response.data)
-                commit(names.mutations.crud[actionName].SUCCESS, payload)
-                resolve(payload)
-              },
-              error => {
+            .then(response => {
+              const payload = (actionName === 'delete') ? idOrData : (response.body || response.data)
+              commit(names.mutations.crud[actionName].SUCCESS, payload)
+              resolve(payload)
+            })
+            .catch(error => {
                 commit(names.mutations.crud[actionName].FAILURE, error)
                 reject(error)
               }
