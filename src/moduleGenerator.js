@@ -223,10 +223,9 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
               resolve(payload)
             })
             .catch(error => {
-                commit(names.mutations.crud[actionName].FAILURE, error)
-                reject(error)
-              }
-            )
+              commit(names.mutations.crud[actionName].FAILURE, error)
+              reject(error)
+            })
         })
       }
     }
