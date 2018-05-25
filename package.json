@@ -27,7 +27,7 @@
     "prepublish": "yon run build"
   },
   "publishConfig": {
-    "registry": "https://verdaccio.arcsecond.io"
+    "registry": "http://localhost:4873"
   },
   "lint-staged": {
     "*.{vue,jsx,js}": [
