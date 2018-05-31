@@ -1,6 +1,6 @@
 {
   "name": "vuex-arcsecond-module-generator",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A Vuex Plugin",
   "author": "Cédric Foellmi <cedric@onekilopars.ec>",
   "main": "dist/vuex-arcsecond-module-generator.common.js",
