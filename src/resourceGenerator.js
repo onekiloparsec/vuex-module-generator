@@ -19,7 +19,8 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
     _parent: parent || null,
 
     url: (uuid) => {
-      let p = baseURL + obj._resourcePath
+      const url = _.isFunction(baseURL) ? baseURL() : baseURL
+      let p = url + obj._resourcePath
       if (obj._parent && obj._parent._singleUUID) {
         p += obj._parent._singleUUID + '/'
       }
