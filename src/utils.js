@@ -17,34 +17,36 @@ export const createMutationNames = (listNameUppercase) => ({
 })
 
 export const createModuleNames = (root) => {
-  const baseName = root.toLowerCase()
-  const word = capitalizeFirstChar(baseName)
+  const singular = root.toLowerCase()
+  const plural = (singular.slice(-1) === 'y') ? singular.substr(0, singular.length - 1) + 'ies' : singular + 's'
+  const singularWord = capitalizeFirstChar(singular)
+  const pluralWord = capitalizeFirstChar(plural)
 
   return {
     state: {
-      list: `${baseName}s`,
-      crud: `${baseName}Crud`,
-      selection: `selected${word}s`,
-      singleSelection: `selected${word}`
+      list: `${plural}`,
+      crud: `${singular}Crud`,
+      selection: `selected${pluralWord}`,
+      singleSelection: `selected${singularWord}`
     },
 
     getters: {
-      isSelected: `is${word}Selected`
+      isSelected: `is${singularWord}Selected`
     },
 
     mutations: {
-      crud: createMutationNames(baseName.toUpperCase() + 'S'),
-      select: `select${word}`,
-      clearSelection: `clear${word}sSelection`,
-      updateList: `update${word}sList`
+      crud: createMutationNames(pluralWord.toUpperCase()),
+      select: `select${singularWord}`,
+      clearSelection: `clear${pluralWord}Selection`,
+      updateList: `update${pluralWord}List`
     },
 
     actions: { // not put inside an even-more-nested 'crud' object, as in mutations...
-      list: `list${word}s`,
-      create: `create${word}`,
-      read: `read${word}`,
-      update: `update${word}`,
-      delete: `delete${word}`
+      list: `list${pluralWord}`,
+      create: `create${singularWord}`,
+      read: `read${singularWord}`,
+      update: `update${singularWord}`,
+      delete: `delete${singularWord}`
     }
   }
 }
