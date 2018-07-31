@@ -56,7 +56,7 @@ export const recurseDown = (array, id, iteratee) => {
   result = iteratee(array, id)
   if (_.isNil(result)) {
     _.each(array, (node) => {
-      if (_.isNil(result) && !_.isNil(node['children'])) {
+      if (_.isNil(result) && node && !_.isNil(node['children'])) {
         result = recurseDown(node['children'], id, iteratee)
       }
       return result
