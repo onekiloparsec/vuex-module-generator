@@ -23,6 +23,8 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
       let p = url + obj._resourcePath
       if (obj._parent && obj._parent._singleUUID) {
         p += obj._parent._singleUUID + '/'
+      } else if (obj._singleUUID) {
+        p += obj._singleUUID + '/'
       }
       if (obj._subPath) {
         p += obj._subPath
