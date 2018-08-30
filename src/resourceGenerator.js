@@ -75,8 +75,9 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
   }
 
   obj.single = (uuid) => {
-    obj._singleUUID = uuid
-    return obj
+    const clonedObj = _.cloneDeep(obj)
+    clonedObj._singleUUID = uuid
+    return clonedObj
   }
 
   return obj
