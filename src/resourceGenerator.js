@@ -18,7 +18,7 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
     _subPath: subPath || null,
     _parent: parent || null,
 
-    url: (uuid) => {
+    url: (uuid, params) => {
       const url = _.isFunction(baseURL) ? baseURL() : baseURL
       let p = url + obj._resourcePath
       if (obj._parent && obj._parent._singleUUID) {
@@ -34,19 +34,20 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
           p += uuid + '/'
         } else if (_.isNumber(uuid)) {
           p += uuid.toString() + '/'
-        } else if (_.isObject(uuid)) {
-          let index = 0
-          _.forEach(uuid, function (value, key) {
-            const letter = (index === 0) ? '?' : '&'
-            p += letter + key + '=' + value
-            index += 1
-          })
         }
+      }
+      if (params && _.isObject(params)) {
+        let index = 0
+        _.forEach(params, function (value, key) {
+          const letter = (index === 0) ? '?' : '&'
+          p += letter + key + '=' + value
+          index += 1
+        })
       }
       return p
     },
 
-    get: (uuid) => obj._http.get(obj.url(uuid)),
+    get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
     options: (uuid) => obj._http.options(obj.url(uuid)),
     post: (data) => obj._http.post(obj.url(), data),
     put: (uuid, data) => obj._http.put(obj.url(uuid), data),
