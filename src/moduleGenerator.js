@@ -107,7 +107,13 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
 })
 
 const createApiActions = (api, idKey, dataKey) => ({
-  list: (obj) => api.get(null, obj), // obj is assumed to be an object. Used a URL parameters.
+  list: (obj) => {
+    if (_.isString(obj)) {
+      return api.get(obj, null) // obj as complement of list endpoint path
+    } else {
+      return api.get(null, obj) // obj is used a URL parameters.
+    }
+  },
   create: (obj) => {
     // Here the presence of TREE_PARENT_ID decides whether one add a child to a tree, or simply an item to a list
     if (_.isNil(obj[TREE_PARENT_ID])) {
