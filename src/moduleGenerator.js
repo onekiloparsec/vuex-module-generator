@@ -224,7 +224,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
           commit(names.mutations.crud[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData)
             .then(response => {
-              const payload = (actionName === 'delete') ? idOrData : (response.body || response.data)
+              const payload = response.body || response.data
               commit(names.mutations.crud[actionName].SUCCESS, payload)
               resolve(payload)
             })
