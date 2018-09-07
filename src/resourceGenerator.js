@@ -21,11 +21,15 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
     url: (uuid, params) => {
       const url = _.isFunction(baseURL) ? baseURL() : baseURL
       let p = url + obj._resourcePath
+
       if (obj._parent && obj._parent._singleUUID) {
         p += obj._parent._singleUUID + '/'
+        obj._parent._singleUUID = null
       } else if (obj._singleUUID) {
         p += obj._singleUUID + '/'
+        obj._singleUUID = null
       }
+
       if (obj._subPath) {
         p += obj._subPath
       }
@@ -76,9 +80,8 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
   }
 
   obj.single = (uuid) => {
-    const clonedObj = _.cloneDeep(obj)
-    clonedObj._singleUUID = uuid
-    return clonedObj
+    obj._singleUUID = uuid
+    return obj
   }
 
   return obj
