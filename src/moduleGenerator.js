@@ -127,7 +127,7 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud, customGetters}) {
+function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud, customGetters }) {
   customGetters = customGetters || {}
   const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
   const apiActions = createApiActions(api, idKey, 'data')
