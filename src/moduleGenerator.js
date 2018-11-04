@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Vue from 'vue'
 
 import { makeAPIPoint } from './resourceGenerator'
-import { createModuleNames, recurseDown, mutationsSuccessRUD } from './utils'
+import { createModuleNames, mutationsSuccessRUD, recurseDown } from './utils'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
