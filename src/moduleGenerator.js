@@ -127,7 +127,7 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud }) {
+function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud, customGetters = {}}) {
   const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
   const apiActions = createApiActions(api, idKey, 'data')
 
@@ -141,7 +141,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
   /* ------------ Vuex Elements ------------ */
 
   const state = {}
-  const getters = {}
+  var getters = {}
   const mutations = {}
   const actions = {}
 
@@ -161,6 +161,8 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
   getters[names.getters.isSelected] = (state) => (selectedItem) => {
     return (_.findIndex(state[names.state.selection], item => item === selectedItem) !== -1)
   }
+
+  getters = { ...getters, ...customGetters }
 
   /* ------------ Vuex Mutations ------------ */
 
