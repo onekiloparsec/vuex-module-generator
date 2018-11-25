@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
 export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
-  if (http == null) {
-    throw Error('Missing http module to make requests!')
-  }
+  // if (http == null) {
+  //   throw Error('Missing http module to make requests!')
+  // }
   if (baseURL == null) {
     throw Error('Missing baseURL!')
   }
