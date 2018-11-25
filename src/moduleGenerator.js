@@ -241,6 +241,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
   })
 
   return {
+    _api: api,
     namespaced: true,
     state,
     getters,
