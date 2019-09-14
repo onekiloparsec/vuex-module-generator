@@ -24,10 +24,14 @@ const {
 
 function rollupBundle ({ env }) {
   return rollup({
-    entry: 'src/index.js',
-    globals: {
-      vue: 'Vue',
-      '_': 'lodash'
+    input: 'src/index.js',
+    output: {
+      name: 'vuex-module-generator',
+      globals: {
+        vue: 'Vue',
+        'lodash': 'lodash',
+        '_': 'lodash'
+      }
     },
     external: Object.keys(require('../package.json').peerDependencies),
     plugins: [
@@ -69,28 +73,30 @@ const bundleOptions = {
   banner,
   exports: 'named',
   format: 'umd',
-  moduleName
+  moduleName,
+  name: moduleName
 }
 
 function createBundle ({ name, env, format }) {
-  return rollupBundle({
-    env
-  }).then(function (bundle) {
-    const options = Object.assign({}, bundleOptions)
-    if (format) options.format = format
-    const code = bundle.generate(options).code
-    if (/min$/.test(name)) {
-      const minified = uglify.minify(code, {
-        output: {
-          preamble: banner,
-          ascii_only: true // eslint-disable-line camelcase
+  return rollupBundle({ env })
+    .then(function (bundle) {
+      const options = Object.assign({}, bundleOptions)
+      if (format) options.format = format
+      bundle.generate(options).then(({ code, map }) => {
+        if (/min$/.test(name)) {
+          const minified = uglify.minify(code, {
+            output: {
+              preamble: banner,
+              ascii_only: true // eslint-disable-line camelcase
+            }
+          }).code
+          return write(`dist/${name}.js`, minified)
+        } else {
+          return write(`dist/${name}.js`, code)
         }
-      }).code
-      return write(`dist/${name}.js`, minified)
-    } else {
-      return write(`dist/${name}.js`, code)
-    }
-  }).catch(logError)
+      })
+    })
+    .catch(logError)
 }
 
 // Browser bundle (can be used with script)
