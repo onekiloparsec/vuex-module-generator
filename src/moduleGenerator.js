@@ -142,7 +142,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
   /* ------------ Vuex Elements ------------ */
 
   const state = {}
-  var getters = {}
+  let _getters = {}
   const mutations = {}
   const actions = {}
 
@@ -159,11 +159,11 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
 
   /* ------------ Vuex Getters ------------ */
 
-  getters[names.getters.isSelected] = (state) => (selectedItem) => {
+  _getters[names.getters.isSelected] = (state) => (selectedItem) => {
     return (_.findIndex(state[names.state.selection], item => item === selectedItem) !== -1)
   }
 
-  getters = _.assign(getters, customGetters)
+  _getters = _.assign(_getters, customGetters)
 
   /* ------------ Vuex Mutations ------------ */
 
@@ -222,7 +222,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
-      actions[names.actions[actionName]] = ({ commit }, idOrData) => {
+      actions[names.actions[actionName]] = _.debounce(function ({ commit }, idOrData) {
         return new Promise((resolve, reject) => {
           commit(names.mutations.crud[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData)
@@ -236,7 +236,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
               reject(error)
             })
         })
-      }
+      }, 10)
     }
   })
 
@@ -244,7 +244,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
     _api: api,
     namespaced: true,
     state,
-    getters,
+    getters: _getters,
     mutations,
     actions
   }
