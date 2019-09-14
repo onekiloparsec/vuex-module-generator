@@ -26,7 +26,7 @@ function rollupBundle ({ env }) {
   return rollup({
     input: 'src/index.js',
     output: {
-      name: 'vuex-module-generator',
+      name: 'vuex-arcsecond-module-generator',
       globals: {
         vue: 'Vue',
         'lodash': 'lodash',

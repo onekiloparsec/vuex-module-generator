@@ -1,13 +1,13 @@
 {
-  "name": "@onekiloparsec/vuex-module-generator",
+  "name": "vuex-arcsecond-module-generator",
   "version": "1.2.10",
   "description": "A Vuex Plugin",
   "author": "Cédric Foellmi <cedric@onekiloparsec.dev>",
-  "main": "dist/vuex-module-generator.common.js",
-  "module": "dist/vuex-module-generator.esm.js",
-  "browser": "dist/vuex-module-generator.js",
-  "unpkg": "dist/vuex-module-generator.js",
-  "style": "dist/vuex-module-generator.css",
+  "main": "dist/vuex-arcsecond-module-generator.common.js",
+  "module": "dist/vuex-arcsecond-module-generator.esm.js",
+  "browser": "dist/vuex-arcsecond-module-generator.js",
+  "unpkg": "dist/vuex-arcsecond-module-generator.js",
+  "style": "dist/vuex-arcsecond-module-generator.css",
   "files": [
     "dist",
     "src"
@@ -27,7 +27,7 @@
     "prepublish": "yon run build"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@onekiloparsec"
+    "registry": "http://localhost:4873"
   },
   "lint-staged": {
     "*.{vue,jsx,js}": [
@@ -132,12 +132,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onekiloparsec/vuex-module-generator.git"
+    "url": "git+https://github.com/onekiloparsec/vuex-arcsecond-module-generator.git"
   },
   "bugs": {
-    "url": "https://github.com/onekiloparsec/vuex-module-generator/issues"
+    "url": "https://github.com/onekiloparsec/vuex-arcsecond-module-generator/issues"
   },
-  "homepage": "https://github.com/onekiloparsec/vuex-module-generator#readme",
+  "homepage": "https://github.com/onekiloparsec/vuex-arcsecond-module-generator#readme",
   "license": {
     "type": "MIT",
     "url": "http://www.opensource.org/licenses/mit-license.php"

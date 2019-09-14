@@ -1,13 +1,13 @@
 # VuexArcsecondModuleGenerator
 
-[![npm](https://img.shields.io/npm/v/vuex-module-generator.svg)](https://www.npmjs.com/package/vuex-module-generator) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
+[![npm](https://img.shields.io/npm/v/vuex-arcsecond-module-generator.svg)](https://www.npmjs.com/package/vuex-arcsecond-module-generator) [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
 
 > A Vuex Plugin
 
 ## Installation
 
 ```bash
-npm install --save vuex-module-generator
+npm install --save vuex-arcsecond-module-generator
 ```
 
 ## Usage
@@ -16,9 +16,9 @@ npm install --save vuex-module-generator
 
 ```js
 import Vue from 'vue'
-import VuexArcsecondModuleGenerator from 'vuex-module-generator'
+import VuexArcsecondModuleGenerator from 'vuex-arcsecond-module-generator'
 // You need a specific loader for CSS files like https://github.com/webpack/css-loader
-import 'vuex-module-generator/dist/vuex-module-generator.css'
+import 'vuex-arcsecond-module-generator/dist/vuex-arcsecond-module-generator.css'
 
 Vue.use(VuexArcsecondModuleGenerator)
 ```
@@ -28,12 +28,12 @@ Vue.use(VuexArcsecondModuleGenerator)
 ```html
 <!-- Include after Vue -->
 <!-- Local files -->
-<link rel="stylesheet" href="vuex-module-generator/dist/vuex-module-generator.css"></link>
-<script src="vuex-module-generator/dist/vuex-module-generator.js"></script>
+<link rel="stylesheet" href="vuex-arcsecond-module-generator/dist/vuex-arcsecond-module-generator.css"></link>
+<script src="vuex-arcsecond-module-generator/dist/vuex-arcsecond-module-generator.js"></script>
 
 <!-- From CDN -->
-<link rel="stylesheet" href="https://unpkg.com/vuex-module-generator/dist/vuex-module-generator.css"></link>
-<script src="https://unpkg.com/vuex-module-generator"></script>
+<link rel="stylesheet" href="https://unpkg.com/vuex-arcsecond-module-generator/dist/vuex-arcsecond-module-generator.css"></link>
+<script src="https://unpkg.com/vuex-arcsecond-module-generator"></script>
 ```
 
 ## Development

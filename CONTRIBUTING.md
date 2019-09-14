@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/onekiloparsec/vuex-module-generator).
+We accept contributions via Pull Requests on [Github](https://github.com/onekiloparsec/vuex-arcsecond-module-generator).
 
 
 ## Pull Requests
