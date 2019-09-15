@@ -222,7 +222,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
 
   _.forEach(actionNames, (actionName) => {
     if (lcrud.includes(actionName.charAt(0))) {
-      actions[names.actions[actionName]] = _.debounce(function ({ commit }, idOrData) {
+      actions[names.actions[actionName]] = ({commit}, idOrData) => {
         return new Promise((resolve, reject) => {
           commit(names.mutations.crud[actionName].PENDING, idOrData)
           apiActions[actionName](idOrData)
@@ -236,7 +236,7 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
               reject(error)
             })
         })
-      }, 10)
+      }
     }
   })
 
