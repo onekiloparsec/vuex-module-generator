@@ -1,6 +1,6 @@
 {
   "name": "@onekiloparsec/vuex-module-generator",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "description": "A Vuex Plugin",
   "author": "Cédric Foellmi <cedric@onekiloparsec.dev>",
   "main": "dist/vuex-module-generator.common.js",
