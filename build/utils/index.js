@@ -1,5 +1,5 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const {join} = require('path')
+const { join } = require('path')
 
 const {
   red,
