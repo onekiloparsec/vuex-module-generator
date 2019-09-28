@@ -1,5 +1,5 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const { join } = require('path')
+const {join} = require('path')
 
 const {
   red,
@@ -28,7 +28,7 @@ exports.author = authorName
 exports.version = version
 exports.dllName = dllPlugin.name
 exports.moduleName = uppercamelcase(name)
-exports.name = name
+exports.name = name.replace('@onekiloparsec/', '')
 exports.filename = name + minExt
 exports.banner = `/*!
  * ${name} v${version}

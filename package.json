@@ -1,5 +1,5 @@
 {
-  "name": "vuex-arcsecond-module-generator",
+  "name": "@onekiloparsec/vuex-module-generator",
   "version": "1.2.13",
   "description": "A Vuex Plugin",
   "author": "Cédric Foellmi <cedric@onekiloparsec.dev>",
@@ -27,7 +27,7 @@
     "prepublish": "yon run build"
   },
   "publishConfig": {
-    "registry": "http://localhost:4873"
+    "registry": "https://npm.pkg.github.com/"
   },
   "lint-staged": {
     "*.{vue,jsx,js}": [
