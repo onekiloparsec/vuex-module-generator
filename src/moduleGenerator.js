@@ -169,15 +169,15 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     _.merge(mutations, {
-      [names.mutations.crud[actionName].PENDING] (state, payload) {
+      [names.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
         state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
       },
-      [names.mutations.crud[actionName].SUCCESS] (state, payload) {
+      [names.mutations.crud[actionName] + 'Success'] (state, payload) {
         mutationSuccesses[actionName](state, payload)
         state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       },
-      [names.mutations.crud[actionName].FAILURE] (state, payload) {
+      [names.mutations.crud[actionName] + 'Failure'] (state, payload) {
         // payload is only error object
         state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
@@ -224,15 +224,15 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
     if (lcrud.includes(actionName.charAt(0))) {
       actions[names.actions[actionName]] = ({ commit }, idOrData) => {
         return new Promise((resolve, reject) => {
-          commit(names.mutations.crud[actionName].PENDING, idOrData)
+          commit(names.mutations.crud[actionName] + 'Pending', idOrData)
           apiActions[actionName](idOrData)
             .then(response => {
               const payload = response.body || response.data
-              commit(names.mutations.crud[actionName].SUCCESS, payload)
+              commit(names.mutations.crud[actionName] + 'Success', payload)
               resolve(payload)
             })
             .catch(error => {
-              commit(names.mutations.crud[actionName].FAILURE, error)
+              commit(names.mutations.crud[actionName] + 'Failure', error)
               reject(error)
             })
         })

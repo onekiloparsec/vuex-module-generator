@@ -1,4 +1,8 @@
-import _ from 'lodash'
+import { isFunction } from 'lodash/isFunction'
+import { isObject } from 'lodash/isObject'
+import { isString } from 'lodash/isString'
+import { isNumber } from 'lodash/isNumber'
+import { forEach } from 'lodash/forEach'
 
 export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   // if (http == null) {
@@ -19,7 +23,7 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
     _parent: parent || null,
 
     url: (uuid, params) => {
-      const url = _.isFunction(baseURL) ? baseURL() : baseURL
+      const url = isFunction(baseURL) ? baseURL() : baseURL
       let p = url + obj._resourcePath
 
       if (obj._parent && obj._parent._singleUUID) {
@@ -34,15 +38,15 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
         p += obj._subPath
       }
       if (uuid) {
-        if (_.isString(uuid)) {
+        if (isString(uuid)) {
           p += uuid + '/'
-        } else if (_.isNumber(uuid)) {
+        } else if (isNumber(uuid)) {
           p += uuid.toString() + '/'
         }
       }
-      if (params && _.isObject(params)) {
+      if (params && isObject(params)) {
         let index = 0
-        _.forEach(params, function (value, key) {
+        forEach(params, function (value, key) {
           const letter = (index === 0) ? '?' : '&'
           p += letter + key + '=' + value
           index += 1

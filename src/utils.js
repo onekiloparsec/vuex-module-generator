@@ -2,20 +2,6 @@ import _ from 'lodash'
 
 export const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
 
-export const createAsyncMutation = (type) => ({
-  SUCCESS: `${type}_SUCCESS`,
-  FAILURE: `${type}_FAILURE`,
-  PENDING: `${type}_PENDING`
-})
-
-export const createMutationNames = (listNameUppercase) => ({
-  list: createAsyncMutation(`${listNameUppercase}_LIST_FETCH`),
-  create: createAsyncMutation(`${listNameUppercase}_SINGLE_CREATE`),
-  read: createAsyncMutation(`${listNameUppercase}_SINGLE_READ`),
-  update: createAsyncMutation(`${listNameUppercase}_SINGLE_UPDATE`),
-  delete: createAsyncMutation(`${listNameUppercase}_SINGLE_DELETE`)
-})
-
 export const createModuleNames = (root) => {
   const singular = root.toLowerCase()
   const plural = (singular.slice(-1) === 'y') ? singular.substr(0, singular.length - 1) + 'ies' : singular + 's'
@@ -35,7 +21,13 @@ export const createModuleNames = (root) => {
     },
 
     mutations: {
-      crud: createMutationNames(pluralWord.toUpperCase()),
+      crud: {
+        list: `list${pluralWord}`,
+        create: `create${singularWord}`,
+        read: `read${singularWord}`,
+        update: `update${singularWord}`,
+        delete: `delete${singularWord}`
+      },
       select: `select${singularWord}`,
       clearSelection: `clear${pluralWord}Selection`,
       updateList: `update${pluralWord}List`
@@ -67,7 +59,7 @@ export const recurseDown = (array, id, iteratee) => {
 
 export const findObjInList = (itemsList, idKey, objId) => {
   const index = _.findIndex(itemsList, item => item[idKey] === objId)
-  return (index > -1) ? { list: itemsList, index: index } : null
+  return (index > -1) ? {list: itemsList, index: index} : null
 }
 
 export const findObjInListOrTree = (itemsList, idKey, objID) => {
