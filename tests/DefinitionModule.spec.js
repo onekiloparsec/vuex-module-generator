@@ -1,7 +1,5 @@
 import { makeModule } from '@/index'
 
-import Vue from 'vue'
-
 const http = {
   get: jest.fn(),
   options: jest.fn(),
@@ -80,25 +78,25 @@ describe('test actions creation based on last parameter', () => {
     })
 
     for (const items of [listItems, treeItems]) {
-      expect(items.mutations['ITEMS_LIST_FETCH_PENDING']).toBeDefined()
-      expect(items.mutations['ITEMS_LIST_FETCH_SUCCESS']).toBeDefined()
-      expect(items.mutations['ITEMS_LIST_FETCH_FAILURE']).toBeDefined()
+      expect(items.mutations['listItemsPending']).toBeDefined()
+      expect(items.mutations['listItemsSuccess']).toBeDefined()
+      expect(items.mutations['listItemsFailure']).toBeDefined()
 
-      expect(items.mutations['ITEMS_SINGLE_CREATE_PENDING']).not.toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_CREATE_SUCCESS']).not.toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_CREATE_FAILURE']).not.toBeDefined()
+      expect(items.mutations['createItemPending']).not.toBeDefined()
+      expect(items.mutations['createItemSuccess']).not.toBeDefined()
+      expect(items.mutations['createItemFailure']).not.toBeDefined()
 
-      expect(items.mutations['ITEMS_SINGLE_READ_PENDING']).toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_READ_SUCCESS']).toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_READ_FAILURE']).toBeDefined()
+      expect(items.mutations['readItemPending']).toBeDefined()
+      expect(items.mutations['readItemSuccess']).toBeDefined()
+      expect(items.mutations['readItemFailure']).toBeDefined()
 
-      expect(items.mutations['ITEMS_SINGLE_UPDATE_PENDING']).not.toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_UPDATE_SUCCESS']).not.toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_UPDATE_FAILURE']).not.toBeDefined()
+      expect(items.mutations['updateItemPending']).not.toBeDefined()
+      expect(items.mutations['updateItemSuccess']).not.toBeDefined()
+      expect(items.mutations['updateItemFailure']).not.toBeDefined()
 
-      expect(items.mutations['ITEMS_SINGLE_DELETE_PENDING']).toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_DELETE_SUCCESS']).toBeDefined()
-      expect(items.mutations['ITEMS_SINGLE_DELETE_FAILURE']).toBeDefined()
+      expect(items.mutations['deleteItemPending']).toBeDefined()
+      expect(items.mutations['deleteItemSuccess']).toBeDefined()
+      expect(items.mutations['deleteItemFailure']).toBeDefined()
 
       expect(items.actions.listItems).toBeDefined()
       expect(items.actions.createItem).not.toBeDefined()

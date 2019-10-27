@@ -3,13 +3,19 @@ import { createModuleNames } from '@/utils'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
-Vue.use(VueResource)
+
+const http = {
+  get: jest.fn(),
+  options: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn()
+}
 
 const API_URL = 'http://localhost:8080/'
-const mutationNames = createModuleNames('items').mutations
+const mutationNames = createModuleNames('item').mutations
 const objActionNames = ['read', 'update', 'delete']
 const boolActionNames = ['list', 'create']
 
@@ -21,7 +27,7 @@ beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
       items: makeModule({
-        http: Vue.http,
+        http: http,
         apiURL: API_URL,
         apiPath: 'items/',
         root: 'item',
@@ -36,7 +42,7 @@ beforeEach(() => {
   treeStore = new Vuex.Store({
     modules: {
       items: makeModule({
-        http: Vue.http,
+        http: http,
         apiURL: API_URL,
         apiPath: 'items/',
         root: 'item',

@@ -3,15 +3,19 @@ import { createModuleNames } from '@/utils'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
-Vue.use(VueResource)
 
-console.log(createModuleNames('items'))
+const http = {
+  get: jest.fn(),
+  options: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn()
+}
 
 const API_URL = 'http://localhost:8080/'
-const mutationNames = createModuleNames('items').mutations
+const mutationNames = createModuleNames('item').mutations
 
 let listStore = null
 let treeStore = null
@@ -33,7 +37,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -48,7 +52,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -114,7 +118,7 @@ describe('test actions after LIST successes without selection', () => {
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -129,7 +133,7 @@ describe('test actions after LIST successes without selection', () => {
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -192,7 +196,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -207,7 +211,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -322,7 +326,7 @@ describe('test actions successes WITH selection and update of list', () => {
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -337,7 +341,7 @@ describe('test actions successes WITH selection and update of list', () => {
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -375,7 +379,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -390,7 +394,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',

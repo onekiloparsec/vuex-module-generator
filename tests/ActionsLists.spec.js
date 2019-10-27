@@ -8,8 +8,16 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-// const API_URL = 'http://localhost:8080/'
+const API_URL = 'http://localhost:8080/'
 // http.options.root = API_URL
+
+const http = {
+  get: jest.fn(),
+  options: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn()
+}
 
 const mock1 = { name: 'dummy1', id: 1 }
 const mock2 = { name: 'dummy2', id: 2 }
@@ -44,7 +52,7 @@ const routes = [
 //   }
 // })
 
-const mutationNames = createModuleNames('items').mutations
+const mutationNames = createModuleNames('item').mutations
 
 describe('test async api actions on module directly', () => {
   let itemsModule = null

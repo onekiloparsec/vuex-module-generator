@@ -2,10 +2,16 @@ import { makeModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
-Vue.use(VueResource)
+
+const http = {
+  get: jest.fn(),
+  options: jest.fn(),
+  post: jest.fn(),
+  put: jest.fn(),
+  delete: jest.fn()
+}
 
 const API_URL = 'http://localhost:8080/'
 const mock1 = { name: 'dummy1', id: 1 }
@@ -21,7 +27,7 @@ describe('test selection of items Multiple = True', () => {
     listStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
@@ -36,7 +42,7 @@ describe('test selection of items Multiple = True', () => {
     treeStore = new Vuex.Store({
       modules: {
         items: makeModule({
-          http: Vue.http,
+          http: http,
           apiURL: API_URL,
           apiPath: 'items/',
           root: 'item',
