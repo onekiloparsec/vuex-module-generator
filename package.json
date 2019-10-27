@@ -3,7 +3,6 @@
   "version": "1.2.14",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
@@ -12,13 +11,10 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "dependencies": {
-    "core-js": "^3.3.2",
-    "vue": "^2.6.10",
-    "vuex": "^3.1.1"
-  },
   "peerDependencies": {
+    "core-js": "^3.3.2",
     "lodash": "^4.17.15",
+    "vue": "^2.6.10",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

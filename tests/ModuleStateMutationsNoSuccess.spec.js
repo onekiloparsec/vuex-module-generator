@@ -67,7 +67,7 @@ describe('test boolean actions', () => {
   test('failure crud state for bool actions', () => {
     for (const store of stores) {
       for (const actionName of boolActionNames) {
-        const mutNames = mutationNames[actionName]
+        const mutNames = mutationNames.crud[actionName]
         expect(store.state.items.itemCrud[actionName]).toEqual(false)
         store.commit('items/' + mutNames + 'Pending')
         expect(store.state.items.itemCrud[actionName]).toEqual(true)
@@ -87,7 +87,7 @@ describe('test object actions', () => {
   test('failure crud state for obj actions', () => {
     for (const store of stores) {
       for (const actionName of objActionNames) {
-        const mutNames = mutationNames[actionName]
+        const mutNames = mutationNames.crud[actionName]
         expect(store.state.items.itemCrud[actionName]).toEqual(null)
         store.commit('items/' + mutNames + 'Pending', mock)
         expect(store.state.items.itemCrud[actionName]).toEqual(mock)

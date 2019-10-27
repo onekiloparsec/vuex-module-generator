@@ -1,8 +1,4 @@
-import { isFunction } from 'lodash/isFunction'
-import { isObject } from 'lodash/isObject'
-import { isString } from 'lodash/isString'
-import { isNumber } from 'lodash/isNumber'
-import { forEach } from 'lodash/forEach'
+import { isFunction, isObject, isString, isNumber, forEach } from 'lodash'
 
 export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   // if (http == null) {

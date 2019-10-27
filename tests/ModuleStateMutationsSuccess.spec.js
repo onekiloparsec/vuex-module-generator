@@ -76,7 +76,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
   test('success read actions on state without list', () => {
     for (const store of stores) {
       expect(store.state.items.items).toEqual([])
-      store.commit('items/' + mutationNames['read'] + 'Success', mock2)
+      store.commit('items/' + mutationNames.crud['read'] + 'Success', mock2)
       expect(store.state.items.items).toEqual([mock2])
     }
   })
@@ -84,8 +84,8 @@ describe('test actions after successes without selection and WITHOUT list', () =
   test('success update actions on state without list', () => {
     for (const store of stores) {
       expect(store.state.items.items).toEqual([])
-      store.commit('items/' + mutationNames['read'] + 'Success', mock2)
-      store.commit('items/' + mutationNames['update'] + 'Success', readMock2)
+      store.commit('items/' + mutationNames.crud['read'] + 'Success', mock2)
+      store.commit('items/' + mutationNames.crud['update'] + 'Success', readMock2)
       expect(store.state.items.items).toEqual([readMock2])
     }
   })
@@ -93,9 +93,9 @@ describe('test actions after successes without selection and WITHOUT list', () =
   test('success delete actions on state after list', () => {
     for (const store of stores) {
       expect(store.state.items.items).toEqual([])
-      store.commit('items/' + mutationNames['read'] + 'Success', mock2)
+      store.commit('items/' + mutationNames.crud['read'] + 'Success', mock2)
       expect(store.state.items.items).toEqual([mock2])
-      store.commit('items/' + mutationNames['delete'] + 'Success', 2)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 2)
       expect(store.state.items.items).toEqual([])
     }
   })
@@ -103,9 +103,9 @@ describe('test actions after successes without selection and WITHOUT list', () =
   test('success read then list', () => {
     for (const store of stores) {
       expect(store.state.items.items).toEqual([])
-      store.commit('items/' + mutationNames['read'] + 'Success', readMock2)
+      store.commit('items/' + mutationNames.crud['read'] + 'Success', readMock2)
       expect(store.state.items.items).toEqual([readMock2])
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
     }
   })
@@ -156,34 +156,34 @@ describe('test actions after LIST successes without selection', () => {
 
   test('success list actions on state', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
     }
   })
 
   test('success read actions on state after list', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
-      store.commit('items/' + mutationNames['read'] + 'Success', readMock2)
+      store.commit('items/' + mutationNames.crud['read'] + 'Success', readMock2)
       expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
     }
   })
 
   test('success update actions on state after list', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
-      store.commit('items/' + mutationNames['update'] + 'Success', readMock2)
+      store.commit('items/' + mutationNames.crud['update'] + 'Success', readMock2)
       expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
     }
   })
 
   test('success delete actions on state after list', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
-      store.commit('items/' + mutationNames['delete'] + 'Success', 2)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 2)
       expect(store.state.items.items).toEqual([mock1, mock3])
     }
   })
@@ -234,7 +234,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
 
   test('success list actions on state', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
       expect(store.state.items.selectedItems).toEqual([])
     }
@@ -243,10 +243,10 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
   test('success read&update actions on state and selection doesn\'t change', () => {
     for (const actionName of ['read', 'update']) {
       for (const store of stores) {
-        store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+        store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
         store.commit('items/selectItem', mock1)
         expect(store.state.items.selectedItems).toEqual([mock1])
-        store.commit('items/' + mutationNames[actionName] + 'Success', readMock2)
+        store.commit('items/' + mutationNames.crud[actionName] + 'Success', readMock2)
         expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
         expect(store.state.items.selectedItems).toEqual([mock1])
       }
@@ -256,10 +256,10 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
   test('success read&update actions on state and selection is also updated', () => {
     for (const actionName of ['read', 'update']) {
       for (const store of stores) {
-        store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+        store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
         store.commit('items/selectItem', mock2)
         expect(store.state.items.selectedItems).toEqual([mock2])
-        store.commit('items/' + mutationNames[actionName] + 'Success', readMock2)
+        store.commit('items/' + mutationNames.crud[actionName] + 'Success', readMock2)
         expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
         expect(store.state.items.selectedItems).toEqual([readMock2]) // selection updated with new object!
       }
@@ -268,11 +268,11 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
 
   test('success delete actions on state and selection doesn\'t change', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock1)
       expect(store.state.items.selectedItems).toEqual([mock1])
       expect(store.state.items.selectedItem).toEqual(null)
-      store.commit('items/' + mutationNames['delete'] + 'Success', 3)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 3)
       expect(store.state.items.items).toEqual([mock1, mock2])
       expect(store.state.items.selectedItems).toEqual([mock1])
       expect(store.state.items.selectedItem).toEqual(null)
@@ -281,12 +281,12 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
 
   test('success delete actions on state and selection doesn\'t change', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock1)
       store.commit('items/selectItem', mock2)
       expect(store.state.items.selectedItems).toEqual([mock1, mock2])
       expect(store.state.items.selectedItem).toEqual(null)
-      store.commit('items/' + mutationNames['delete'] + 'Success', 3)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 3)
       expect(store.state.items.items).toEqual([mock1, mock2])
       expect(store.state.items.selectedItems).toEqual([mock1, mock2])
       expect(store.state.items.selectedItem).toEqual(null)
@@ -295,12 +295,12 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
 
   test('success delete actions on state and selection change', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock1)
       store.commit('items/selectItem', mock3)
       expect(store.state.items.selectedItems).toEqual([mock1, mock3])
       expect(store.state.items.selectedItem).toEqual(null)
-      store.commit('items/' + mutationNames['delete'] + 'Success', 3)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 3)
       expect(store.state.items.items).toEqual([mock1, mock2])
       expect(store.state.items.selectedItems).toEqual([mock1])
       expect(store.state.items.selectedItem).toEqual(null)
@@ -309,10 +309,10 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
 
   test('success delete actions on state and selection is also updated', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock2)
       expect(store.state.items.selectedItems).toEqual([mock2])
-      store.commit('items/' + mutationNames['delete'] + 'Success', 2)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 2)
       expect(store.state.items.items).toEqual([mock1, mock3])
       expect(store.state.items.selectedItems).toEqual([]) // selection updated!
     }
@@ -364,9 +364,9 @@ describe('test actions successes WITH selection and update of list', () => {
 
   test('success list actions on state', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock2)
-      store.commit('items/' + mutationNames['list'] + 'Success', [newMock1, newMock2, newMock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [newMock1, newMock2, newMock3])
       expect(store.state.items.selectedItems).toEqual([])
     }
   })
@@ -417,7 +417,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
 
   test('success list actions on state', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       expect(store.state.items.items).toEqual([mock1, mock2, mock3])
       expect(store.state.items.selectedItems).toEqual([])
     }
@@ -426,10 +426,10 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
   test('success read&update actions on state and selection doesn\'t change', () => {
     for (const actionName of ['read', 'update']) {
       for (const store of stores) {
-        store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+        store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
         store.commit('items/selectItem', mock1)
         expect(store.state.items.selectedItems).toEqual([mock1])
-        store.commit('items/' + mutationNames[actionName] + 'Success', readMock2)
+        store.commit('items/' + mutationNames.crud[actionName] + 'Success', readMock2)
         expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
         expect(store.state.items.selectedItems).toEqual([mock1])
       }
@@ -439,10 +439,10 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
   test('success read&update actions on state and selection is also updated', () => {
     for (const actionName of ['read', 'update']) {
       for (const store of stores) {
-        store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+        store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
         store.commit('items/selectItem', mock2)
         expect(store.state.items.selectedItems).toEqual([mock2])
-        store.commit('items/' + mutationNames[actionName] + 'Success', readMock2)
+        store.commit('items/' + mutationNames.crud[actionName] + 'Success', readMock2)
         expect(store.state.items.items).toEqual([mock1, readMock2, mock3])
         expect(store.state.items.selectedItems).toEqual([readMock2]) // selection updated with new object!
       }
@@ -451,11 +451,11 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
 
   test('success delete actions on state and selection doesn\'t change', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock1)
       expect(store.state.items.selectedItems).toEqual([mock1])
       expect(store.state.items.selectedItem).toEqual(mock1)
-      store.commit('items/' + mutationNames['delete'] + 'Success', 3)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 3)
       expect(store.state.items.items).toEqual([mock1, mock2])
       expect(store.state.items.selectedItems).toEqual([mock1])
       expect(store.state.items.selectedItem).toEqual(mock1)
@@ -464,10 +464,10 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
 
   test('success delete actions on state and selection is also updated', () => {
     for (const store of stores) {
-      store.commit('items/' + mutationNames['list'] + 'Success', [mock1, mock2, mock3])
+      store.commit('items/' + mutationNames.crud['list'] + 'Success', [mock1, mock2, mock3])
       store.commit('items/selectItem', mock2)
       expect(store.state.items.selectedItems).toEqual([mock2])
-      store.commit('items/' + mutationNames['delete'] + 'Success', 2)
+      store.commit('items/' + mutationNames.crud['delete'] + 'Success', 2)
       expect(store.state.items.items).toEqual([mock1, mock3])
       expect(store.state.items.selectedItems).toEqual([]) // selection updated!
     }
