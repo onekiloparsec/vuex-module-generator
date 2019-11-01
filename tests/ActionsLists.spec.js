@@ -5,19 +5,13 @@ import testAction from './ActionHelper'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import VueResource from 'vue-resource'
 
 Vue.use(Vuex)
+Vue.use(VueResource)
 
 const API_URL = 'http://localhost:8080/'
-// http.options.root = API_URL
-
-const http = {
-  get: jest.fn(),
-  options: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  delete: jest.fn()
-}
+Vue.http.options.root = API_URL
 
 const mock1 = { name: 'dummy1', id: 1 }
 const mock2 = { name: 'dummy2', id: 2 }
@@ -41,16 +35,16 @@ const routes = [
   }
 ]
 
-// http.interceptors.unshift((request, next) => {
-//   const route = routes.find((item) => {
-//     return (request.method === item.method && request.url === API_URL + item.url)
-//   })
-//   if (route) {
-//     next(request.respondWith(route.response.body, { status: route.response.status }))
-//   } else {
-//     next(request.respondWith({ status: 404, statusText: 'Oh no! Not found!' }))
-//   }
-// })
+Vue.http.interceptors.unshift((request, next) => {
+  const route = routes.find((item) => {
+    return (request.method === item.method && request.url === API_URL + item.url)
+  })
+  if (route) {
+    next(request.respondWith(route.response.body, { status: route.response.status }))
+  } else {
+    next(request.respondWith({ status: 404, statusText: 'Oh no! Not found!' }))
+  }
+})
 
 const mutationNames = createModuleNames('item').mutations
 
@@ -59,7 +53,7 @@ describe('test async api actions on module directly', () => {
 
   beforeEach(() => {
     itemsModule = makeModule({
-      http: http,
+      http: Vue.http,
       apiURL: API_URL,
       apiPath: 'items/',
       root: 'item',
@@ -76,23 +70,23 @@ describe('test async api actions on module directly', () => {
 
   test('the list is empty at start', done => {
     testAction(itemsModule.actions.listItems, null, {}, [
-      { type: mutationNames['list'] + 'Pending' },
-      { type: mutationNames['list'] + 'Success', payload: [] }
+      { type: mutationNames.crud['list'] + 'Pending' },
+      { type: mutationNames.crud['list'] + 'Success', payload: [] }
     ], done)
   })
 
   test('reading an item', done => {
     testAction(itemsModule.actions.readItem, 3, {}, [
-      { type: mutationNames['read'] + 'Pending', payload: 3 },
-      { type: mutationNames['read'] + 'Success', payload: mock3 }
+      { type: mutationNames.crud['read'] + 'Pending', payload: 3 },
+      { type: mutationNames.crud['read'] + 'Success', payload: mock3 }
     ], done)
   })
 
   test('removal of an item in list after delete', done => {
     itemsModule.state.items = [mock1, mock2, mock3]
     testAction(itemsModule.actions.deleteItem, 2, itemsModule.state, [
-      { type: mutationNames['delete'] + 'Pending', payload: 2 },
-      { type: mutationNames['delete'] + 'Success', payload: 2 }
+      { type: mutationNames.crud['delete'] + 'Pending', payload: 2 },
+      { type: mutationNames.crud['delete'] + 'Success', payload: 2 }
     ], done)
   })
 })
