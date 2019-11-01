@@ -1,6 +1,7 @@
 {
-  "name": "vuex-module-generator",
+  "name": "@onekiloparsec/vuex-module-generator",
   "version": "1.3.0",
+  "main": "dist/vuex-module-generator.common.js",
   "private": true,
   "scripts": {
     "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
