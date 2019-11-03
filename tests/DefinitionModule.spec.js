@@ -105,4 +105,43 @@ describe('test actions creation based on last parameter', () => {
       expect(items.actions.deleteItem).toBeDefined()
     }
   })
+
+  test('organisations', () => {
+    const organisations = makeModule({
+      http: http,
+      apiURL: API_URL,
+      apiPath: 'organisations/',
+      root: 'organisation',
+      idKey: 'subdomain',
+      allowTree: false,
+      allowMultipleSelection: false,
+      lcrud: 'lr' // read-only
+    })
+
+    expect(organisations.mutations['listOrganisationsPending']).toBeDefined()
+    expect(organisations.mutations['listOrganisationsSuccess']).toBeDefined()
+    expect(organisations.mutations['listOrganisationsFailure']).toBeDefined()
+
+    expect(organisations.mutations['createOrganisationPending']).not.toBeDefined()
+    expect(organisations.mutations['createOrganisationSuccess']).not.toBeDefined()
+    expect(organisations.mutations['createOrganisationFailure']).not.toBeDefined()
+
+    expect(organisations.mutations['readOrganisationPending']).toBeDefined()
+    expect(organisations.mutations['readOrganisationSuccess']).toBeDefined()
+    expect(organisations.mutations['readOrganisationFailure']).toBeDefined()
+
+    expect(organisations.mutations['updateOrganisationPending']).not.toBeDefined()
+    expect(organisations.mutations['updateOrganisationSuccess']).not.toBeDefined()
+    expect(organisations.mutations['updateOrganisationFailure']).not.toBeDefined()
+
+    expect(organisations.mutations['deleteOrganisationPending']).not.toBeDefined()
+    expect(organisations.mutations['deleteOrganisationSuccess']).not.toBeDefined()
+    expect(organisations.mutations['deleteOrganisationFailure']).not.toBeDefined()
+
+    expect(organisations.actions.listOrganisations).toBeDefined()
+    expect(organisations.actions.createOrganisation).not.toBeDefined()
+    expect(organisations.actions.readOrganisation).toBeDefined()
+    expect(organisations.actions.updateOrganisation).not.toBeDefined()
+    expect(organisations.actions.deleteOrganisation).not.toBeDefined()
+  })
 })
