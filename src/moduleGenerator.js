@@ -128,14 +128,16 @@ const createApiActions = (api, idKey, dataKey) => ({
 })
 
 function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud, customGetters }) {
+  lcrud = lcrud || 'lr' // read-only
   customGetters = customGetters || {}
+
   const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
   const apiActions = createApiActions(api, idKey, 'data')
 
-  const names = createModuleNames(root)
+  const moduleNames = createModuleNames(root)
 
-  const mutationSuccesses = createMutationSuccesses(names.state.list, names.state.selection, names.state.singleSelection, idKey)
-  const actionNames = ['list', 'create', 'read', 'update', 'delete'] // lcrud
+  const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
+  const actionNames = ['list', 'create', 'read', 'update', 'delete']
   const boolActionNames = ['list', 'create']
   const defaultActionStates = [false, false, null, null, null]
 
@@ -151,16 +153,16 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
   state.__allowTree__ = allowTree || false
   state.__allowMultipleSelection__ = allowMultipleSelection || false
 
-  state[names.state.list] = []
-  state[names.state.crud] = _.zipObject(actionNames, defaultActionStates)
+  state[moduleNames.state.list] = []
+  state[moduleNames.state.crud] = _.zipObject(actionNames, defaultActionStates)
 
-  state[names.state.selection] = []
-  state[names.state.singleSelection] = null
+  state[moduleNames.state.selection] = []
+  state[moduleNames.state.singleSelection] = null
 
   /* ------------ Vuex Getters ------------ */
 
-  _getters[names.getters.isSelected] = (state) => (selectedItem) => {
-    return (_.findIndex(state[names.state.selection], item => item === selectedItem) !== -1)
+  _getters[moduleNames.getters.isSelected] = (state) => (selectedItem) => {
+    return (_.findIndex(state[moduleNames.state.selection], item => item === selectedItem) !== -1)
   }
 
   _getters = _.assign(_getters, customGetters)
@@ -169,76 +171,77 @@ function makeModule ({ http, apiURL, apiPath, root, idKey, allowTree, allowMulti
 
   _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     _.merge(mutations, {
-      [names.mutations.crud[actionName] + 'Pending'] (state, payload) {
+      [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
-        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
+        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
       },
-      [names.mutations.crud[actionName] + 'Success'] (state, payload) {
+      [moduleNames.mutations.crud[actionName] + 'Success'] (state, payload) {
         mutationSuccesses[actionName](state, payload)
-        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
+        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       },
-      [names.mutations.crud[actionName] + 'Failure'] (state, payload) {
+      [moduleNames.mutations.crud[actionName] + 'Failure'] (state, payload) {
         // payload is only error object
-        state[names.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
+        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
   })
 
   // Non-(L)CRUD mutations :
 
-  mutations[names.mutations.select] = (state, selectedItem) => {
+  mutations[moduleNames.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
       if (state.__allowMultipleSelection__) {
-        state[names.state.selection] = _.uniq(_.concat(state[names.state.selection], selectedItem))
+        state[moduleNames.state.selection] = _.uniq(_.concat(state[moduleNames.state.selection], selectedItem))
       } else {
-        state[names.state.singleSelection] = selectedItem
-        state[names.state.selection] = _.concat([], selectedItem)
+        state[moduleNames.state.singleSelection] = selectedItem
+        state[moduleNames.state.selection] = _.concat([], selectedItem)
       }
     }
   }
 
-  mutations['de' + names.mutations.select] = (state, selectedItem) => {
+  mutations['de' + moduleNames.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
-      const index = _.findIndex(state[names.state.selection], item => item === selectedItem)
+      const index = _.findIndex(state[moduleNames.state.selection], item => item === selectedItem)
       if (index !== -1) {
-        state[names.state.selection].splice(index, 1)
+        state[moduleNames.state.selection].splice(index, 1)
       }
-      if (state[names.state.singleSelection] === selectedItem) {
-        state[names.state.singleSelection] = null
+      if (state[moduleNames.state.singleSelection] === selectedItem) {
+        state[moduleNames.state.singleSelection] = null
       }
     }
   }
 
-  mutations[names.mutations.clearSelection] = (state) => {
-    state[names.state.selection] = []
-    state[names.state.singleSelection] = null
+  mutations[moduleNames.mutations.clearSelection] = (state) => {
+    state[moduleNames.state.selection] = []
+    state[moduleNames.state.singleSelection] = null
   }
 
-  mutations[names.mutations.updateList] = (state, newList) => {
-    state[names.state.list] = newList
+  mutations[moduleNames.mutations.updateList] = (state, newList) => {
+    state[moduleNames.state.list] = newList
   }
 
   /* ------------ Vuex Actions ------------ */
 
-  _.forEach(actionNames, (actionName) => {
-    if (lcrud.includes(actionName.charAt(0))) {
-      actions[names.actions[actionName]] = ({ commit }, idOrData) => {
+  _.forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
+    _.merge(actions, {
+      [moduleNames.actions[actionName]] ({ commit }, idOrData) {
         return new Promise((resolve, reject) => {
-          commit(names.mutations.crud[actionName] + 'Pending', idOrData)
+          commit(moduleNames.mutations.crud[actionName] + 'Pending', idOrData)
           apiActions[actionName](idOrData)
             .then(response => {
               const payload = response.body || response.data
-              commit(names.mutations.crud[actionName] + 'Success', payload)
+              commit(moduleNames.mutations.crud[actionName] + 'Success', payload)
               resolve(payload)
             })
             .catch(error => {
-              commit(names.mutations.crud[actionName] + 'Failure', error)
+              commit(moduleNames.mutations.crud[actionName] + 'Failure', error)
               reject(error)
             })
         })
       }
-    }
+    })
   })
+
 
   return {
     _api: api,
