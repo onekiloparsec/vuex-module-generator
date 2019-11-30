@@ -18,3 +18,40 @@ export const makeDefaultAction = (mutationsCrud, actionName, apiActions) => ({ c
       })
   })
 }
+
+export const makePagedAPIAction = (mutationCrudList, listApiAction) => ({ commit }, idOrData) => {
+  let page = 1
+  let results = []
+
+  return new Promise(async (resolve, reject) => {
+    // Committing mutation of pending state for current action
+    commit(mutationCrudList + 'Pending')
+
+    let keepGoing = true
+    while (keepGoing) {
+      let response
+      try {
+        // Doing the actual fetch request to API endpoint
+        response = await listApiAction({ ...idOrData, page: page })
+      } catch (error) {
+        keepGoing = false
+        commit(mutationCrudList + 'Failure', error)
+        reject(error)
+      }
+
+      const payload = response.body || response.data
+      const total = Math.ceil(payload.count / payload.results.length)
+      results.push(...payload.results)
+
+      if (payload.next) {
+        commit(mutationCrudList + 'PartialSuccess', { payload: payload.results, page, total })
+        page += 1
+      } else {
+        keepGoing = false
+      }
+    }
+
+    commit(mutationCrudList + 'Success', results)
+    resolve(results)
+  })
+}
