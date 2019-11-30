@@ -63,14 +63,18 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     merge(mutations, {
       [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
+        // Update crud state only.
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
       },
       [moduleNames.mutations.crud[actionName] + 'Success'] (state, payload) {
+        // Update list/tree and selection(s) state
         mutationSuccesses[actionName](state, payload)
+        // Update crud state.
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       },
       [moduleNames.mutations.crud[actionName] + 'Failure'] (state, payload) {
         // payload is only error object
+        // Update crud state only
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
