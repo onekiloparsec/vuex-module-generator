@@ -20,10 +20,9 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
   const apiActions = createApiActions(api, idKey, 'data')
-
   const moduleNames = createModuleNames(root)
-
   const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
+
   const actionNames = ['list', 'create', 'read', 'update', 'delete']
   const boolActionNames = ['list', 'create']
   const defaultActionStates = [false, false, null, null, null]
