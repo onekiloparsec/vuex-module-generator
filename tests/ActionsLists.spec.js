@@ -1,5 +1,5 @@
 import { makeModule } from '@/index'
-import { createModuleNames } from '@/utils'
+import createModuleNames from '@/moduleNames'
 
 import testAction from './ActionHelper'
 

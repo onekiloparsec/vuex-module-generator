@@ -1,6 +1,10 @@
-import { isFunction, isObject, isString, isNumber, forEach } from 'lodash'
+import isFunction from 'lodash/isFunction'
+import isString from 'lodash/isString'
+import isObject from 'lodash/isObject'
+import isNumber from 'lodash/isNumber'
+import forEach from 'lodash/forEach'
 
-export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
+const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   // if (http == null) {
   //   throw Error('Missing http module to make requests!')
   // }
@@ -87,4 +91,4 @@ export const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) =
   return obj
 }
 
-export default { makeAPIPoint }
+export { makeAPIPoint }
