@@ -133,14 +133,17 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   /* ------------ Vuex Actions ------------ */
 
   forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
-    merge(actions, {
-      [moduleNames.actions[actionName]]: makeDefaultAction(moduleNames.mutations.crud, actionName, apiActions)
-    })
+    actions[moduleNames.actions[actionName]] = makeDefaultAction(moduleNames.mutations.crud, actionName, apiActions)
   })
 
-  // Page API Action
+  // Paged List API Action
 
-  actions['pages'] = makePagedAPIAction(moduleNames.mutations.crud['list'], apiActions.list())
+  if (lcrud.includes('p')) {
+    // If we add 'p' to the lcrud parameter, whatever the presence of an 'l', we override
+    // the list action by the paged list one.
+    const actionName = moduleNames.actions['list']
+    actions[actionName] = makePagedAPIAction(moduleNames.mutations.crud.list, apiActions.list)
+  }
 
   return {
     _api: api,

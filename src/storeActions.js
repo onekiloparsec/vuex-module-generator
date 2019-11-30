@@ -21,6 +21,7 @@ export const makeDefaultAction = (mutationsCrud, actionName, apiActions) => ({ c
 
 export const makePagedAPIAction = (mutationCrudList, listApiAction) => ({ commit }, idOrData) => {
   let page = 1
+  let total = 1
   let results = []
 
   return new Promise(async (resolve, reject) => {
@@ -40,11 +41,13 @@ export const makePagedAPIAction = (mutationCrudList, listApiAction) => ({ commit
       }
 
       const payload = response.body || response.data
-      const total = Math.ceil(payload.count / payload.results.length)
+      if (page === 1) {
+        total = Math.ceil(payload.count / payload.results.length)
+      }
       results.push(...payload.results)
+      commit(mutationCrudList + 'PartialSuccess', { payload: payload.results, page, total })
 
       if (payload.next) {
-        commit(mutationCrudList + 'PartialSuccess', { payload: payload.results, page, total })
         page += 1
       } else {
         keepGoing = false
