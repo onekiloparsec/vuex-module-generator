@@ -65,6 +65,11 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
         // payload is only idOrData
         // Update crud state only.
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
+
+        if (actionName === 'list') {
+          state[moduleNames.state.pageCurrent] = 0
+          state[moduleNames.state.pageTotal] = 0
+        }
       },
       [moduleNames.mutations.crud[actionName] + 'Success'] (state, payload) {
         // Update list/tree and selection(s) state
@@ -78,23 +83,22 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
-
-    // Pages List mutations :
-
-    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
-      const { payload, page, total } = data
-      state[moduleNames.state.pageCurrent] = page
-      state[moduleNames.state.pageTotal] = total || page
-
-      if (page === 1) {
-        // At start, clear list and selection
-        mutationSuccesses['list'](state, [])
-      }
-      // Update list/tree and selection(s) state
-      mutationSuccesses['partialList'](state, payload)
-      // Do not update CRUD state object, since requests are still on going...
-    }
   })
+
+  // Pages List mutations :
+
+  mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
+    const { payload, page, total } = data
+    state[moduleNames.state.pageCurrent] = page
+    state[moduleNames.state.pageTotal] = total || page
+
+    if (page === 1) { // At start, clear list and selection
+      mutationSuccesses['list'](state, [])
+    }
+    // Then, update list/tree and selection(s) state
+    mutationSuccesses['partialList'](state, payload)
+    // Do not update CRUD state object, since requests are still on going...
+  }
 
   // Non-(L)CRUD mutations :
 
@@ -133,7 +137,8 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   /* ------------ Vuex Actions ------------ */
 
   forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
-    actions[moduleNames.actions[actionName]] = makeDefaultAction(moduleNames.mutations.crud, actionName, apiActions)
+    const mutationName = moduleNames.mutations.crud[actionName]
+    actions[moduleNames.actions[actionName]] = makeDefaultAction(mutationName, apiActions[actionName])
   })
 
   // Paged List API Action
@@ -141,8 +146,9 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   if (lcrud.includes('p')) {
     // If we add 'p' to the lcrud parameter, whatever the presence of an 'l', we override
     // the list action by the paged list one.
-    const actionName = moduleNames.actions['list']
-    actions[actionName] = makePagedAPIAction(moduleNames.mutations.crud.list, apiActions.list)
+    const actionName = 'list'
+    const mutationName = moduleNames.mutations.crud[actionName]
+    actions[moduleNames.actions[actionName]] = makePagedAPIAction(mutationName, apiActions[actionName])
   }
 
   return {
