@@ -1,17 +1,19 @@
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+
 module.exports = {
   productionSourceMap: false,
   configureWebpack: {
+    mode: 'production',
+    optimization: {
+      usedExports: true
+    },
+    // plugins: [
+    //   new BundleAnalyzerPlugin({ analyzerPort: 8787 })
+    // ],
     externals: {
-      lodash: {
-        commonjs: 'lodash',
-        commonjs2: 'lodash',
-        root: 'lodash'
-      },
-      vuex: {
-        commonjs: 'vuex',
-        commonjs2: 'vuex',
-        root: 'vuex'
-      }
+      lodash: 'lodash',
+      vuex: 'vuex'
     }
   }
 }
+
