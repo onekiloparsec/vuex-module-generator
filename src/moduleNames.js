@@ -12,6 +12,8 @@ const createModuleNames = (root) => {
       crud: `${singular}Crud`,
       selection: `selected${pluralCapitalized}`,
       singleSelection: `selected${singularCapitalized}`,
+      pageCurrent: `current${pluralCapitalized}Page`,
+      pageTotal: `total${pluralCapitalized}PageCount`
     },
 
     getters: {
