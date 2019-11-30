@@ -7,7 +7,7 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 
 import { makeAPIPoint } from './resourceGenerator'
-import { makeDefaultAction } from './storeActions'
+import { makeDefaultAction, makePagedAPIAction } from './storeActions'
 
 import createApiActions from './apiActions'
 import createModuleNames from './moduleNames'
@@ -138,6 +138,9 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     })
   })
 
+  // Page API Action
+
+  actions['pages'] = makePagedAPIAction(moduleNames.mutations.crud['list'], apiActions.list())
 
   return {
     _api: api,
