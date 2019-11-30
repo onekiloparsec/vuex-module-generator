@@ -7,9 +7,11 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 
 import { makeAPIPoint } from './resourceGenerator'
-import createMutationSuccesses from './mutationsSuccesses'
+import { makeDefaultAction } from './storeActions'
+
 import createApiActions from './apiActions'
 import createModuleNames from './moduleNames'
+import createMutationSuccesses from './mutationsSuccesses'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
@@ -44,6 +46,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   state[moduleNames.state.selection] = []
   state[moduleNames.state.singleSelection] = null
+  state[moduleNames.state.currentPage] = 0
 
   /* ------------ Vuex Getters ------------ */
 
@@ -110,21 +113,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
     merge(actions, {
-      [moduleNames.actions[actionName]] ({ commit }, idOrData) {
-        return new Promise((resolve, reject) => {
-          commit(moduleNames.mutations.crud[actionName] + 'Pending', idOrData)
-          apiActions[actionName](idOrData)
-            .then(response => {
-              const payload = response.body || response.data
-              commit(moduleNames.mutations.crud[actionName] + 'Success', payload)
-              resolve(payload)
-            })
-            .catch(error => {
-              commit(moduleNames.mutations.crud[actionName] + 'Failure', error)
-              reject(error)
-            })
-        })
-      }
+      [moduleNames.actions[actionName]]: makeDefaultAction(moduleNames.mutations.crud, actionName, apiActions)
     })
   })
 

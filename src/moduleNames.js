@@ -3,40 +3,40 @@ const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1
 const createModuleNames = (root) => {
   const singular = root.toLowerCase()
   const plural = (singular.slice(-1) === 'y') ? singular.substr(0, singular.length - 1) + 'ies' : singular + 's'
-  const singularWord = capitalizeFirstChar(singular)
-  const pluralWord = capitalizeFirstChar(plural)
+  const singularCapitalized = capitalizeFirstChar(singular)
+  const pluralCapitalized = capitalizeFirstChar(plural)
 
   return {
     state: {
       list: `${plural}`,
       crud: `${singular}Crud`,
-      selection: `selected${pluralWord}`,
-      singleSelection: `selected${singularWord}`
+      selection: `selected${pluralCapitalized}`,
+      singleSelection: `selected${singularCapitalized}`,
     },
 
     getters: {
-      isSelected: `is${singularWord}Selected`
+      isSelected: `is${singularCapitalized}Selected`
     },
 
     mutations: {
       crud: {
-        list: `list${pluralWord}`,
-        create: `create${singularWord}`,
-        read: `read${singularWord}`,
-        update: `update${singularWord}`,
-        delete: `delete${singularWord}`
+        list: `list${pluralCapitalized}`,
+        create: `create${singularCapitalized}`,
+        read: `read${singularCapitalized}`,
+        update: `update${singularCapitalized}`,
+        delete: `delete${singularCapitalized}`
       },
-      select: `select${singularWord}`,
-      clearSelection: `clear${pluralWord}Selection`,
-      updateList: `update${pluralWord}List`
+      select: `select${singularCapitalized}`,
+      clearSelection: `clear${pluralCapitalized}Selection`,
+      updateList: `update${pluralCapitalized}List`
     },
 
     actions: { // not put inside an even-more-nested 'crud' object, as in mutations...
-      list: `list${pluralWord}`,
-      create: `create${singularWord}`,
-      read: `read${singularWord}`,
-      update: `update${singularWord}`,
-      delete: `delete${singularWord}`
+      list: `list${pluralCapitalized}`,
+      create: `create${singularCapitalized}`,
+      read: `read${singularCapitalized}`,
+      update: `update${singularCapitalized}`,
+      delete: `delete${singularCapitalized}`
     }
   }
 }

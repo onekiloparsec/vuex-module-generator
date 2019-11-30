@@ -6,7 +6,7 @@ import { TREE_PARENT_ID } from './moduleGenerator'
 const createApiActions = (api, idKey, dataKey) => ({
   list: (obj) => {
     if (isString(obj)) {
-      return api.get(obj, null) // obj as complement of list endpoint path
+      return api.get(obj, null) // obj as complement of list endpoint path. Counter-REST principle, but useful sometimes...
     } else {
       return api.get(null, obj) // obj is used a URL parameters.
     }
