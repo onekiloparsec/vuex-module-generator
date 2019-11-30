@@ -46,7 +46,8 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   state[moduleNames.state.selection] = []
   state[moduleNames.state.singleSelection] = null
-  state[moduleNames.state.currentPage] = 0
+  state[moduleNames.state.pageCurrent] = 0 // Pages start at index one (1), not 0.
+  state[moduleNames.state.pageTotal] = 0
 
   /* ------------ Vuex Getters ------------ */
 
