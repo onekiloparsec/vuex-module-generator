@@ -78,6 +78,22 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
       }
     })
+
+    // Pages List mutations :
+
+    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
+      const { payload, page, total } = data
+      state[moduleNames.state.pageCurrent] = page
+      state[moduleNames.state.pageTotal] = total || page
+
+      if (page === 1) {
+        // At start, clear list and selection
+        mutationSuccesses['list'](state, [])
+      }
+      // Update list/tree and selection(s) state
+      mutationSuccesses['partialList'](state, payload)
+      // Do not update CRUD state object, since requests are still on going...
+    }
   })
 
   // Non-(L)CRUD mutations :
