@@ -1,6 +1,6 @@
 {
   "name": "@onekiloparsec/vuex-module-generator",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/vuex-module-generator.common.js",
   "module": "dist/vuex-module-generator.esm.js",
   "browser": "dist/vuex-module-generator.js",
