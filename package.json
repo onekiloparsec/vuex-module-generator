@@ -39,7 +39,7 @@
     "webpack-bundle-analyzer": "^3.6.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "http://localhost:4873"
   },
   "repository": {
     "type": "git",
