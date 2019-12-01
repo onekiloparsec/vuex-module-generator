@@ -59,13 +59,12 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   /* ------------ Vuex Mutations ------------ */
 
-  forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
+  forEach(actionNames.filter(a => lcrud.replace('p', 'l').includes(a.charAt(0))), actionName => {
     merge(mutations, {
       [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
         // Update crud state only.
         state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
-
         if (actionName === 'list') {
           state[moduleNames.state.pageCurrent] = 0
           state[moduleNames.state.pageTotal] = 0
@@ -85,19 +84,19 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     })
   })
 
-  // Pages List mutations :
+  if (lcrud.includes('p')) {
+    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
+      const { payload, page, total } = data
+      state[moduleNames.state.pageCurrent] = page
+      state[moduleNames.state.pageTotal] = total || page
 
-  mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
-    const { payload, page, total } = data
-    state[moduleNames.state.pageCurrent] = page
-    state[moduleNames.state.pageTotal] = total || page
-
-    if (page === 1) { // At start, clear list and selection
-      mutationSuccesses['list'](state, [])
+      if (page === 1) { // At start, clear list and selection
+        mutationSuccesses['list'](state, [])
+      }
+      // Then, update list/tree and selection(s) state
+      mutationSuccesses['partialList'](state, payload)
+      // Do not update CRUD state object, since requests are still on going...
     }
-    // Then, update list/tree and selection(s) state
-    mutationSuccesses['partialList'](state, payload)
-    // Do not update CRUD state object, since requests are still on going...
   }
 
   // Non-(L)CRUD mutations :

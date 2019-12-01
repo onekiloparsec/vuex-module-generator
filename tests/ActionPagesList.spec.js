@@ -76,3 +76,42 @@ describe('test async api actions on module directly', () => {
     ], done)
   })
 })
+
+describe('test async api actions inside a valid store', () => {
+  let store
+  let mutations
+
+  beforeEach(() => {
+    const itemsModule = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'pcrud', // NOTE THE P!!! (instead of the l)
+      allowMultipleSelection: false,
+      allowTree: false
+    })
+
+    mutations = {
+      listItemsPending: jest.fn(),
+      listItemsPartialSuccess: jest.fn(),
+      listItemsSuccess: jest.fn()
+    }
+
+    store = new Vuex.Store({ modules: { items: { ...itemsModule, mutations: mutations } } })
+  })
+
+  afterEach(() => {
+    store = null
+  })
+
+  test('the list is fetched pages by pages, until the end.', async done => {
+    await store.dispatch('items/listItems')
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 2, payload: [mock1, mock2, mock3, mock4] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 2, payload: [mock5, mock6, mock7] })
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4, mock5, mock6, mock7])
+    done()
+  })
+})

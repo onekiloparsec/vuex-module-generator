@@ -90,3 +90,49 @@ describe('test async api actions on module directly', () => {
     ], done)
   })
 })
+
+
+describe('test async api actions inside a valid store', () => {
+  let store
+  let mutations
+
+  beforeEach(() => {
+    let itemsModule = makeModule({
+      http: Vue.http,
+      apiURL: API_URL,
+      apiPath: 'items/',
+      root: 'item',
+      idKey: 'uuid',
+      lcrud: 'lcrud',
+      allowMultipleSelection: false,
+      allowTree: false
+    })
+
+    mutations = {
+      listItemsPending: jest.fn(),
+      listItemsSuccess: jest.fn(),
+      readItemPending: jest.fn(),
+      readItemSuccess: jest.fn()
+    }
+
+    store = new Vuex.Store({ modules: { items: { ...itemsModule, mutations: mutations } } })
+  })
+
+  afterEach(() => {
+    store = null
+  })
+
+  test('listing items with no data', async done => {
+    await store.dispatch('items/listItems')
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [])
+    done()
+  })
+
+  test('reading an item', async done => {
+    await store.dispatch('items/readItem', 3)
+    expect(mutations.readItemPending).toHaveBeenCalledWith(expect.any(Object), 3)
+    expect(mutations.readItemSuccess).toHaveBeenCalledWith(expect.any(Object), mock3)
+    done()
+  })
+})
