@@ -89,7 +89,6 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
       const { payload, page, total } = data
       state[moduleNames.state.pageCurrent] = page
       state[moduleNames.state.pageTotal] = total || page
-
       if (page === 1) { // At start, clear list and selection
         mutationSuccesses['list'](state, [])
       }

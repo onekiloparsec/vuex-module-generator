@@ -24,7 +24,7 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
     // filter out items that are not known anymore. do not use IDs! objects may have changed
     state[selectionName] = state[selectionName].filter(item => itemsList.includes(item))
     // also clear single selection if necessary
-    if (itemsList && itemsList.includes(state[singleSelectionName]) === false) {
+    if (state[listName].includes(state[singleSelectionName]) === false) {
       state[singleSelectionName] = null
     }
   },
