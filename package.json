@@ -1,5 +1,5 @@
 {
-  "name": "@onekiloparsec/vuex-module-generator",
+  "name": "vuex-module-generator",
   "version": "1.4.7",
   "main": "dist/vuex-module-generator.common.js",
   "module": "dist/vuex-module-generator.esm.js",
