@@ -1,5 +1,5 @@
 {
-  "name": "vuex-module-generator",
+  "name": "@onekiloparsec/vuex-module-generator",
   "version": "1.4.10",
   "main": "dist/vuex-module-generator.common.js",
   "module": "dist/vuex-module-generator.esm.js",
@@ -39,7 +39,7 @@
     "webpack-bundle-analyzer": "^3.6.0"
   },
   "publishConfig": {
-    "registry": "http://localhost:4873"
+    "registry": "https://npm.pkg.github.com/"
   },
   "repository": {
     "type": "git",
