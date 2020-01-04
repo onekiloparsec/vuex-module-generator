@@ -25,12 +25,22 @@ const routes = [
   {
     method: 'GET',
     url: 'items/?page=1',
-    response: { body: { results: [mock1, mock2, mock3, mock4], count: 7, previous: null, next: API_URL + 'items/?page=2' }, status: 200 }
+    response: { body: { results: [mock1, mock2], count: 7, previous: null, next: API_URL + 'items/?page=2' }, status: 200 }
   },
   {
     method: 'GET',
     url: 'items/?page=2',
-    response: { body: { results: [mock5, mock6, mock7], count: 7, previous: API_URL + 'items/?page=1', next: null }, status: 200 }
+    response: { body: { results: [mock3, mock4], count: 7, previous: API_URL + 'items/?page=1', next: API_URL + 'items/?page=3' }, status: 200 }
+  },
+  {
+    method: 'GET',
+    url: 'items/?page=3',
+    response: { body: { results: [mock5, mock6], count: 7, previous: API_URL + 'items/?page=2', next: API_URL + 'items/?page=4' }, status: 200 }
+  },
+  {
+    method: 'GET',
+    url: 'items/?page=4',
+    response: { body: { results: [mock7], count: 7, previous: API_URL + 'items/?page=3', next: null }, status: 200 }
   }
 ]
 
@@ -70,8 +80,10 @@ describe('test async api actions on module directly', () => {
   test('the list is fetched pages by pages, unti the end.', done => {
     testAction(itemsModule.actions.listItems, null, {}, [
       { type: mutationNames.crud['list'] + 'Pending' },
-      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 1, total: 2, payload: [mock1, mock2, mock3, mock4] } },
-      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 2, total: 2, payload: [mock5, mock6, mock7] } },
+      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 1, total: 4, payload: [mock1, mock2] } },
+      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 2, total: 4, payload: [mock3, mock4] } },
+      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 3, total: 4, payload: [mock5, mock6] } },
+      { type: mutationNames.crud['list'] + 'PartialSuccess', payload: { page: 4, total: 4, payload: [mock7] } },
       { type: mutationNames.crud['list'] + 'Success', payload: [mock1, mock2, mock3, mock4, mock5, mock6, mock7] }
     ], done)
   })
@@ -109,8 +121,52 @@ describe('test async api actions inside a valid store', () => {
   test('the list is fetched pages by pages, until the end.', async done => {
     await store.dispatch('items/listItems')
     expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
-    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 2, payload: [mock1, mock2, mock3, mock4] })
-    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 2, payload: [mock5, mock6, mock7] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 4, payload: [mock1, mock2] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 4, payload: [mock3, mock4] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 3, total: 4, payload: [mock5, mock6] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 4, total: 4, payload: [mock7] })
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4, mock5, mock6, mock7])
+    done()
+  })
+
+  test('the a limited list is fetched pages by pages, until maxPage when maxPage < total pages.', async done => {
+    await store.dispatch('items/listItems', { maxPage: 2 })
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 4, payload: [mock1, mock2] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 4, payload: [mock3, mock4] })
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4])
+    done()
+  })
+
+  test('the a limited list is fetched pages by pages, until the end when maxPage >> total pages.', async done => {
+    await store.dispatch('items/listItems', { maxPage: 200 })
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 4, payload: [mock1, mock2] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 4, payload: [mock3, mock4] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 3, total: 4, payload: [mock5, mock6] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 4, total: 4, payload: [mock7] })
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4, mock5, mock6, mock7])
+    done()
+  })
+
+  test('the a limited list is fetched pages by pages, until the end when maxPage = 0', async done => {
+    await store.dispatch('items/listItems', { maxPage: 0 })
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 4, payload: [mock1, mock2] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 4, payload: [mock3, mock4] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 3, total: 4, payload: [mock5, mock6] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 4, total: 4, payload: [mock7] })
+    expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4, mock5, mock6, mock7])
+    done()
+  })
+
+  test('the a limited list is fetched pages by pages, until the end when maxPage < 0', async done => {
+    await store.dispatch('items/listItems', { maxPage: -1 })
+    expect(mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 1, total: 4, payload: [mock1, mock2] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 2, total: 4, payload: [mock3, mock4] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 3, total: 4, payload: [mock5, mock6] })
+    expect(mutations.listItemsPartialSuccess).toHaveBeenCalledWith(expect.any(Object), { page: 4, total: 4, payload: [mock7] })
     expect(mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), [mock1, mock2, mock3, mock4, mock5, mock6, mock7])
     done()
   })

@@ -21,13 +21,23 @@ export const makeDefaultAction = (mutationName, apiAction) => ({ commit }, idOrD
 
 export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOrData) => {
   return new Promise(async (resolve, reject) => {
-    // Committing mutation of pending state for current action
-    commit(mutationName + 'Pending', idOrData)
-
     let page = 1
     let total = 1
     let results = []
     let keepGoing = true
+
+    let maxPage = 0
+    // Be careful, checking for idOrData['maxPage'] will return false when maxPage = 0
+    if (idOrData && 'maxPage' in idOrData) {
+      maxPage = idOrData['maxPage'] || 0
+      delete idOrData['maxPage']
+      if (Object.keys(idOrData).length === 0) {
+        idOrData = undefined
+      }
+    }
+
+    // Committing mutation of pending state for current action
+    commit(mutationName + 'Pending', idOrData)
 
     while (keepGoing) {
       let response
@@ -47,10 +57,10 @@ export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOr
       results.push(...payload.results)
       commit(mutationName + 'PartialSuccess', { payload: payload.results, page, total })
 
-      if (payload.next) {
-        page += 1
-      } else {
+      if (!payload.next || (maxPage > 0 && page === maxPage)) {
         keepGoing = false
+      } else {
+        page += 1
       }
     }
 
