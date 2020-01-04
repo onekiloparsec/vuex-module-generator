@@ -5,6 +5,7 @@ import forEach from 'lodash/forEach'
 import merge from 'lodash/merge'
 import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
+import includes from 'lodash/includes'
 
 import { makeAPIPoint } from './resourceGenerator'
 import { makeDefaultAction, makePagedAPIAction } from './storeActions'
@@ -59,12 +60,12 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   /* ------------ Vuex Mutations ------------ */
 
-  forEach(actionNames.filter(a => lcrud.replace('p', 'l').includes(a.charAt(0))), actionName => {
+  forEach(actionNames.filter(a => includes(lcrud.replace('p', 'l'), a.charAt(0))), actionName => {
     merge(mutations, {
       [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
         // Update crud state only.
-        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? true : payload
+        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? true : payload
         if (actionName === 'list') {
           state[moduleNames.state.pageCurrent] = 0
           state[moduleNames.state.pageTotal] = 0
@@ -74,17 +75,17 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
         // Update list/tree and selection(s) state
         mutationSuccesses[actionName](state, payload)
         // Update crud state.
-        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
+        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? false : null
       },
       [moduleNames.mutations.crud[actionName] + 'Failure'] (state, payload) {
         // payload is only error object
         // Update crud state only
-        state[moduleNames.state.crud][actionName] = (boolActionNames.includes(actionName)) ? false : null
+        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? false : null
       }
     })
   })
 
-  if (lcrud.includes('p')) {
+  if (includes(lcrud, 'p')) {
     mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
       const { payload, page, total } = data
       state[moduleNames.state.pageCurrent] = page
@@ -134,14 +135,14 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   /* ------------ Vuex Actions ------------ */
 
-  forEach(actionNames.filter(a => lcrud.includes(a.charAt(0))), actionName => {
+  forEach(actionNames.filter(a => includes(lcrud, a.charAt(0))), actionName => {
     const mutationName = moduleNames.mutations.crud[actionName]
     actions[moduleNames.actions[actionName]] = makeDefaultAction(mutationName, apiActions[actionName])
   })
 
   // Paged List API Action
 
-  if (lcrud.includes('p')) {
+  if (includes(lcrud, 'p')) {
     // If we add 'p' to the lcrud parameter, whatever the presence of an 'l', we override
     // the list action by the paged list one.
     const actionName = 'list'

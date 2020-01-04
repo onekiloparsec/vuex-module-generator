@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import concat from 'lodash/concat'
+import includes from 'lodash/includes'
 import findIndex from 'lodash/findIndex'
 
 import { mutationsSuccessRUD, recurseDown } from './utils'
@@ -11,9 +12,9 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
     // list is list, no need of idOrData here.
     state[listName] = itemsList
     // filter out items that are not known anymore. do not use IDs! objects may have changed
-    state[selectionName] = state[selectionName].filter(item => itemsList.includes(item))
+    state[selectionName] = state[selectionName].filter(item => includes(itemsList, item))
     // also clear single selection if necessary
-    if (itemsList && itemsList.includes(state[singleSelectionName]) === false) {
+    if (itemsList && includes(itemsList, state[singleSelectionName]) === false) {
       state[singleSelectionName] = null
     }
   },
@@ -22,9 +23,9 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
     // Append new items inside list
     state[listName].push(...itemsList)
     // filter out items that are not known anymore. do not use IDs! objects may have changed
-    state[selectionName] = state[selectionName].filter(item => itemsList.includes(item))
+    state[selectionName] = state[selectionName].filter(item => includes(itemsList, item))
     // also clear single selection if necessary
-    if (state[listName].includes(state[singleSelectionName]) === false) {
+    if (includes(state[listName], state[singleSelectionName]) === false) {
       state[singleSelectionName] = null
     }
   },
