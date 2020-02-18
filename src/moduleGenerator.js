@@ -1,3 +1,4 @@
+import isObject from 'lodash/isObject'
 import zipObject from 'lodash/zipObject'
 import findIndex from 'lodash/findIndex'
 import assign from 'lodash/assign'
@@ -65,7 +66,11 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
       [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
         // Update crud state only.
-        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? true : payload
+        let value = true
+        if (!includes(boolActionNames, actionName)) {
+          value = isObject(payload) ? payload[idKey] : payload
+        }
+        state[moduleNames.state.crud][actionName] = value
         if (actionName === 'list') {
           state[moduleNames.state.pageCurrent] = 0
           state[moduleNames.state.pageTotal] = 0
@@ -137,7 +142,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   forEach(actionNames.filter(a => includes(lcrud, a.charAt(0))), actionName => {
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makeDefaultAction(mutationName, apiActions[actionName])
+    actions[moduleNames.actions[actionName]] = makeDefaultAction(mutationName, apiActions[actionName], idKey)
   })
 
   // Paged List API Action
@@ -147,7 +152,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     // the list action by the paged list one.
     const actionName = 'list'
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makePagedAPIAction(mutationName, apiActions[actionName])
+    actions[moduleNames.actions[actionName]] = makePagedAPIAction(mutationName, apiActions[actionName], idKey)
   }
 
   return {
