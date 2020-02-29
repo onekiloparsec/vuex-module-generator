@@ -90,7 +90,7 @@ describe('test object actions', () => {
         const mutNames = mutationNames.crud[actionName]
         expect(store.state.items.itemCrud[actionName]).toEqual(null)
         store.commit('items/' + mutNames + 'Pending', mock)
-        expect(store.state.items.itemCrud[actionName]).toEqual(mock)
+        expect(store.state.items.itemCrud[actionName]).toEqual(mock.uuid)
         store.commit('items/' + mutNames + 'Failure')
         expect(store.state.items.itemCrud[actionName]).toEqual(null)
       }
