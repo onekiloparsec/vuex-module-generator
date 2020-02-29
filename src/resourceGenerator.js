@@ -59,6 +59,7 @@ const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
     options: (uuid) => obj._http.options(obj.url(uuid)),
     post: (data) => obj._http.post(obj.url(), data),
     put: (uuid, data) => obj._http.put(obj.url(uuid), data),
+    patch: (uuid, data) => obj._http.patch(obj.url(uuid), data),
     delete: (uuid) => obj._http.delete(obj.url(uuid))
   }
 

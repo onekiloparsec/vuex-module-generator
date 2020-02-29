@@ -25,6 +25,7 @@ const createModuleNames = (root) => {
         list: `list${pluralCapitalized}`,
         create: `create${singularCapitalized}`,
         read: `read${singularCapitalized}`,
+        swap: `swap${singularCapitalized}`,
         update: `update${singularCapitalized}`,
         delete: `delete${singularCapitalized}`
       },
@@ -33,10 +34,11 @@ const createModuleNames = (root) => {
       updateList: `update${pluralCapitalized}List`
     },
 
-    actions: { // not put inside an even-more-nested 'crud' object, as in mutations...
+    actions: {
       list: `list${pluralCapitalized}`,
       create: `create${singularCapitalized}`,
       read: `read${singularCapitalized}`,
+      swap: `swap${singularCapitalized}`,
       update: `update${singularCapitalized}`,
       delete: `delete${singularCapitalized}`
     }

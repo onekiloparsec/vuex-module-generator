@@ -20,7 +20,8 @@ const createApiActions = (api, idKey, dataKey) => ({
     }
   },
   read: (obj) => api.get(obj.toString()), // obj is assumed to be a id string.
-  update: (obj) => api.put(obj[idKey].toString(), obj[dataKey]), // obj is assumed to be an object, inside which we have an id, and a data payload.
+  swap: (obj) => api.put(obj[idKey].toString(), obj[dataKey]), // obj is assumed to be an object, inside which we have an id, and a data payload.
+  update: (obj) => api.patch(obj[idKey].toString(), obj[dataKey]), // obj is assumed to be an object, inside which we have an id, and a data payload.
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 

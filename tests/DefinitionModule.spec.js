@@ -8,7 +8,7 @@ const http = {
   delete: jest.fn()
 }
 
-const defaultCrud = { list: false, create: false, read: null, update: null, delete: null }
+const defaultCrud = { list: false, create: false, read: null, swap: null, update: null, delete: null }
 const API_URL = 'http://localhost:8080/'
 
 describe('test actions creation based on last parameter', () => {
@@ -19,7 +19,7 @@ describe('test actions creation based on last parameter', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lcrud',
+      lcrusd: 'lcrusd',
       allowMultipleSelection: true,
       allowTree: false
     })
@@ -29,7 +29,7 @@ describe('test actions creation based on last parameter', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lcrud',
+      lcrusd: 'lcrusd',
       allowMultipleSelection: true,
       allowTree: true
     })
@@ -55,14 +55,14 @@ describe('test actions creation based on last parameter', () => {
     }
   })
 
-  test('only specified lcrud actions are available', () => {
+  test('only specified lcrusd actions are available', () => {
     const listItems = makeModule({
       http: http,
       apiURL: API_URL,
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lrd',
+      lcrusd: 'lrd',
       allowMultipleSelection: true,
       allowTree: false
     })
@@ -72,7 +72,7 @@ describe('test actions creation based on last parameter', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lrd',
+      lcrusd: 'lrd',
       allowMultipleSelection: true,
       allowTree: true
     })
@@ -115,7 +115,7 @@ describe('test actions creation based on last parameter', () => {
       idKey: 'subdomain',
       allowTree: false,
       allowMultipleSelection: false,
-      lcrud: 'lr' // read-only
+      lcrusd: 'lr' // read-only
     })
 
     expect(organisations.mutations['listOrganisationsPending']).toBeDefined()

@@ -16,7 +16,7 @@ const http = {
 
 const API_URL = 'http://localhost:8080/'
 const mutationNames = createModuleNames('item').mutations
-const objActionNames = ['read', 'update', 'delete']
+const objActionNames = ['read', 'update', 'swap', 'delete']
 const boolActionNames = ['list', 'create']
 
 let listStore = null
@@ -31,8 +31,8 @@ beforeEach(() => {
         apiURL: API_URL,
         apiPath: 'items/',
         root: 'item',
-        idKey: 'id',
-        lcrud: 'lcrud',
+        idKey: 'uuid',
+        lcrusd: 'lcrusd',
         allowMultipleSelection: true,
         allowTree: false
       })
@@ -46,8 +46,8 @@ beforeEach(() => {
         apiURL: API_URL,
         apiPath: 'items/',
         root: 'item',
-        idKey: 'id',
-        lcrud: 'lcrud',
+        idKey: 'uuid',
+        lcrusd: 'lcrusd',
         allowMultipleSelection: true,
         allowTree: true
       })

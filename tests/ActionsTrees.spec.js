@@ -49,7 +49,7 @@ describe('test async api actions', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lcrud',
+      lcrusd: 'lcrusd',
       allowMultipleSelection: true,
       allowTree: true
     })

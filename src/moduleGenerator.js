@@ -18,8 +18,8 @@ import createMutationSuccesses from './mutationsSuccesses'
 export const TREE_PARENT_ID = 'tree_parent_id'
 
 
-const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrud, customGetters }) => {
-  lcrud = lcrud || 'lr' // read-only
+const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrusd, customGetters }) => {
+  lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
   const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
@@ -27,9 +27,9 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   const moduleNames = createModuleNames(root)
   const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
 
-  const actionNames = ['list', 'create', 'read', 'update', 'delete']
+  const actionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
   const boolActionNames = ['list', 'create']
-  const defaultActionStates = [false, false, null, null, null]
+  const defaultActionStates = [false, false, null, null, null, null]
 
   /* ------------ Vuex Elements ------------ */
 
@@ -61,7 +61,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   /* ------------ Vuex Mutations ------------ */
 
-  forEach(actionNames.filter(a => includes(lcrud.replace('p', 'l'), a.charAt(0))), actionName => {
+  forEach(actionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0))), actionName => {
     merge(mutations, {
       [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
         // payload is only idOrData
@@ -90,7 +90,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     })
   })
 
-  if (includes(lcrud, 'p')) {
+  if (includes(lcrusd, 'p')) {
     mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
       const { payload, page, total } = data
       state[moduleNames.state.pageCurrent] = page
@@ -104,7 +104,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     }
   }
 
-  // Non-(L)CRUD mutations :
+  // Non-(L)CRU(S)D mutations :
 
   mutations[moduleNames.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
@@ -140,15 +140,15 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   /* ------------ Vuex Actions ------------ */
 
-  forEach(actionNames.filter(a => includes(lcrud, a.charAt(0))), actionName => {
+  forEach(actionNames.filter(a => includes(lcrusd, a.charAt(0))), actionName => {
     const mutationName = moduleNames.mutations.crud[actionName]
     actions[moduleNames.actions[actionName]] = makeDefaultAction(mutationName, apiActions[actionName], idKey)
   })
 
   // Paged List API Action
 
-  if (includes(lcrud, 'p')) {
-    // If we add 'p' to the lcrud parameter, whatever the presence of an 'l', we override
+  if (includes(lcrusd, 'p')) {
+    // If we add 'p' to the lcrusd parameter, whatever the presence of an 'l', we override
     // the list action by the paged list one.
     const actionName = 'list'
     const mutationName = moduleNames.mutations.crud[actionName]

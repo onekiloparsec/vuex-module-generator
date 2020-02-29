@@ -93,6 +93,27 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
     }
   },
 
+  // SWAP mutation will do the same as READ
+  swap: (state, obj) => {
+    const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
+
+    if (listCursor) {
+      listCursor.list.splice(listCursor.index, 1, obj)
+      Vue.set(state, listName, new Array(...state[listName]))
+    } else {
+      state[listName].push(obj)
+    }
+
+    if (selectionCursor) {
+      selectionCursor.list.splice(selectionCursor.index, 1, obj)
+      Vue.set(state, selectionName, new Array(...state[selectionName]))
+    }
+
+    if (updateSingleSelection) {
+      state[singleSelectionName] = obj
+    }
+  },
+
   // DELETE mutation will...
   delete: (state, objID) => {
     const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, objID)

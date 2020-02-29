@@ -42,7 +42,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: false
         })
@@ -57,7 +57,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: true
         })
@@ -123,7 +123,7 @@ describe('test actions after LIST successes without selection', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: false
         })
@@ -138,7 +138,7 @@ describe('test actions after LIST successes without selection', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: true
         })
@@ -201,7 +201,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: false
         })
@@ -216,7 +216,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: true
         })
@@ -331,7 +331,7 @@ describe('test actions successes WITH selection and update of list', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: false
         })
@@ -346,7 +346,7 @@ describe('test actions successes WITH selection and update of list', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: true
         })
@@ -384,7 +384,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: false,
           allowTree: false
         })
@@ -399,7 +399,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'id',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: false,
           allowTree: true
         })

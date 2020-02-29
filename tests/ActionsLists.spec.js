@@ -58,7 +58,7 @@ describe('test async api actions on module directly', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lcrud',
+      lcrusd: 'lcrusd',
       allowMultipleSelection: false,
       allowTree: false
     })
@@ -103,7 +103,7 @@ describe('test async api actions inside a valid store', () => {
       apiPath: 'items/',
       root: 'item',
       idKey: 'uuid',
-      lcrud: 'lcrud',
+      lcrusd: 'lcrusd',
       allowMultipleSelection: false,
       allowTree: false
     })

@@ -32,7 +32,7 @@ describe('test selection of items Multiple = True', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'uuid',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: false
         })
@@ -47,7 +47,7 @@ describe('test selection of items Multiple = True', () => {
           apiPath: 'items/',
           root: 'item',
           idKey: 'uuid',
-          lcrud: 'lcrud',
+          lcrusd: 'lcrusd',
           allowMultipleSelection: true,
           allowTree: true
         })
