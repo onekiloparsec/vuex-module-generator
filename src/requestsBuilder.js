@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil'
 
 import { TREE_PARENT_ID } from './moduleGenerator'
 
-const createApiActions = (api, idKey, dataKey) => ({
+const createRequestsBuilder = (api, idKey, dataKey) => ({
   list: (obj) => {
     if (isString(obj)) {
       return api.get(obj, null) // obj as complement of list endpoint path. Counter-REST principle, but useful sometimes...
@@ -25,4 +25,4 @@ const createApiActions = (api, idKey, dataKey) => ({
   delete: (obj) => api.delete(obj.toString()) // // idOrData is assumed to be a id.
 })
 
-export default createApiActions
+export { createRequestsBuilder }

@@ -8,10 +8,10 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 
-import { makeAPIPoint } from './resourceGenerator'
+import { createRequestsBuilder } from './requestsBuilder'
+import { makeAPIEndpoint } from './apiEndpointsBuilder'
 import { makeDefaultAction, makePagedAPIAction } from './storeActions'
 
-import createApiActions from './apiActions'
 import createModuleNames from './moduleNames'
 import createMutationSuccesses from './mutationsSuccesses'
 
@@ -22,8 +22,8 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
-  const api = makeAPIPoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
-  const apiActions = createApiActions(api, idKey, 'data')
+  const api = makeAPIEndpoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
+  const apiActions = createRequestsBuilder(api, idKey, 'data')
   const moduleNames = createModuleNames(root)
   const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
 

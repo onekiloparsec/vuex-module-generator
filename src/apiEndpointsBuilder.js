@@ -4,7 +4,7 @@ import isObject from 'lodash/isObject'
 import isNumber from 'lodash/isNumber'
 import forEach from 'lodash/forEach'
 
-const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
+const makeAPIEndpoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   // if (http == null) {
   //   throw Error('Missing http module to make requests!')
   // }
@@ -64,7 +64,7 @@ const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   }
 
   obj.subresource = (subpath) => {
-    return makeAPIPoint({
+    return makeAPIEndpoint({
       http: obj._http,
       baseURL: baseURL,
       resourcePath: obj._resourcePath,
@@ -74,7 +74,7 @@ const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   }
 
   obj.addSubresource = (subpath) => {
-    obj[subpath.slice(0, -1)] = makeAPIPoint({
+    obj[subpath.slice(0, -1)] = makeAPIEndpoint({
       http: obj._http,
       baseURL: baseURL,
       resourcePath: obj._resourcePath,
@@ -92,4 +92,4 @@ const makeAPIPoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   return obj
 }
 
-export { makeAPIPoint }
+export { makeAPIEndpoint }

@@ -1,2 +1,3 @@
-export * from './resourceGenerator'
+export * from './apiEndpointsBuilder'
+export * from './requestsBuilder'
 export * from './moduleGenerator'
