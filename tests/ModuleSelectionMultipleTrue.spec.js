@@ -95,6 +95,23 @@ describe('test selection of items Multiple = True', () => {
     }
   })
 
+  test('Selection with multiple valid items at once', () => {
+    for (const store of stores) {
+      store.commit('items/selectMultipleItems', [mock1, mock3])
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
+      store.commit('items/selectItem', mock3)
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(false)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
+      store.commit('items/selectMultipleItems', [mock2, mock3])
+      expect(store.getters['items/isItemSelected'](mock1)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock2)).toEqual(true)
+      expect(store.getters['items/isItemSelected'](mock3)).toEqual(true)
+    }
+  })
+
   test('Selection with unknown item', () => {
     // object is nonetheless selected even if it is not part of the list !
     // this should certainly change, but it is tricky to maintain selection inside a tree

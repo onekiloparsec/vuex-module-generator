@@ -117,6 +117,17 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     }
   }
 
+  mutations[moduleNames.mutations.selectMultiple] = (state, selectedItems) => {
+    if (selectedItems.length) {
+      state[moduleNames.state.singleSelection] = null
+      if (state.__allowMultipleSelection__) {
+        state[moduleNames.state.selection] = uniq(concat(state[moduleNames.state.selection], selectedItems))
+      } else {
+        state[moduleNames.state.selection] = concat([], selectedItems)
+      }
+    }
+  }
+
   mutations['de' + moduleNames.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
       const index = findIndex(state[moduleNames.state.selection], item => item === selectedItem)

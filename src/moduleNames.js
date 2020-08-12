@@ -30,6 +30,7 @@ const createModuleNames = (root) => {
         delete: `delete${singularCapitalized}`
       },
       select: `select${singularCapitalized}`,
+      selectMultiple: `selectMultiple${pluralCapitalized}`,
       clearSelection: `clear${pluralCapitalized}Selection`,
       updateList: `update${pluralCapitalized}List`
     },
