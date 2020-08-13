@@ -14,8 +14,7 @@
     "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "prepare": "npm run build",
-    "prepublish": "npm run build"
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "lodash": "^4.17.15",
