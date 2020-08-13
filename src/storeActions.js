@@ -55,7 +55,7 @@ export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOr
         total = Math.ceil(payload.count / payload.results.length)
       }
       results.push(...payload.results)
-      commit(mutationName + 'PartialSuccess', Object.freeze({ payload: payload.results, page, total }))
+      commit(mutationName + 'PartialSuccess', { payload: Object.freeze(payload.results), page, total })
 
       if (!payload.next || (maxPage > 0 && page === maxPage)) {
         keepGoing = false
