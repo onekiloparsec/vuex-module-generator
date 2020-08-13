@@ -1,3 +1,5 @@
+import isArray from 'lodash/isArray'
+
 export const makeDefaultAction = (mutationName, apiAction) => ({ commit }, idOrData) => {
   return new Promise((resolve, reject) => {
     // Committing mutation of pending state for current action
@@ -8,7 +10,11 @@ export const makeDefaultAction = (mutationName, apiAction) => ({ commit }, idOrD
       .then(response => {
         // Committing mutation of success state for current action
         const payload = response.body || response.data
-        commit(mutationName + 'Success', Object.freeze(payload))
+        if (isArray(payload)) {
+          commit(mutationName + 'Success', payload.map(item => Object.freeze(item)))
+        } else {
+          commit(mutationName + 'Success', Object.freeze(payload))
+        }
         resolve(payload)
       })
       .catch(error => {
@@ -55,7 +61,7 @@ export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOr
         total = Math.ceil(payload.count / payload.results.length)
       }
       results.push(...payload.results)
-      commit(mutationName + 'PartialSuccess', { payload: Object.freeze(payload.results), page, total })
+      commit(mutationName + 'PartialSuccess', { payload: payload.results.map(item => Object.freeze(item)), page, total })
 
       if (!payload.next || (maxPage > 0 && page === maxPage)) {
         keepGoing = false
@@ -64,7 +70,7 @@ export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOr
       }
     }
 
-    commit(mutationName + 'Success', Object.freeze(results))
+    commit(mutationName + 'Success', results.map(item => Object.freeze(item)))
     resolve(results)
   })
 }
