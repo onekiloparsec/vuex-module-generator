@@ -5,6 +5,7 @@ export const makeDefaultAction = (mutationName, apiAction) => ({ commit }, idOrD
     // Committing mutation of pending state for current action
     commit(mutationName + 'Pending', idOrData)
 
+    const deleteId = mutationName.startsWith('delete') ? idOrData : null
     // Doing the actual fetch request to API endpoint
     apiAction(idOrData)
       .then(response => {
@@ -13,7 +14,7 @@ export const makeDefaultAction = (mutationName, apiAction) => ({ commit }, idOrD
         if (isArray(payload)) {
           commit(mutationName + 'Success', payload.map(item => Object.freeze(item)))
         } else {
-          commit(mutationName + 'Success', Object.freeze(payload))
+          commit(mutationName + 'Success', payload ? Object.freeze(payload) : deleteId)
         }
         resolve(payload)
       })
