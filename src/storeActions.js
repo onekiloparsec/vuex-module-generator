@@ -54,6 +54,7 @@ export const makePagedAPIAction = (mutationName, apiAction) => ({ commit }, idOr
         keepGoing = false
         commit(mutationName + 'Failure', error)
         reject(error)
+        return
       }
 
       const payload = response.body || response.data
