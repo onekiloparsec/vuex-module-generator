@@ -91,8 +91,9 @@ describe('test async api actions on module directly', () => {
   })
 })
 
+// Tests at the mutations level
 
-describe('test async api actions inside a valid store', () => {
+describe('test async list & read api mutations inside a valid store', () => {
   let store
   let mutations
 
