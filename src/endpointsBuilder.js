@@ -3,11 +3,13 @@ import isString from 'lodash/isString'
 import isObject from 'lodash/isObject'
 import isNumber from 'lodash/isNumber'
 import forEach from 'lodash/forEach'
+import isNil from 'lodash/isNil'
+import { TREE_PARENT_ID } from './moduleGenerator'
 
 // Create an object fully set up to make HTTP requests to a REST endpoint.
 // Start with obj = makeAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 
-const makeAPIEndpoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
+const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }) => {
   // if (http == null) {
   //   throw Error('Missing http module to make requests!')
   // }
@@ -58,12 +60,76 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
       return p
     },
 
-    get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
-    options: (uuid) => obj._http.options(obj.url(uuid)),
-    post: (data) => obj._http.post(obj.url(), data),
-    put: (uuid, data) => obj._http.put(obj.url(uuid), data),
-    patch: (uuid, data) => obj._http.patch(obj.url(uuid), data),
-    delete: (uuid) => obj._http.delete(obj.url(uuid))
+    _get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
+    _options: (uuid) => obj._http.options(obj.url(uuid)),
+    _post: (data) => obj._http.post(obj.url(), data),
+    _put: (uuid, data) => obj._http.put(obj.url(uuid), data),
+    _patch: (uuid, data) => obj._http.patch(obj.url(uuid), data),
+    _delete: (uuid) => obj._http.delete(obj.url(uuid)),
+
+    list: (obj) => isString(obj) ? this._get(obj, null) : this._get(null, obj),
+
+    // The presence of TREE_PARENT_ID decides whether one add a child to a tree, or simply an item to a list
+    create: (obj) => isNil(obj[TREE_PARENT_ID]) ? this._post(obj) : this.subresource(obj[TREE_PARENT_ID].toString() + '/').post(obj['data']),
+
+    read: (obj) => this._get(obj.toString()), // obj is assumed to be a id string.
+    swap: (obj) => this._put(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
+    update: (obj) => this._patch(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
+    delete: (obj) => this._delete(obj.toString()), // // idOrData is assumed to be a id.
+
+    pages: (obj, notifyCallback, prefix = '') => {
+      return new Promise(async (resolve, reject) => {
+        let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
+
+        // Be careful, checking for idOrData['maxPage'] will return false when maxPage = 0
+        if (obj && 'maxPage' in obj) {
+          maxPage = obj['maxPage'] || 0
+          delete obj['maxPage']
+          if (Object.keys(obj).length === 0) {
+            obj = undefined
+          }
+        }
+
+        if (notifyCallback) {
+          notifyCallback(prefix + 'Pending', obj)
+        }
+
+        while (keepGoing) {
+          let response
+          try {
+            // Doing the actual fetch request to API endpoint
+            response = await this._get(null, { ...obj, page: page })
+          } catch (error) {
+            keepGoing = false
+            if (notifyCallback) {
+              notifyCallback(prefix + 'Failure', error)
+            }
+            reject(error)
+            return
+          }
+
+          const data = response.body || response.data
+          if (page === 1) {
+            total = Math.ceil(data.count / data.results.length)
+          }
+          results.push(...data.results)
+          if (notifyCallback) {
+            notifyCallback(prefix + 'PartialSuccess', { data: data.results.map(item => Object.freeze(item)), page, total })
+          }
+
+          if (!data.next || (maxPage > 0 && page === maxPage)) {
+            keepGoing = false
+          } else {
+            page += 1
+          }
+        }
+
+        if (notifyCallback) {
+          notifyCallback(prefix + 'Success', results.map(item => Object.freeze(item)))
+        }
+        resolve(results)
+      })
+    }
   }
 
   obj.subresource = (subpath) => {

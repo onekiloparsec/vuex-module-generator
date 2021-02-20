@@ -8,7 +8,6 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 
-import { makeExtendedCrudRequests } from './requestsBuilder'
 import { makeAPIEndpoint } from './endpointsBuilder'
 import { makeDefaultStoreAction, makePagedStoreAction } from './storeActions'
 
@@ -22,8 +21,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
-  const endpoint = makeAPIEndpoint({ http: http, baseURL: apiURL, resourcePath: apiPath })
-  const crudRequests = makeExtendedCrudRequests(endpoint, idKey, 'data')
+  const endpoint = makeAPIEndpoint({ http: http, baseURL: apiURL, resourcePath: apiPath, idKey: idKey })
   const moduleNames = createModuleNames(root)
   const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
 
@@ -153,7 +151,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
 
   forEach(actionNames.filter(a => includes(lcrusd, a.charAt(0))), actionName => {
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makeDefaultStoreAction(mutationName, crudRequests[actionName], idKey)
+    actions[moduleNames.actions[actionName]] = makeDefaultStoreAction(mutationName, endpoint[actionName], idKey)
   })
 
   // Paged List API Action
@@ -163,7 +161,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
     // the list action by the paged list one.
     const actionName = 'list'
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, crudRequests[actionName], idKey)
+    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, endpoint['pages'], idKey)
   }
 
   return {
