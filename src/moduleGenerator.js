@@ -167,7 +167,7 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   }
 
   return {
-    _api: endpoint,
+    _endpoint: endpoint,
     namespaced: true,
     state,
     getters: _getters,
