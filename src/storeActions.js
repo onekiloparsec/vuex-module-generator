@@ -1,9 +1,9 @@
 import { makeDefaultFetchPromise, makePagedFetchPromise } from './fetchPromises'
 
-export const makeDefaultStoreAction = (mutationName, apiAction) => ({ commit }, idOrData) => {
-  return makeDefaultFetchPromise(mutationName, apiAction, commit, idOrData)
+export const makeDefaultStoreAction = (mutationName, crudRequest) => ({ commit }, idOrData) => {
+  return makeDefaultFetchPromise(mutationName, crudRequest, commit, idOrData)
 }
 
-export const makePagedStoreAction = (mutationName, apiAction) => ({ commit }, idOrData) => {
-  return makePagedFetchPromise(mutationName, apiAction, commit, idOrData)
+export const makePagedStoreAction = (mutationName, crudRequest) => ({ commit }, idOrData) => {
+  return makePagedFetchPromise(mutationName, crudRequest, commit, idOrData)
 }
