@@ -4,6 +4,9 @@ import isObject from 'lodash/isObject'
 import isNumber from 'lodash/isNumber'
 import forEach from 'lodash/forEach'
 
+// Create an object fully set up to make HTTP requests to a REST endpoint.
+// Start with obj = makeAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
+
 const makeAPIEndpoint = ({ http, baseURL, resourcePath, subPath, parent }) => {
   // if (http == null) {
   //   throw Error('Missing http module to make requests!')
