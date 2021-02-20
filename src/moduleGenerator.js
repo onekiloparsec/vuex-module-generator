@@ -8,9 +8,9 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 
-import { makeDefaultAction, makePagedAPIAction } from './storeActions'
 import { makeExtendedCrudRequests } from './requestsBuilder'
 import { makeAPIEndpoint } from './endpointsBuilder'
+import { makeDefaultStoreAction, makePagedStoreAction } from './storeActions'
 
 import createModuleNames from './moduleNames'
 import createMutationSuccesses from './mutationsSuccesses'
@@ -91,15 +91,15 @@ const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultip
   })
 
   if (includes(lcrusd, 'p')) {
-    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, data) => {
-      const { payload, page, total } = data
+    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, payload) => {
+      const { data, page, total } = payload
       state[moduleNames.state.pageCurrent] = page
       state[moduleNames.state.pageTotal] = total || page
       if (page === 1) { // At start, clear list and selection
         mutationSuccesses['list'](state, [])
       }
       // Then, update list/tree and selection(s) state
-      mutationSuccesses['partialList'](state, payload)
+      mutationSuccesses['partialList'](state, data)
       // Do not update CRUD state object, since requests are still on going...
     }
   }
