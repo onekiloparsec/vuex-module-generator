@@ -144,7 +144,7 @@ describe('test async list & read api mutations inside a valid store', () => {
     // Check at top of file for mocked requests
     await store.dispatch('items/deleteItem', 2)
     expect(mutations.deleteItemPending).toHaveBeenCalledWith(expect.any(Object), 2)
-    expect(mutations.deleteItemSuccess).toHaveBeenCalledWith(expect.any(Object), null)
+    expect(mutations.deleteItemSuccess).toHaveBeenCalledWith(expect.any(Object), 2)
     done()
   })
 })
