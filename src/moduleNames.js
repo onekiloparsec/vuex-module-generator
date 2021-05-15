@@ -1,23 +1,19 @@
-const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
+import { capitalizeFirstChar, pluralize } from '@/utils'
 
 const createModuleNames = (root) => {
   const singular = root.toLowerCase()
-  const plural = (singular.slice(-1) === 'y') ? singular.substr(0, singular.length - 1) + 'ies' : singular + 's'
+  const plural = pluralize(singular)
   const singularCapitalized = capitalizeFirstChar(singular)
   const pluralCapitalized = capitalizeFirstChar(plural)
 
   return {
     state: {
       list: `${plural}`,
-      crud: `${singular}Crud`,
-      selection: `selected${pluralCapitalized}`,
-      singleSelection: `selected${singularCapitalized}`,
+      status: `${plural}LoadingStatus`,
+      selection: `selected${singularCapitalized}`,
+      selections: `selected${pluralCapitalized}`,
       pageCurrent: `current${pluralCapitalized}Page`,
       pageTotal: `total${pluralCapitalized}PageCount`
-    },
-
-    getters: {
-      isSelected: `is${singularCapitalized}Selected`
     },
 
     mutations: {

@@ -1,10 +1,8 @@
 import Vue from 'vue'
 import concat from 'lodash/concat'
 import includes from 'lodash/includes'
-import findIndex from 'lodash/findIndex'
 
-import { mutationsSuccessRUD, recurseDown } from './utils'
-import { TREE_PARENT_ID } from './moduleGenerator'
+import { mutationsSuccessRUD } from './utils'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
 const createMutationSuccesses = (listName, selectionName, singleSelectionName, idKey) => ({
@@ -32,28 +30,16 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
 
   // CREATE mutation will append object to list.
   create: (state, obj) => {
-    if (state.__allowTree__) {
-      // obj is the newly created object.
-      // idOrData is the POST request payload object containing:
-      // -- the data with which obj has been created, and
-      // -- the TREE_PARENT_ID to attach to. TREE_PARENT_ID *must* be present.
-      recurseDown(state[listName], obj[TREE_PARENT_ID], (arr, id) => {
-        const index = findIndex(arr, item => item[idKey] === id)
-        if (index !== -1) {
-          arr.push(obj)
-          return false
-        }
-      })
-      // Using Vue.set() to ensure reactivity when changing a nested array
-      Vue.set(state, listName, new Array(...state[listName]))
-    } else {
-      state[listName] = concat(state[listName], obj)
-    }
+    state[listName] = concat(state[listName], obj)
   },
 
   // READ mutation will update the object if it exists already, or push it inside list if not yet present.
   read: (state, obj) => {
-    const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
+    const {
+      listCursor,
+      selectionCursor,
+      updateSingleSelection
+    } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
 
     if (listCursor) {
       listCursor.list.splice(listCursor.index, 1, obj)
@@ -74,7 +60,11 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
 
   // UPDATE mutation will do the same as READ
   update: (state, obj) => {
-    const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
+    const {
+      listCursor,
+      selectionCursor,
+      updateSingleSelection
+    } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
 
     if (listCursor) {
       listCursor.list.splice(listCursor.index, 1, obj)
@@ -95,7 +85,11 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
 
   // SWAP mutation will do the same as READ
   swap: (state, obj) => {
-    const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
+    const {
+      listCursor,
+      selectionCursor,
+      updateSingleSelection
+    } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, obj[idKey])
 
     if (listCursor) {
       listCursor.list.splice(listCursor.index, 1, obj)
@@ -116,7 +110,11 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
 
   // DELETE mutation will...
   delete: (state, objID) => {
-    const { listCursor, selectionCursor, updateSingleSelection } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, objID)
+    const {
+      listCursor,
+      selectionCursor,
+      updateSingleSelection
+    } = mutationsSuccessRUD(state[listName], state[selectionName], state[singleSelectionName], idKey, objID)
 
     if (listCursor) {
       listCursor.list.splice(listCursor.index, 1)

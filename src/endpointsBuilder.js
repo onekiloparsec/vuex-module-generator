@@ -1,10 +1,7 @@
-import isFunction from 'lodash/isFunction'
 import isString from 'lodash/isString'
-import isObject from 'lodash/isObject'
-import isNumber from 'lodash/isNumber'
-import forEach from 'lodash/forEach'
 import isNil from 'lodash/isNil'
 import { TREE_PARENT_ID } from './moduleGenerator'
+import { makeURLBuilder } from '@/urlBuilder'
 
 // Create an object fully set up to make HTTP requests to a REST endpoint.
 // Start with obj = makeAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
@@ -20,46 +17,17 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
     throw Error('Missing resourcePath!')
   }
 
-  const obj = {
+  let obj = {
     _http: http,
     _resourcePath: resourcePath,
     _singleUUID: null,
     _subPath: subPath || null,
     _parent: parent || null,
+  }
 
-    url: (uuid, params) => {
-      const url = isFunction(baseURL) ? baseURL() : baseURL
-      let p = url + obj._resourcePath
+  obj.url = makeURLBuilder(obj, baseURL)
 
-      if (obj._parent && obj._parent._singleUUID) {
-        p += obj._parent._singleUUID + '/'
-        obj._parent._singleUUID = null
-      } else if (obj._singleUUID) {
-        p += obj._singleUUID + '/'
-        obj._singleUUID = null
-      }
-
-      if (obj._subPath) {
-        p += obj._subPath
-      }
-      if (uuid) {
-        if (isString(uuid)) {
-          p += uuid + '/'
-        } else if (isNumber(uuid)) {
-          p += uuid.toString() + '/'
-        }
-      }
-      if (params && isObject(params)) {
-        let index = 0
-        forEach(params, function (value, key) {
-          const letter = (index === 0) ? '?' : '&'
-          p += letter + key + '=' + value
-          index += 1
-        })
-      }
-      return p
-    },
-
+  obj = { ...obj,
     _get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
     _options: (uuid) => obj._http.options(obj.url(uuid)),
     _post: (data) => obj._http.post(obj.url(), data),
@@ -76,60 +44,6 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
     swap: (obj) => this._put(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
     update: (obj) => this._patch(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
     delete: (obj) => this._delete(obj.toString()), // // idOrData is assumed to be a id.
-
-    pages: (obj, notifyCallback, prefix = '') => {
-      return new Promise(async (resolve, reject) => {
-        let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
-
-        // Be careful, checking for idOrData['maxPage'] will return false when maxPage = 0
-        if (obj && 'maxPage' in obj) {
-          maxPage = obj['maxPage'] || 0
-          delete obj['maxPage']
-          if (Object.keys(obj).length === 0) {
-            obj = undefined
-          }
-        }
-
-        if (notifyCallback) {
-          notifyCallback(prefix + 'Pending', obj)
-        }
-
-        while (keepGoing) {
-          let response
-          try {
-            // Doing the actual fetch request to API endpoint
-            response = await this._get(null, { ...obj, page: page })
-          } catch (error) {
-            keepGoing = false
-            if (notifyCallback) {
-              notifyCallback(prefix + 'Failure', error)
-            }
-            reject(error)
-            return
-          }
-
-          const data = response.body || response.data
-          if (page === 1) {
-            total = Math.ceil(data.count / data.results.length)
-          }
-          results.push(...data.results)
-          if (notifyCallback) {
-            notifyCallback(prefix + 'PartialSuccess', { data: data.results.map(item => Object.freeze(item)), page, total })
-          }
-
-          if (!data.next || (maxPage > 0 && page === maxPage)) {
-            keepGoing = false
-          } else {
-            page += 1
-          }
-        }
-
-        if (notifyCallback) {
-          notifyCallback(prefix + 'Success', results.map(item => Object.freeze(item)))
-        }
-        resolve(results)
-      })
-    }
   }
 
   obj.subresource = (subpath) => {
@@ -140,17 +54,6 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
       subPath: subpath,
       parent: obj
     })
-  }
-
-  obj.addSubresource = (subpath) => {
-    obj[subpath.slice(0, -1)] = makeAPIEndpoint({
-      http: obj._http,
-      baseURL: baseURL,
-      resourcePath: obj._resourcePath,
-      subPath: subpath,
-      parent: obj
-    })
-    return obj
   }
 
   obj.single = (uuid) => {

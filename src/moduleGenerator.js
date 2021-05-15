@@ -1,177 +1,92 @@
-import isObject from 'lodash/isObject'
 import zipObject from 'lodash/zipObject'
 import findIndex from 'lodash/findIndex'
 import assign from 'lodash/assign'
-import forEach from 'lodash/forEach'
-import merge from 'lodash/merge'
-import uniq from 'lodash/uniq'
-import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 
-import { makeAPIEndpoint } from './endpointsBuilder'
 import { makeDefaultStoreAction, makePagedStoreAction } from './storeActions'
 
 import createModuleNames from './moduleNames'
-import createMutationSuccesses from './mutationsSuccesses'
+import { mutationsConfigurator } from '@/moduleMutationsConfigurator'
 
 export const TREE_PARENT_ID = 'tree_parent_id'
 
 
-const makeModule = ({ http, apiURL, apiPath, root, idKey, allowTree, allowMultipleSelection, lcrusd, customGetters }) => {
+const makeModule = ({ endpoint, root, idKey, allowMultipleSelection, lcrusd, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
-  const endpoint = makeAPIEndpoint({ http: http, baseURL: apiURL, resourcePath: apiPath, idKey: idKey })
   const moduleNames = createModuleNames(root)
-  const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
-
   const actionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
-  const boolActionNames = ['list', 'create']
   const defaultActionStates = [false, false, null, null, null, null]
-
-  /* ------------ Vuex Elements ------------ */
-
-  const state = {}
-  let _getters = {}
-  const mutations = {}
-  const actions = {}
 
   /* ------------ Vuex State ------------ */
 
-  state.__allowTree__ = allowTree || false
+  const state = {}
+
+  // Default selection: single, not multiple
   state.__allowMultipleSelection__ = allowMultipleSelection || false
 
+  // The container is an array.
   state[moduleNames.state.list] = []
-  state[moduleNames.state.crud] = zipObject(actionNames, defaultActionStates)
+  // Status object distinguish all with bools for list and create (since we have no ID)
+  state[moduleNames.state.status] = zipObject(actionNames, defaultActionStates)
 
-  state[moduleNames.state.selection] = []
-  state[moduleNames.state.singleSelection] = null
-  state[moduleNames.state.pageCurrent] = 0 // Pages start at index one (1), not 0.
-  state[moduleNames.state.pageTotal] = 0
+  // Selection, single or multiple is handled by a list *and* an object.
+  state[moduleNames.state.selection] = null
+  state[moduleNames.state.selections] = []
+
+  if (includes(lcrusd, 'p')) {
+    // If we use paged-list action, add dedicated state.
+    state[moduleNames.state.pageCurrent] = 0 // Pages start at index one (1), not 0.
+    state[moduleNames.state.pageTotal] = 0
+  }
 
   /* ------------ Vuex Getters ------------ */
 
-  _getters[moduleNames.getters.isSelected] = (state) => (selectedItem) => {
-    return (findIndex(state[moduleNames.state.selection], item => item === selectedItem) !== -1)
-  }
-
+  let _getters = {}
   _getters = assign(_getters, customGetters)
 
   /* ------------ Vuex Mutations ------------ */
 
-  forEach(actionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0))), actionName => {
-    merge(mutations, {
-      [moduleNames.mutations.crud[actionName] + 'Pending'] (state, payload) {
-        // payload is only idOrData
-        // Update crud state only.
-        let value = true
-        if (!includes(boolActionNames, actionName)) {
-          value = isObject(payload) ? payload[idKey] : payload
-        }
-        state[moduleNames.state.crud][actionName] = value
-        if (actionName === 'list') {
-          state[moduleNames.state.pageCurrent] = 0
-          state[moduleNames.state.pageTotal] = 0
-        }
-      },
-      [moduleNames.mutations.crud[actionName] + 'Success'] (state, payload) {
-        // Update list/tree and selection(s) state
-        mutationSuccesses[actionName](state, payload)
-        // Update crud state.
-        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? false : null
-      },
-      [moduleNames.mutations.crud[actionName] + 'Failure'] (state, payload) {
-        // payload is only error object
-        // Update crud state only
-        state[moduleNames.state.crud][actionName] = (includes(boolActionNames, actionName)) ? false : null
-      }
-    })
-  })
-
-  if (includes(lcrusd, 'p')) {
-    mutations[moduleNames.mutations.crud['list'] + 'PartialSuccess'] = (state, payload) => {
-      const { data, page, total } = payload
-      state[moduleNames.state.pageCurrent] = page
-      state[moduleNames.state.pageTotal] = total || page
-      if (page === 1) { // At start, clear list and selection
-        mutationSuccesses['list'](state, [])
-      }
-      // Then, update list/tree and selection(s) state
-      mutationSuccesses['partialList'](state, data)
-      // Do not update CRUD state object, since requests are still on going...
-    }
-  }
-
-  // Non-(L)CRU(S)D mutations :
-
-  mutations[moduleNames.mutations.select] = (state, selectedItem) => {
-    if (selectedItem) {
-      if (state.__allowMultipleSelection__) {
-        state[moduleNames.state.selection] = uniq(concat(state[moduleNames.state.selection], selectedItem))
-      } else {
-        state[moduleNames.state.singleSelection] = selectedItem
-        state[moduleNames.state.selection] = concat([], selectedItem)
-      }
-    }
-  }
-
-  mutations[moduleNames.mutations.selectMultiple] = (state, selectedItems) => {
-    if (selectedItems.length) {
-      state[moduleNames.state.singleSelection] = null
-      if (state.__allowMultipleSelection__) {
-        state[moduleNames.state.selection] = uniq(concat(state[moduleNames.state.selection], selectedItems))
-      } else {
-        state[moduleNames.state.selection] = concat([], selectedItems)
-      }
-    }
-  }
-
-  mutations['de' + moduleNames.mutations.select] = (state, selectedItem) => {
-    if (selectedItem) {
-      const index = findIndex(state[moduleNames.state.selection], item => item === selectedItem)
-      if (index !== -1) {
-        state[moduleNames.state.selection].splice(index, 1)
-      }
-      if (state[moduleNames.state.singleSelection] === selectedItem) {
-        state[moduleNames.state.singleSelection] = null
-      }
-    }
-  }
-
-  mutations[moduleNames.mutations.clearSelection] = (state) => {
-    state[moduleNames.state.selection] = []
-    state[moduleNames.state.singleSelection] = null
-  }
-
-  mutations[moduleNames.mutations.updateList] = (state, newList) => {
-    state[moduleNames.state.list] = newList
-  }
+  const activatedActionNames = actionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
+  const mutations = mutationsConfigurator(activatedActionNames, moduleNames, idKey, lcrusd)
 
   /* ------------ Vuex Actions ------------ */
 
-  forEach(actionNames.filter(a => includes(lcrusd, a.charAt(0))), actionName => {
+  const actions = {}
+
+  // Create default actions for all activated action names defined by lcrusd.
+  activatedActionNames.forEach(actionName => {
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makeDefaultStoreAction(mutationName, endpoint[actionName], idKey)
+    actions[moduleNames.actions[actionName]] = makeDefaultStoreAction(mutationName, endpoint[actionName])
   })
 
-  // Paged List API Action
-
+  // Paged List API Action: replace list with true paged-list workflow (with a list/GET request).
   if (includes(lcrusd, 'p')) {
     // If we add 'p' to the lcrusd parameter, whatever the presence of an 'l', we override
     // the list action by the paged list one.
     const actionName = 'list'
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, endpoint['pages'], idKey)
+    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, endpoint[actionName], idKey)
   }
 
-  return {
-    _endpoint: endpoint,
-    namespaced: true,
-    state,
-    getters: _getters,
-    mutations,
-    actions
+  // We have our module.
+  const module = { _endpoint: endpoint, namespaced: true, state, getters: _getters, mutations, actions }
+
+  // Make it possible to add a submodule, for API endpoints subresources...
+  // For instance 'telescopes/' in '<APIURL>/observingsites/<uuid>/telescopes/'
+  module.addSubmodule = ({ name, subPath, subIdKey, subAllowTree, subAllowMultipleSelection, sublcrusd }) => {
+    module[name] = makeModule({
+      endpoint: endpoint.subresource(subPath),
+      root: name,
+      idKey: subIdKey,
+      allowTree: subAllowTree,
+      allowMultipleSelection: subAllowMultipleSelection,
+      lcrusd: sublcrusd
+    })
   }
+
+  return module
 }
 
 export { makeModule }
