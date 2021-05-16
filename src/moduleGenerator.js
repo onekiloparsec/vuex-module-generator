@@ -1,17 +1,20 @@
 import zipObject from 'lodash/zipObject'
-import findIndex from 'lodash/findIndex'
 import assign from 'lodash/assign'
 import includes from 'lodash/includes'
 
-import { makeDefaultStoreAction, makePagedStoreAction } from './storeActions'
-
 import createModuleNames from './moduleNames'
 import { mutationsConfigurator } from '@/moduleMutationsConfigurator'
+import { makeDefaultFetchPromise, makePagedFetchPromise } from '@/fetchPromisesMaker'
 
-export const TREE_PARENT_ID = 'tree_parent_id'
+export const makeDefaultStoreAction = (mutationName, endpointMethodFunc) => ({ commit }, idOrData) => {
+  return makeDefaultFetchPromise(mutationName, endpointMethodFunc, commit, idOrData)
+}
 
+export const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ commit }, idOrData) => {
+  return makePagedFetchPromise(mutationName, endpointMethodFunc, commit, idOrData)
+}
 
-const makeModule = ({ endpoint, root, idKey, allowMultipleSelection, lcrusd, customGetters }) => {
+export const makeModule = ({ endpoint, root, idKey, allowMultipleSelection, lcrusd, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
@@ -89,4 +92,3 @@ const makeModule = ({ endpoint, root, idKey, allowMultipleSelection, lcrusd, cus
   return module
 }
 
-export { makeModule }
