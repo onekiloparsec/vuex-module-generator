@@ -19,7 +19,7 @@ export const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ com
 const defaultActionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
 const defaultActionStatuses = [false, false, null, null, null, null]
 
-export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, allowMultipleSelection, customGetters }) => {
+export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
@@ -30,10 +30,7 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, allowM
   /* ------------ Vuex State ------------ */
 
   const state = {}
-
-  // Default selection: single, not multiple
-  state.__allowMultipleSelection__ = allowMultipleSelection || false
-
+  
   // The container is an array.
   state[moduleNames.state.list] = []
   // Auxiliary data is put inside an object

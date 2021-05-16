@@ -15,6 +15,8 @@ const http = {
   delete: jest.fn().mockResolvedValue({})
 }
 
+const remoteObjects = [{ name: 'obj1' }, { name: 'obj2' }]
+
 Vue.use(Vuex)
 
 describe('test moduleGenerator', () => {
@@ -161,7 +163,7 @@ describe('test moduleGenerator', () => {
     })
   })
 
-  describe('[module actions runs - full lcrusd - no pages]', () => {
+  describe('[module actions dispatch - full lcrusd - no pages]', () => {
     let items = null
     let store = null
 
@@ -217,6 +219,83 @@ describe('test moduleGenerator', () => {
     test('delete action', () => {
       store.dispatch('items/deleteItem', 'HD 5980')
       expect(http.delete).toHaveBeenCalledWith(`${API_URL}items/HD 5980/`)
+    })
+  })
+
+  describe('[module action-mutations commits - full lcrusd - no pages]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      http.get = jest.fn().mockResolvedValue({ data: remoteObjects })
+      items = makeStoreModule({
+        http: http,
+        baseURL: API_URL,
+        rootName: 'item',
+        lcrusd: 'lcrusd',
+        idKey: 'uuid'
+      })
+      for (let key of Object.keys(items.mutations)) {
+        items.mutations[key] = jest.fn()
+      }
+      store = new Vuex.Store({ modules: { items } })
+    })
+
+    test('mutations for listItems', async (done) => {
+      await store.dispatch('items/listItems')
+      // expect.any(Object) is the vuex state object passed by vuex.
+      expect(items.mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+      setTimeout(() => {
+        expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
+        done()
+      }, 10)
+    })
+  })
+
+  describe('[module select-mutations commits - full lcrusd - no pages]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      items = makeStoreModule({
+        http: http,
+        baseURL: API_URL,
+        rootName: 'item',
+        lcrusd: 'lcrusd',
+        idKey: 'uuid'
+      })
+      store = new Vuex.Store({ modules: { items } })
+      store.commit('items/updateItemsList', remoteObjects)
+    })
+
+    test('update the list', () => {
+      expect(store.state.items.items).toEqual(remoteObjects)
+    })
+
+    test('select an item of the list', () => {
+      store.commit('items/selectItem', remoteObjects[1])
+      expect(store.state.items.selectedItems).toEqual([remoteObjects[1]])
+      expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
+    })
+
+    test('select a null at cold start', () => {
+      store.commit('items/selectItem', null)
+      expect(store.state.items.selectedItems).toEqual([])
+      expect(store.state.items.selectedItem).toEqual(null)
+    })
+
+    test('select a null after a select of an object in the list', () => {
+      // Ok that may be strange, as it doesn't change the selection at all.
+      store.commit('items/selectItem', remoteObjects[1])
+      store.commit('items/selectItem', null)
+      expect(store.state.items.selectedItems).toEqual([remoteObjects[1]])
+      expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
+    })
+
+    test('select multiple items of the list', () => {
+      store.commit('items/selectMultipleItems', remoteObjects)
+      expect(store.state.items.selectedItems).toEqual(remoteObjects)
+      expect(store.state.items.selectedItem).toEqual(remoteObjects[0])
     })
   })
 })

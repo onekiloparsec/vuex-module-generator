@@ -79,12 +79,8 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     if (!selectedItem) {
       return
     }
-    if (state.__allowMultipleSelection__) {
-      state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItem))
-    } else {
-      state[moduleNames.state.selections] = concat([], selectedItem)
-    }
-    state[moduleNames.state.selection] = head(state[moduleNames.state.selections]) || null
+    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItem))
+    state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
   }
 
   // Select multiple items at once. Very important to avoid triggering multiple updates.
@@ -92,12 +88,8 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     if (selectedItems.length === 0) {
       return
     }
-    if (state.__allowMultipleSelection__) {
-      state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItems))
-    } else {
-      state[moduleNames.state.selections] = concat([], selectedItems)
-    }
-    state[moduleNames.state.selection] = head(state[moduleNames.state.selections]) || null
+    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItems))
+    state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
   }
 
   // Deselect an item.
