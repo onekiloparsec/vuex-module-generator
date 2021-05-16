@@ -4,12 +4,9 @@ import { makeURLBuilder } from './endpointURLBuilder'
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 // WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey) => {
+export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, parent = null) => {
   if (http == null) {
     throw Error('Missing http module to make requests!')
-  }
-  if (baseURL == null) {
-    throw Error('Missing baseURL!')
   }
   if (resourcePath == null) {
     throw Error('Missing resourcePath!')
@@ -18,10 +15,11 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey) => {
   const endpoint = {
     _http: http,
     _baseURL: baseURL,
-    _resourcePath: resourcePath
+    _resourcePath: resourcePath,
+    _parent: parent
   }
 
-  endpoint.url = makeURLBuilder(baseURL, resourcePath)
+  endpoint.url = makeURLBuilder(baseURL, resourcePath, parent)
 
   endpoint.list = (params) => endpoint._http.get(endpoint.url(null, params))
   endpoint.create = (data) => endpoint._http.post(endpoint.url(), data)
@@ -32,24 +30,24 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey) => {
 
   endpoint.options = (_id) => endpoint._http.options(endpoint.url(_id))
 
-  endpoint.subresource = (subpath) => {
-    return buildAPIEndpoint({
-      http: endpoint._http,
-      baseURL: baseURL + endpoint._resourcePath,
-      resourcePath: subpath
-    })
-  }
-
   // Deprecated. Allow to use things like api.observingsites.single(<_id>).images.list()...
   // when a subresource 'images/' has been added to the object.
-  endpoint.addSubresource = (subpath) => {
-    endpoint[subpath.slice(0, -1)] = buildAPIEndpoint({
-      http: endpoint._http,
-      baseURL: baseURL + endpoint._resourcePath,
-      resourcePath: subpath
-    })
+  endpoint.addSubresource = (subPath, subIdKey) => {
+    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint(
+      endpoint._http,
+      endpoint._baseURL + endpoint._resourcePath,
+      subPath,
+      subIdKey,
+      endpoint
+    )
     return endpoint
   }
+
+  endpoint.single = (_id) => {
+    endpoint._singleResourceId = _id
+    return endpoint
+  }
+
 
   return endpoint
 }

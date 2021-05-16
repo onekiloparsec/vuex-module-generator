@@ -2,10 +2,6 @@ import { makeURLBuilder } from '@/endpointURLBuilder'
 
 const API_URL = 'http://localhost:8080/'
 
-export const buildPortalBaseURL = function (subdomain = 'saao') {
-  return API_URL + subdomain + '/'
-}
-
 describe('test endpointURLBuilder', () => {
   describe('[Basics]', () => {
     let urlBuilder = null
@@ -35,11 +31,11 @@ describe('test endpointURLBuilder', () => {
     })
   })
 
-  describe('[With URL func]', () => {
+  describe('[With parent and single resource ID]', () => {
     let urlBuilder = null
 
     beforeEach(() => {
-      urlBuilder = makeURLBuilder(buildPortalBaseURL, 'items/')
+      urlBuilder = makeURLBuilder(API_URL, 'items/', { _singleResourceId: '6-7-8-9' })
     })
 
     test('URL builder constructor', () => {
@@ -47,19 +43,19 @@ describe('test endpointURLBuilder', () => {
     })
 
     test('basic list url', () => {
-      expect(urlBuilder()).toEqual(`${API_URL}saao/items/`)
+      expect(urlBuilder()).toEqual(`${API_URL}6-7-8-9/items/`)
     })
 
     test('basic detail url', () => {
-      expect(urlBuilder('1-2-3-4')).toEqual(`${API_URL}saao/items/1-2-3-4/`)
+      expect(urlBuilder('1-2-3-4')).toEqual(`${API_URL}6-7-8-9/items/1-2-3-4/`)
     })
 
     test('list url with params', () => {
-      expect(urlBuilder(null, { 'toto': 'tata' })).toEqual(`${API_URL}saao/items/?toto=tata`)
+      expect(urlBuilder(null, { 'toto': 'tata' })).toEqual(`${API_URL}6-7-8-9/items/?toto=tata`)
     })
 
     test('detail url with params', () => {
-      expect(urlBuilder('1-2-3-4', { 'toto': 'tata' })).toEqual(`${API_URL}saao/items/1-2-3-4/?toto=tata`)
+      expect(urlBuilder('1-2-3-4', { 'toto': 'tata' })).toEqual(`${API_URL}6-7-8-9/items/1-2-3-4/?toto=tata`)
     })
   })
 })
