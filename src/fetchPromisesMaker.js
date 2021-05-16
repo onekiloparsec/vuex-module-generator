@@ -24,7 +24,7 @@ export const makeDefaultFetchPromise = function (mutationName, endpointMethodFun
   })
 }
 
-export const makePagedStoreAction = function (mutationName, endpointListMethodFunc, notifyCallback, idOrData) {
+export const makePagedFetchPromise = function (mutationName, endpointListMethodFunc, notifyCallback, idOrData) {
   return new Promise(async (resolve, reject) => {
     let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
 
