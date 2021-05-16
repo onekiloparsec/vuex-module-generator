@@ -4,10 +4,10 @@ import { makeURLBuilder } from './endpointURLBuilder'
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 // WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }) => {
-  // if (http == null) {
-  //   throw Error('Missing http module to make requests!')
-  // }
+export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey) => {
+  if (http == null) {
+    throw Error('Missing http module to make requests!')
+  }
   if (baseURL == null) {
     throw Error('Missing baseURL!')
   }
@@ -15,60 +15,41 @@ export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, 
     throw Error('Missing resourcePath!')
   }
 
-  let obj = {
+  const endpoint = {
     _http: http,
-    _resourcePath: resourcePath,
-    _singleUUID: null,
-    _subPath: subPath || null,
-    _parent: parent || null
+    _baseURL: baseURL,
+    _resourcePath: resourcePath
   }
 
-  obj.url = makeURLBuilder(obj, baseURL)
+  endpoint.url = makeURLBuilder(baseURL, resourcePath)
 
-  obj = {
-    ...obj,
-    _get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
-    _options: (uuid) => obj._http.options(obj.url(uuid)),
-    _post: (data) => obj._http.post(obj.url(), data),
-    _put: (uuid, data) => obj._http.put(obj.url(uuid), data),
-    _patch: (uuid, data) => obj._http.patch(obj.url(uuid), data),
-    _delete: (uuid) => obj._http.delete(obj.url(uuid)),
+  endpoint.list = (params) => endpoint._http.get(endpoint.url(null, params))
+  endpoint.create = (data) => endpoint._http.post(endpoint.url(), data)
+  endpoint.read = (id) => endpoint._http.get(endpoint.url(id.toString(), null))
+  endpoint.swap = (obj) => endpoint._http.put(endpoint.url(obj[idKey].toString()), obj['data'])
+  endpoint.update = (obj) => endpoint._http.patch(endpoint.url(obj[idKey].toString()), obj['data'])
+  endpoint.delete = (id) => endpoint._http.delete(endpoint.url(id.toString()))
 
-    list: (obj) => this._get(null, obj),
-    create: (obj) => this._post(obj),
-    read: (obj) => this._get(obj.toString(), null), // obj is assumed to be a id string.
-    swap: (obj) => this._put(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
-    update: (obj) => this._patch(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
-    delete: (obj) => this._delete(obj.toString()) // // idOrData is assumed to be a id.
-  }
+  endpoint.options = (_id) => endpoint._http.options(endpoint.url(_id))
 
-  obj.subresource = (subpath) => {
+  endpoint.subresource = (subpath) => {
     return buildAPIEndpoint({
-      http: obj._http,
-      baseURL: baseURL,
-      resourcePath: obj._resourcePath,
-      subPath: subpath,
-      parent: obj
+      http: endpoint._http,
+      baseURL: baseURL + endpoint._resourcePath,
+      resourcePath: subpath
     })
   }
 
-  // Deprecated. Allow to use things like api.observingsites.single(<uuid>).images.list()...
+  // Deprecated. Allow to use things like api.observingsites.single(<_id>).images.list()...
   // when a subresource 'images/' has been added to the object.
-  obj.addSubresource = (subpath) => {
-    obj[subpath.slice(0, -1)] = buildAPIEndpoint({
-      http: obj._http,
-      baseURL: baseURL,
-      resourcePath: obj._resourcePath,
-      subPath: subpath,
-      parent: obj
+  endpoint.addSubresource = (subpath) => {
+    endpoint[subpath.slice(0, -1)] = buildAPIEndpoint({
+      http: endpoint._http,
+      baseURL: baseURL + endpoint._resourcePath,
+      resourcePath: subpath
     })
-    return obj
+    return endpoint
   }
 
-  obj.single = (uuid) => {
-    obj._singleUUID = uuid
-    return obj
-  }
-
-  return obj
+  return endpoint
 }
