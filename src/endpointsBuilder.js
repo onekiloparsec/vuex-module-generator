@@ -1,12 +1,10 @@
-import isString from 'lodash/isString'
-import isNil from 'lodash/isNil'
-import { TREE_PARENT_ID } from './moduleGenerator'
 import { makeURLBuilder } from '@/urlBuilder'
 
 // Create an object fully set up to make HTTP requests to a REST endpoint.
-// Start with obj = makeAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
+// Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
+// WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }) => {
+export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }) => {
   // if (http == null) {
   //   throw Error('Missing http module to make requests!')
   // }
@@ -22,12 +20,13 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
     _resourcePath: resourcePath,
     _singleUUID: null,
     _subPath: subPath || null,
-    _parent: parent || null,
+    _parent: parent || null
   }
 
   obj.url = makeURLBuilder(obj, baseURL)
 
-  obj = { ...obj,
+  obj = {
+    ...obj,
     _get: (uuid, params) => obj._http.get(obj.url(uuid, params)),
     _options: (uuid) => obj._http.options(obj.url(uuid)),
     _post: (data) => obj._http.post(obj.url(), data),
@@ -35,25 +34,35 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
     _patch: (uuid, data) => obj._http.patch(obj.url(uuid), data),
     _delete: (uuid) => obj._http.delete(obj.url(uuid)),
 
-    list: (obj) => isString(obj) ? this._get(obj, null) : this._get(null, obj),
-
-    // The presence of TREE_PARENT_ID decides whether one add a child to a tree, or simply an item to a list
-    create: (obj) => isNil(obj[TREE_PARENT_ID]) ? this._post(obj) : this.subresource(obj[TREE_PARENT_ID].toString() + '/').post(obj['data']),
-
-    read: (obj) => this._get(obj.toString()), // obj is assumed to be a id string.
+    list: (obj) => this._get(null, obj),
+    create: (obj) => this._post(obj),
+    read: (obj) => this._get(obj.toString(), null), // obj is assumed to be a id string.
     swap: (obj) => this._put(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
     update: (obj) => this._patch(obj[idKey].toString(), obj['data']), // obj is assumed to be an object, inside which we have an id, and a data payload.
-    delete: (obj) => this._delete(obj.toString()), // // idOrData is assumed to be a id.
+    delete: (obj) => this._delete(obj.toString()) // // idOrData is assumed to be a id.
   }
 
   obj.subresource = (subpath) => {
-    return makeAPIEndpoint({
+    return buildAPIEndpoint({
       http: obj._http,
       baseURL: baseURL,
       resourcePath: obj._resourcePath,
       subPath: subpath,
       parent: obj
     })
+  }
+
+  // Deprecated. Allow to use things like api.observingsites.single(<uuid>).images.list()...
+  // when a subresource 'images/' has been added to the object.
+  obj.addSubresource = (subpath) => {
+    obj[subpath.slice(0, -1)] = buildAPIEndpoint({
+      http: obj._http,
+      baseURL: baseURL,
+      resourcePath: obj._resourcePath,
+      subPath: subpath,
+      parent: obj
+    })
+    return obj
   }
 
   obj.single = (uuid) => {
@@ -63,5 +72,3 @@ const makeAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath, parent }
 
   return obj
 }
-
-export { makeAPIEndpoint }
