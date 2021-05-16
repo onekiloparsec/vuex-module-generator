@@ -77,21 +77,6 @@ export const makeModule = ({ apiEndpoint, rootName, idKey, allowMultipleSelectio
   }
 
   // We have our module.
-  const module = { _endpoint: apiEndpoint, namespaced: true, state, getters: _getters, mutations, actions }
-
-  // Make it possible to add a submodule, for API endpoints subresources...
-  // For instance 'telescopes/' in '<APIURL>/observingsites/<uuid>/telescopes/'
-  module.addSubmodule = ({ name, subPath, subIdKey, subAllowTree, subAllowMultipleSelection, sublcrusd }) => {
-    module[name] = makeModule({
-      apiEndpoint: apiEndpoint.subresource(subPath),
-      rootName: name,
-      idKey: subIdKey,
-      allowTree: subAllowTree,
-      allowMultipleSelection: subAllowMultipleSelection,
-      lcrusd: sublcrusd
-    })
-  }
-
-  return module
+  return { _endpoint: apiEndpoint, namespaced: true, state, getters: _getters, mutations, actions }
 }
 
