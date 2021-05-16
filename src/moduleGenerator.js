@@ -17,7 +17,7 @@ export const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ com
 const defaultActionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
 const defaultActionStatuses = [false, false, null, null, null, null]
 
-export const makeModule = ({ apiEndpoint, rootName, idKey, allowMultipleSelection, lcrusd, customGetters }) => {
+export const makeModule = ({ apiEndpoint, rootName, lcrusd, idKey, allowMultipleSelection, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
