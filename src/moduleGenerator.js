@@ -6,7 +6,6 @@ import { createModuleNames } from '@/moduleNamesCreator'
 import { configureMutations } from '@/moduleMutationsConfigurator'
 import { makeDefaultFetchPromise, makePagedFetchPromise } from '@/fetchPromisesMaker'
 import { buildAPIEndpoint } from './endpointsBuilder'
-import { pluralize } from '@/utils'
 
 export const makeDefaultStoreAction = (mutationName, endpointMethodFunc) => ({ commit }, idOrData) => {
   return makeDefaultFetchPromise(mutationName, endpointMethodFunc, commit, idOrData)
@@ -19,13 +18,13 @@ export const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ com
 const defaultActionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
 const defaultActionStatuses = [false, false, null, null, null, null]
 
-export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, customGetters }) => {
+export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd, idKey, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
 
   const moduleNames = createModuleNames(rootName)
   const activatedActionNames = defaultActionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
-  const apiEndpoint = buildAPIEndpoint({ http, baseURL, resourcePath: pluralize(rootName), idKey })
+  const apiEndpoint = buildAPIEndpoint({ http, baseURL, resourcePath, idKey })
 
   /* ------------ Vuex State ------------ */
 
