@@ -185,6 +185,12 @@ describe('test moduleGenerator', () => {
       expect(http.get).toHaveBeenCalledWith(`${API_URL}items/`)
     })
 
+    test('list action with payload', () => {
+      const payload = { search: 'toto' }
+      store.dispatch('items/listItems', payload)
+      expect(http.get).toHaveBeenCalledWith(`${API_URL}items/?search=toto`)
+    })
+
     test('create action', () => {
       const payload = { name: 'toto' }
       store.dispatch('items/createItem', payload)
