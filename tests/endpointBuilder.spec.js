@@ -16,7 +16,7 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid')
+      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
     })
 
     test('items constructor', () => {
@@ -80,7 +80,8 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid').addSubresource('images/', 'pk')
+      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
+        .addSubresource('images/', 'pk')
     })
 
     test('items constructor', () => {

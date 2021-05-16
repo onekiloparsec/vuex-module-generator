@@ -25,7 +25,7 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, custom
 
   const moduleNames = createModuleNames(rootName)
   const activatedActionNames = defaultActionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
-  const apiEndpoint = buildAPIEndpoint(http, baseURL, pluralize(rootName), idKey)
+  const apiEndpoint = buildAPIEndpoint({ http, baseURL, resourcePath: pluralize(rootName), idKey })
 
   /* ------------ Vuex State ------------ */
 

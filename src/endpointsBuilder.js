@@ -4,7 +4,7 @@ import { makeURLBuilder } from './endpointURLBuilder'
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 // WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, parent = null) => {
+export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, parent = null }) => {
   if (http == null) {
     throw Error('Missing http module to make requests!')
   }
@@ -46,13 +46,13 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, parent = nu
   // Deprecated. Allow to use things like api.observingsites.single(<_id>).images.list()...
   // when a subresource 'images/' has been added to the object.
   endpoint.addSubresource = (subPath, subIdKey) => {
-    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint(
-      endpoint._http,
-      endpoint._baseURL + endpoint._resourcePath,
-      subPath,
-      subIdKey,
-      endpoint
-    )
+    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint({
+      http: endpoint._http,
+      baseURL: endpoint._baseURL + endpoint._resourcePath,
+      resourcePath: subPath,
+      idKey: subIdKey,
+      parent: endpoint
+    })
     return endpoint
   }
 
