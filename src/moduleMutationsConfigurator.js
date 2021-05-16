@@ -100,7 +100,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     state[moduleNames.state.selection] = head(state[moduleNames.state.selections]) || null
   }
 
-  // Select an item.
+  // Deselect an item.
   mutations['de' + moduleNames.mutations.select] = (state, selectedItem) => {
     if (selectedItem) {
       const index = findIndex(state[moduleNames.state.selections], item => item === selectedItem)
