@@ -1,4 +1,4 @@
-import { makeAPIEndpoint, makeModule } from '@/index'
+import { buildAPIEndpoint, makeModule } from '@'
 
 const http = {
   get: jest.fn(),
@@ -15,7 +15,7 @@ describe('test actions creation based on last parameter', () => {
   let endpoint = null
 
   beforeEach(() => {
-    endpoint = makeAPIEndpoint({
+    endpoint = buildAPIEndpoint({
       http: http,
       baseURL: API_URL,
       resourcePath: 'items/',
