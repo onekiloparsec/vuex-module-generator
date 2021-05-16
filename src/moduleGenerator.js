@@ -5,6 +5,8 @@ import includes from 'lodash/includes'
 import { createModuleNames } from '@/moduleNamesCreator'
 import { configureMutations } from '@/moduleMutationsConfigurator'
 import { makeDefaultFetchPromise, makePagedFetchPromise } from '@/fetchPromisesMaker'
+import { buildAPIEndpoint } from './endpointsBuilder'
+import { pluralize } from '@/utils'
 
 export const makeDefaultStoreAction = (mutationName, endpointMethodFunc) => ({ commit }, idOrData) => {
   return makeDefaultFetchPromise(mutationName, endpointMethodFunc, commit, idOrData)
@@ -23,6 +25,7 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, allowM
 
   const moduleNames = createModuleNames(rootName)
   const activatedActionNames = defaultActionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
+  const apiEndpoint = buildAPIEndpoint(http, baseURL, pluralize(rootName), idKey)
 
   /* ------------ Vuex State ------------ */
 
@@ -73,7 +76,7 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, allowM
     // the list action by the paged list one.
     const actionName = 'list'
     const mutationName = moduleNames.mutations.crud[actionName]
-    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, apiEndpoint[actionName], idKey)
+    actions[moduleNames.actions[actionName]] = makePagedStoreAction(mutationName, apiEndpoint[actionName])
   }
 
   // We have our module.

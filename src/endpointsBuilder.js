@@ -8,24 +8,37 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, parent = nu
   if (http == null) {
     throw Error('Missing http module to make requests!')
   }
+  if (baseURL == null) {
+    throw Error('Missing baseURL!')
+  }
   if (resourcePath == null) {
     throw Error('Missing resourcePath!')
+  }
+  if (idKey == null) {
+    throw Error('Missing idKey!')
   }
 
   const endpoint = {
     _http: http,
     _baseURL: baseURL,
     _resourcePath: resourcePath,
+    _idKey: idKey,
     _parent: parent
   }
 
   endpoint.url = makeURLBuilder(baseURL, resourcePath, parent)
 
+  // l
   endpoint.list = (params) => endpoint._http.get(endpoint.url(null, params))
+  // c
   endpoint.create = (data) => endpoint._http.post(endpoint.url(), data)
+  // r
   endpoint.read = (id) => endpoint._http.get(endpoint.url(id.toString(), null))
-  endpoint.swap = (obj) => endpoint._http.put(endpoint.url(obj[idKey].toString()), obj['data'])
-  endpoint.update = (obj) => endpoint._http.patch(endpoint.url(obj[idKey].toString()), obj['data'])
+  // u
+  endpoint.update = (obj) => endpoint._http.patch(endpoint.url(obj[endpoint._idKey].toString()), obj['data'])
+  // s
+  endpoint.swap = (obj) => endpoint._http.put(endpoint.url(obj[endpoint._idKey].toString()), obj['data'])
+  // d
   endpoint.delete = (id) => endpoint._http.delete(endpoint.url(id.toString()))
 
   endpoint.options = (_id) => endpoint._http.options(endpoint.url(_id))

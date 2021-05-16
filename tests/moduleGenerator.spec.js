@@ -1,16 +1,21 @@
-import { makeModule } from '@/moduleGenerator'
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+import { makeStoreModule } from '@/moduleGenerator'
 import { buildAPIEndpoint } from '@/endpointsBuilder'
 
 const API_URL = 'http://localhost:8080/'
 
 const http = {
-  get: jest.fn(),
-  options: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  patch: jest.fn(),
-  delete: jest.fn()
+  get: jest.fn().mockResolvedValue({}),
+  options: jest.fn().mockResolvedValue({}),
+  post: jest.fn().mockResolvedValue({}),
+  put: jest.fn().mockResolvedValue({}),
+  patch: jest.fn().mockResolvedValue({}),
+  delete: jest.fn().mockResolvedValue({})
 }
+
+Vue.use(Vuex)
 
 describe('test moduleGenerator', () => {
   describe('[module definitions - full lcrusd - no pages]', () => {
@@ -18,7 +23,7 @@ describe('test moduleGenerator', () => {
 
     beforeEach(() => {
       const endpoint = buildAPIEndpoint(http, API_URL, 'items/')
-      items = makeModule({
+      items = makeStoreModule({
         apiEndpoint: endpoint, rootName: 'item', lcrusd: 'lcrusd', idKey: 'uuid'
       })
     })
@@ -90,7 +95,7 @@ describe('test moduleGenerator', () => {
 
     beforeEach(() => {
       const endpoint = buildAPIEndpoint(http, API_URL, 'items/')
-      items = makeModule({
+      items = makeStoreModule({
         apiEndpoint: endpoint, rootName: 'item', lcrusd: 'pr', idKey: 'uuid'
       })
     })
@@ -153,6 +158,59 @@ describe('test moduleGenerator', () => {
       expect(items.actions.updateItem).toBeUndefined()
       expect(items.actions.swapItem).toBeUndefined()
       expect(items.actions.deleteItem).toBeUndefined()
+    })
+  })
+
+  describe('[module actions runs - full lcrusd - no pages]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      items = makeStoreModule({
+        http: http,
+        baseURL: API_URL,
+        rootName: 'item',
+        lcrusd: 'lcrusd',
+        idKey: 'uuid'
+      })
+      store = new Vuex.Store({ modules: { items } })
+    })
+
+    test('access to endpoint', () => {
+      expect(items._endpoint).toBeDefined()
+    })
+
+    test('list action', () => {
+      store.dispatch('items/listItems')
+      expect(http.get).toHaveBeenCalledWith(`${API_URL}items/`)
+    })
+
+    test('create action', () => {
+      const payload = { name: 'toto' }
+      store.dispatch('items/createItem', payload)
+      expect(http.post).toHaveBeenCalledWith(`${API_URL}items/`, payload)
+    })
+
+    test('read action', () => {
+      store.dispatch('items/readItem', 'HD 5980')
+      expect(http.get).toHaveBeenCalledWith(`${API_URL}items/HD 5980/`)
+    })
+
+    test('update action', () => {
+      const payload = { uuid: '1234', data: { name: 'toto' } }
+      store.dispatch('items/updateItem', payload)
+      expect(http.patch).toHaveBeenCalledWith(`${API_URL}items/1234/`, payload.data)
+    })
+
+    test('swap action', () => {
+      const payload = { uuid: '1234', data: { name: 'toto' } }
+      store.dispatch('items/swapItem', payload)
+      expect(http.put).toHaveBeenCalledWith(`${API_URL}items/1234/`, payload.data)
+    })
+
+    test('delete action', () => {
+      store.dispatch('items/deleteItem', 'HD 5980')
+      expect(http.delete).toHaveBeenCalledWith(`${API_URL}items/HD 5980/`)
     })
   })
 })
