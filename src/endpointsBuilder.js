@@ -1,4 +1,4 @@
-import { makeURLBuilder } from '@/urlBuilder'
+import { makeURLBuilder } from './endpointURLBuilder'
 
 // Create an object fully set up to make HTTP requests to a REST endpoint.
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
