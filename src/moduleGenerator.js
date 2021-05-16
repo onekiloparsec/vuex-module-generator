@@ -18,9 +18,10 @@ export const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ com
 const defaultActionNames = ['list', 'create', 'read', 'update', 'swap', 'delete']
 const defaultActionStatuses = [false, false, null, null, null, null]
 
-export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd, idKey, customGetters }) => {
+export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd, idKey, allowMultipleSelection, customGetters }) => {
   lcrusd = lcrusd || 'lr' // read-only
   customGetters = customGetters || {}
+  allowMultipleSelection = allowMultipleSelection || false
 
   const moduleNames = createModuleNames(rootName)
   const activatedActionNames = defaultActionNames.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
@@ -39,7 +40,9 @@ export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd,
 
   // Selection, single or multiple is handled by a list *and* an object.
   state[moduleNames.state.selection] = null
-  state[moduleNames.state.selections] = []
+  if (allowMultipleSelection) {
+    state[moduleNames.state.selections] = []
+  }
 
   if (includes(lcrusd, 'p')) {
     // If we use paged-list action, add dedicated state.
@@ -54,7 +57,7 @@ export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd,
 
   /* ------------ Vuex Mutations ------------ */
 
-  const mutations = configureMutations(activatedActionNames, moduleNames, idKey, lcrusd)
+  const mutations = configureMutations(activatedActionNames, moduleNames, idKey, lcrusd, allowMultipleSelection)
 
   /* ------------ Vuex Actions ------------ */
 

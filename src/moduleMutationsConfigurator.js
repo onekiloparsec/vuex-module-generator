@@ -10,7 +10,7 @@ import { configureSuccessMutations } from '@/moduleMutationsSuccessesConfigurato
 
 const boolActionNames = ['list', 'create']
 
-export const configureMutations = (activatedActionNames, moduleNames, idKey, lcrusd) => {
+export const configureMutations = (activatedActionNames, moduleNames, idKey, lcrusd, allowMultipleSelection) => {
   const mutations = {}
 
   // Warning, for each action, there are 3 mutations: Pending, Success, and Failure.
@@ -79,22 +79,31 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     if (!selectedItem) {
       return
     }
-    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], [selectedItem]))
-    state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
+    // Select the item
+    state[moduleNames.state.selection] = selectedItem
+    if (allowMultipleSelection) {
+      // Append to selection, if not yet inside it.
+      state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], [selectedItem]))
+    }
   }
 
-  // Select multiple items at once. Very important to avoid triggering multiple updates.
-  mutations[moduleNames.mutations.selectMultiple] = (state, selectedItems) => {
-    if (selectedItems.length === 0) {
-      return
+  // Do not create this mutation if now allowed.
+  if (allowMultipleSelection) {
+    // Select multiple items at once. Very important to avoid triggering multiple updates.
+    mutations[moduleNames.mutations.selectMultiple] = (state, selectedItems) => {
+      if (selectedItems.length === 0) {
+        return
+      }
+      // Append/merge selection of multiple items.
+      state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], selectedItems))
+      // Get first, if total is 1
+      state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
     }
-    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], selectedItems))
-    state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
   }
 
   // Deselect an item.
   mutations['de' + moduleNames.mutations.select] = (state, selectedItem) => {
-    if (selectedItem) {
+    if (selectedItem && allowMultipleSelection) {
       const index = findIndex(state[moduleNames.state.selections], item => item === selectedItem)
       if (index !== -1) {
         state[moduleNames.state.selections].splice(index, 1)
@@ -105,16 +114,20 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
 
   // Clear all selection.
   mutations[moduleNames.mutations.clearSelection] = (state) => {
-    state[moduleNames.state.selections] = []
     state[moduleNames.state.selection] = null
+    if (allowMultipleSelection) {
+      state[moduleNames.state.selections] = []
+    }
   }
 
   /** Special mutations ****************************************************************************************************************************/
 
   // Directly update list of items.
   mutations[moduleNames.mutations.updateList] = (state, newList) => {
-    state[moduleNames.state.selections] = []
     state[moduleNames.state.selection] = null
+    if (allowMultipleSelection) {
+      state[moduleNames.state.selections] = []
+    }
     state[moduleNames.state.list] = newList
   }
 

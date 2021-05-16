@@ -317,6 +317,62 @@ describe('moduleGenerator', () => {
 
     test('select an item of the list', () => {
       store.commit('items/selectItem', remoteObjects[1])
+      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
+    })
+
+    test('select a null at cold start', () => {
+      store.commit('items/selectItem', null)
+      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItem).toEqual(null)
+    })
+
+    test('select a null after a select of an object in the list', () => {
+      // Ok that may be strange, as it doesn't change the selection at all.
+      store.commit('items/selectItem', remoteObjects[1])
+      store.commit('items/selectItem', null)
+      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
+    })
+
+    test('select multiple items of the list', () => {
+      expect(store._mutations['items/selectItem']).toBeDefined()
+      expect(store._mutations['items/selectMultipleItems']).toBeUndefined()
+    })
+  })
+
+  describe('[module select-mutations commits - full lcrusd - no pages - multiple selection]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      const http = {
+        get: jest.fn().mockResolvedValue({}),
+        options: jest.fn().mockResolvedValue({}),
+        post: jest.fn().mockResolvedValue({}),
+        put: jest.fn().mockResolvedValue({}),
+        patch: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({})
+      }
+      items = makeStoreModule({
+        http: http,
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        rootName: 'item',
+        lcrusd: 'lcrusd',
+        idKey: 'uuid',
+        allowMultipleSelection: true
+      })
+      store = new Vuex.Store({ modules: { items } })
+      store.commit('items/updateItemsList', remoteObjects)
+    })
+
+    test('update the list', () => {
+      expect(store.state.items.items).toEqual(remoteObjects)
+    })
+
+    test('select an item of the list', () => {
+      store.commit('items/selectItem', remoteObjects[1])
       expect(store.state.items.selectedItems).toEqual([remoteObjects[1]])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
     })
@@ -336,9 +392,8 @@ describe('moduleGenerator', () => {
     })
 
     test('select multiple items of the list', () => {
-      store.commit('items/selectMultipleItems', remoteObjects)
-      expect(store.state.items.selectedItems).toEqual(remoteObjects)
-      expect(store.state.items.selectedItem).toEqual(null)
+      expect(store._mutations['items/selectItem']).toBeDefined()
+      expect(store._mutations['items/selectMultipleItems']).toBeDefined()
     })
   })
 })
