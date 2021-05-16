@@ -1,6 +1,7 @@
 import isArray from 'lodash/isArray'
 
 export const makeDefaultFetchPromise = function (mutationName, endpointMethodFunc, notifyCallback, idOrData) {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     // Committing mutation of pending state for current action
     notifyCallback(mutationName + 'Pending', idOrData)
@@ -25,6 +26,7 @@ export const makeDefaultFetchPromise = function (mutationName, endpointMethodFun
 }
 
 export const makePagedFetchPromise = function (mutationName, endpointListMethodFunc, notifyCallback, idOrData) {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
 

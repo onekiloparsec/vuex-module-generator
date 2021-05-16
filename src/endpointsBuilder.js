@@ -61,6 +61,5 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, parent = nu
     return endpoint
   }
 
-
   return endpoint
 }

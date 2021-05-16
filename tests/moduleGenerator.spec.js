@@ -242,48 +242,48 @@ describe('moduleGenerator', () => {
     })
   })
 
-// describe('[module action-mutations commits - full lcrusd - no pages]', () => {
-//   let items = null
-//   let store = null
-//   let http = null
-//
-//   beforeEach(() => {
-//     http = {
-//       get: jest.fn().mockResolvedValueOnce({ data: remoteObjects }),
-//       options: jest.fn().mockResolvedValue({}),
-//       post: jest.fn().mockResolvedValue({}),
-//       put: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
-//       patch: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
-//       delete: jest.fn().mockResolvedValue({})
-//     }
-//     items = makeStoreModule({
-//       http: http,
-//       baseURL: API_URL,
-//       rootName: 'item',
-//       lcrusd: 'lcrusd',
-//       idKey: 'uuid'
-//     })
-//     for (let key of Object.keys(items.mutations)) {
-//       items.mutations[key] = jest.fn()
-//     }
-//     store = new Vuex.Store({ modules: { items } })
-//   })
-//
-//   afterEach(() => {
-//     jest.clearAllMocks()
-//     jest.resetAllMocks()
-//   })
-//
-//   test('mutations for listItems', async (done) => {
-//     store.dispatch('items/listItems')
-//     // expect.any(Object) is the vuex state object passed by vuex.
-//     expect(items.mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
-//     setTimeout(() => {
-//       expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
-//       done()
-//     }, 10)
-//   })
-// })
+  // describe('[module action-mutations commits - full lcrusd - no pages]', () => {
+  //   let items = null
+  //   let store = null
+  //   let http = null
+  //
+  //   beforeEach(() => {
+  //     http = {
+  //       get: jest.fn().mockResolvedValueOnce({ data: remoteObjects }),
+  //       options: jest.fn().mockResolvedValue({}),
+  //       post: jest.fn().mockResolvedValue({}),
+  //       put: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
+  //       patch: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
+  //       delete: jest.fn().mockResolvedValue({})
+  //     }
+  //     items = makeStoreModule({
+  //       http: http,
+  //       baseURL: API_URL,
+  //       rootName: 'item',
+  //       lcrusd: 'lcrusd',
+  //       idKey: 'uuid'
+  //     })
+  //     for (let key of Object.keys(items.mutations)) {
+  //       items.mutations[key] = jest.fn()
+  //     }
+  //     store = new Vuex.Store({ modules: { items } })
+  //   })
+  //
+  //   afterEach(() => {
+  //     jest.clearAllMocks()
+  //     jest.resetAllMocks()
+  //   })
+  //
+  //   test('mutations for listItems', async (done) => {
+  //     store.dispatch('items/listItems')
+  //     // expect.any(Object) is the vuex state object passed by vuex.
+  //     expect(items.mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
+  //     setTimeout(() => {
+  //       expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
+  //       done()
+  //     }, 10)
+  //   })
+  // })
 
   describe('[module select-mutations commits - full lcrusd - no pages]', () => {
     let items = null

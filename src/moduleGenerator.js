@@ -79,4 +79,3 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, custom
   // We have our module.
   return { _endpoint: apiEndpoint, namespaced: true, state, getters: _getters, mutations, actions }
 }
-

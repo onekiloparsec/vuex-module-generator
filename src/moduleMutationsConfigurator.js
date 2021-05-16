@@ -72,7 +72,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     }
   }
 
-  /*** Selection mutations **************************************************************************************************************************/
+  /** Selection mutations **************************************************************************************************************************/
 
   // Select one item
   mutations[moduleNames.mutations.select] = (state, selectedItem) => {
@@ -109,7 +109,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     state[moduleNames.state.selection] = null
   }
 
-  /*** Special mutations ****************************************************************************************************************************/
+  /** Special mutations ****************************************************************************************************************************/
 
   // Directly update list of items.
   mutations[moduleNames.mutations.updateList] = (state, newList) => {
