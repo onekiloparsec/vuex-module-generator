@@ -28,7 +28,7 @@ describe('moduleGenerator', () => {
       }
 
       items = makeStoreModule({
-        http: http, baseURL: API_URL, rootName: 'item', lcrusd: 'lcrusd', idKey: 'uuid'
+        http: http, baseURL: API_URL, resourcePath: 'items/', rootName: 'item', lcrusd: 'lcrusd', idKey: 'uuid'
       })
     })
 
@@ -108,7 +108,7 @@ describe('moduleGenerator', () => {
       }
 
       items = makeStoreModule({
-        http: http, baseURL: API_URL, rootName: 'item', lcrusd: 'pr', idKey: 'uuid'
+        http: http, baseURL: API_URL, resourcePath: 'items/', rootName: 'item', lcrusd: 'pr', idKey: 'uuid'
       })
     })
 
@@ -191,6 +191,7 @@ describe('moduleGenerator', () => {
       items = makeStoreModule({
         http: http,
         baseURL: API_URL,
+        resourcePath: 'items/',
         rootName: 'item',
         lcrusd: 'lcrusd',
         idKey: 'uuid'
@@ -301,6 +302,7 @@ describe('moduleGenerator', () => {
       items = makeStoreModule({
         http: http,
         baseURL: API_URL,
+        resourcePath: 'items/',
         rootName: 'item',
         lcrusd: 'lcrusd',
         idKey: 'uuid'
