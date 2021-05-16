@@ -80,7 +80,7 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid').addSubresource('images/')
+      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid').addSubresource('images/', 'pk')
     })
 
     test('items constructor', () => {

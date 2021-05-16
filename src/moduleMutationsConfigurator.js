@@ -79,7 +79,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     if (!selectedItem) {
       return
     }
-    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItem))
+    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], [selectedItem]))
     state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
   }
 
@@ -88,7 +88,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
     if (selectedItems.length === 0) {
       return
     }
-    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selection], selectedItems))
+    state[moduleNames.state.selections] = uniq(concat(state[moduleNames.state.selections], selectedItems))
     state[moduleNames.state.selection] = (state[moduleNames.state.selections].length === 1) ? head(state[moduleNames.state.selections]) : null
   }
 

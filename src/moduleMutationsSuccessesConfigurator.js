@@ -84,7 +84,7 @@ export const configureSuccessMutations = (listName, selectionsKey, selectionKey,
       Vue.set(state, selectionsKey, new Array(...state[selectionsKey]))
     }
 
-    if (state[selectionKey][idKey] === objID) {
+    if (state[selectionKey] && state[selectionKey][idKey] === objID) {
       state[selectionKey] = null
     }
   }

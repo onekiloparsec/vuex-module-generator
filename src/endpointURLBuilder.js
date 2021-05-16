@@ -12,7 +12,10 @@ export const makeURLBuilder = (baseURL, resourcePath, parent = null) => {
       parent._singleResourceId = null
     }
 
-    path += resourcePath + '/'
+    path += resourcePath
+    if (path.slice(-1) !== '/') {
+      path += '/'
+    }
 
     if (uuid) {
       if (isString(uuid)) {

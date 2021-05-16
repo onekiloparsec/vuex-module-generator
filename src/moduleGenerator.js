@@ -30,7 +30,7 @@ export const makeStoreModule = ({ http, baseURL, rootName, lcrusd, idKey, custom
   /* ------------ Vuex State ------------ */
 
   const state = {}
-  
+
   // The container is an array.
   state[moduleNames.state.list] = []
   // Auxiliary data is put inside an object
