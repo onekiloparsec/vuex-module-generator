@@ -1,4 +1,4 @@
-import { makeDefaultFetchPromise, makePagedFetchPromise } from './fetchPromises'
+import { makeDefaultFetchPromise, makePagedFetchPromise } from './fetchPromisesMaker'
 
 export const makeDefaultStoreAction = (mutationName, crudRequest) => ({ commit }, idOrData) => {
   return makeDefaultFetchPromise(mutationName, crudRequest, commit, idOrData)
