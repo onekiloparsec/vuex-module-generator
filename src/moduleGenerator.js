@@ -33,6 +33,8 @@ export const makeModule = ({ apiEndpoint, rootName, idKey, allowMultipleSelectio
 
   // The container is an array.
   state[moduleNames.state.list] = []
+  // Auxiliary data is put inside an object
+  state[moduleNames.state.dataMap] = {}
   // Status object distinguish all with bools for list and create (since we have no ID)
   state[moduleNames.state.status] = zipObject(defaultActionNames, defaultActionStatuses)
 

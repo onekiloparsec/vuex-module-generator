@@ -9,6 +9,7 @@ export const createModuleNames = (root) => {
   return {
     state: {
       list: `${plural}`,
+      dataMap: `${plural}DataMap`,
       status: `${plural}LoadingStatus`,
       selection: `selected${singularCapitalized}`,
       selections: `selected${pluralCapitalized}`,
