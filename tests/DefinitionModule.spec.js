@@ -1,4 +1,4 @@
-import { buildAPIEndpoint, makeModule } from '@'
+import { buildAPIEndpoint, makeStoreModule } from '@'
 
 const http = {
   get: jest.fn(),
@@ -24,7 +24,7 @@ describe('test actions creation based on last parameter', () => {
   })
 
   test('all state and mutations available', () => {
-    const items = makeModule({
+    const items = makeStoreModule({
       endpoint,
       root: 'item',
       idKey: 'uuid',
@@ -50,7 +50,7 @@ describe('test actions creation based on last parameter', () => {
   })
 
   test('only specified lcrusd actions are available', () => {
-    const items = makeModule({
+    const items = makeStoreModule({
       endpoint,
       root: 'item',
       idKey: 'uuid',

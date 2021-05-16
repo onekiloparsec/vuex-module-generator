@@ -1,4 +1,4 @@
-import { makeModule } from '@/index'
+import { makeStoreModule } from '@/index'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
@@ -26,7 +26,7 @@ describe('test selection of items Multiple = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -41,7 +41,7 @@ describe('test selection of items Multiple = True', () => {
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',

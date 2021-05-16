@@ -1,4 +1,4 @@
-import { makeModule } from '@/index'
+import { makeStoreModule } from '@/index'
 import createModuleNames from '@/moduleNames'
 
 import testAction from './ActionHelper'
@@ -61,7 +61,7 @@ describe('test async api actions on module directly', () => {
   let itemsModule = null
 
   beforeEach(() => {
-    itemsModule = makeModule({
+    itemsModule = makeStoreModule({
       http: Vue.http,
       apiURL: API_URL,
       apiPath: 'items/',
@@ -94,7 +94,7 @@ describe('test async api actions inside a valid store', () => {
   let mutations
 
   beforeEach(() => {
-    const itemsModule = makeModule({
+    const itemsModule = makeStoreModule({
       http: Vue.http,
       apiURL: API_URL,
       apiPath: 'items/',

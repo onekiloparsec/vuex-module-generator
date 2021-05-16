@@ -1,4 +1,4 @@
-import { makeModule } from '@/index'
+import { makeStoreModule } from '@/index'
 import createModuleNames from '@/moduleNames'
 
 import Vue from 'vue'
@@ -26,7 +26,7 @@ let stores = []
 beforeEach(() => {
   listStore = new Vuex.Store({
     modules: {
-      items: makeModule({
+      items: makeStoreModule({
         http: http,
         apiURL: API_URL,
         apiPath: 'items/',
@@ -41,7 +41,7 @@ beforeEach(() => {
   })
   treeStore = new Vuex.Store({
     modules: {
-      items: makeModule({
+      items: makeStoreModule({
         http: http,
         apiURL: API_URL,
         apiPath: 'items/',

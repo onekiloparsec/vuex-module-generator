@@ -1,4 +1,4 @@
-import { makeModule } from '@/index'
+import { makeStoreModule } from '@/index'
 import createModuleNames from '@/moduleNames'
 
 import Vue from 'vue'
@@ -36,7 +36,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -51,7 +51,7 @@ describe('test actions after successes without selection and WITHOUT list', () =
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -117,7 +117,7 @@ describe('test actions after LIST successes without selection', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -132,7 +132,7 @@ describe('test actions after LIST successes without selection', () => {
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -195,7 +195,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -210,7 +210,7 @@ describe('test actions successes WITH selection MULTIPLE = True', () => {
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -325,7 +325,7 @@ describe('test actions successes WITH selection and update of list', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -340,7 +340,7 @@ describe('test actions successes WITH selection and update of list', () => {
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -378,7 +378,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
   beforeEach(() => {
     listStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
@@ -393,7 +393,7 @@ describe('test actions successes WITH selection MULTIPLE = False', () => {
     })
     treeStore = new Vuex.Store({
       modules: {
-        items: makeModule({
+        items: makeStoreModule({
           http: http,
           apiURL: API_URL,
           apiPath: 'items/',
