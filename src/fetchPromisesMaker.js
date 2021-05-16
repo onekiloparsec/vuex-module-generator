@@ -1,13 +1,13 @@
 import isArray from 'lodash/isArray'
 
-export const makeDefaultFetchPromise = function (mutationName, crudRequest, notifyCallback, idOrData) {
+export const makeDefaultFetchPromise = function (mutationName, endpointMethodFunc, notifyCallback, idOrData) {
   return new Promise(async (resolve, reject) => {
     // Committing mutation of pending state for current action
     notifyCallback(mutationName + 'Pending', idOrData)
     const deleteId = mutationName.startsWith('delete') ? idOrData : null
     try {
       // Doing the actual fetch request to API endpoint
-      const response = await crudRequest(idOrData)
+      const response = await endpointMethodFunc(idOrData)
       // Committing mutation of success state for current action
       const payload = response.body || response.data
       if (isArray(payload)) {
@@ -24,7 +24,7 @@ export const makeDefaultFetchPromise = function (mutationName, crudRequest, noti
   })
 }
 
-export const makePagedStoreAction = function (mutationName, listRequest, notifyCallback, idOrData) {
+export const makePagedStoreAction = function (mutationName, endpointListMethodFunc, notifyCallback, idOrData) {
   return new Promise(async (resolve, reject) => {
     let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
 
@@ -45,7 +45,7 @@ export const makePagedStoreAction = function (mutationName, listRequest, notifyC
       let response
       try {
         // Doing the actual fetch request to API endpoint
-        response = await listRequest(null, { ...idOrData, page: page })
+        response = await endpointListMethodFunc({ ...idOrData, page })
       } catch (error) {
         keepGoing = false
         if (notifyCallback) {
