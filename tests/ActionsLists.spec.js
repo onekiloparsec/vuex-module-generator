@@ -1,4 +1,4 @@
-import { makeModule } from '@/index'
+import { makeModule } from '@'
 import createModuleNames from '@/moduleNames'
 
 import testAction from './ActionHelper'
