@@ -1,6 +1,6 @@
 import { capitalizeFirstChar, pluralize } from '@/utils'
 
-const createModuleNames = (root) => {
+export const createModuleNames = (root) => {
   const singular = root.toLowerCase()
   const plural = pluralize(singular)
   const singularCapitalized = capitalizeFirstChar(singular)
@@ -41,5 +41,3 @@ const createModuleNames = (root) => {
     }
   }
 }
-
-export default createModuleNames

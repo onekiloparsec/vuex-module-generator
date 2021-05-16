@@ -5,17 +5,18 @@ import uniq from 'lodash/uniq'
 import concat from 'lodash/concat'
 import findIndex from 'lodash/findIndex'
 import head from 'lodash/head'
-import createMutationSuccesses from '@/mutationsSuccesses'
+
+import { configureSuccessMutations } from '@/moduleMutationsSuccessesConfigurator'
 
 const boolActionNames = ['list', 'create']
 
-export const mutationsConfigurator = (activatedActionNames, moduleNames, idKey, lcrusd) => {
+export const configureMutations = (activatedActionNames, moduleNames, idKey, lcrusd) => {
   const mutations = {}
 
   // Warning, for each action, there are 3 mutations: Pending, Success, and Failure.
   // First and last ones are easy ones: basically updating the loading status.
   // Success mutations are dealing with storage of response data, hence see createMutationSuccesses.
-  const mutationSuccesses = createMutationSuccesses(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
+  const mutationSuccesses = configureSuccessMutations(moduleNames.state.list, moduleNames.state.selection, moduleNames.state.singleSelection, idKey)
 
   // Deal with l(ist), c(reate), r(ead), u(pdate), s(wap), d(delete) actions.
   // Corresponds to get, post, get (again), patch, put and delete HTTP methods.
@@ -120,6 +121,8 @@ export const mutationsConfigurator = (activatedActionNames, moduleNames, idKey, 
 
   // Directly update list of items.
   mutations[moduleNames.mutations.updateList] = (state, newList) => {
+    state[moduleNames.state.selections] = []
+    state[moduleNames.state.selection] = null
     state[moduleNames.state.list] = newList
   }
 

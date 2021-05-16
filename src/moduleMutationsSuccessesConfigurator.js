@@ -5,7 +5,7 @@ import includes from 'lodash/includes'
 import { mutationsSuccessRUD } from './utils'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
-const createMutationSuccesses = (listName, selectionName, singleSelectionName, idKey) => ({
+export const configureSuccessMutations = (listName, selectionName, singleSelectionName, idKey) => ({
   list: (state, itemsList) => {
     // list is list, no need of idOrData here.
     state[listName] = itemsList
@@ -131,5 +131,3 @@ const createMutationSuccesses = (listName, selectionName, singleSelectionName, i
     }
   }
 })
-
-export default createMutationSuccesses
