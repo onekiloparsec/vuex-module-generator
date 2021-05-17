@@ -16,7 +16,7 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
   // Warning, for each action, there are 3 mutations: Pending, Success, and Failure.
   // First and last ones are easy ones: basically updating the loading status.
   // Success mutations are dealing with storage of response data, hence see configureSuccessMutations.
-  const mutationSuccesses = configureSuccessMutations(moduleNames.state.list, idKey, moduleNames.state.selection, moduleNames.state.multipleSelection)
+  const mutationSuccesses = configureSuccessMutations(moduleNames.state, idKey)
 
   // Deal with l(ist), c(reate), r(ead), u(pdate), s(wap), d(delete) actions.
   // Corresponds to get, post, get (again), patch, put and delete HTTP methods.
