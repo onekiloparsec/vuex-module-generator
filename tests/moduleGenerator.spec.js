@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import flushPromises from 'flush-promises'
 
 import { makeStoreModule } from '@/moduleGenerator'
 
@@ -178,10 +179,11 @@ describe('moduleGenerator', () => {
     let items = null
     let store = null
     let http = null
+    let obj = { uuid: '123', name: 'HD 5980' }
 
     beforeEach(() => {
       http = {
-        get: jest.fn().mockResolvedValue({ data: { uuid: '123' } }),
+        get: jest.fn().mockResolvedValue({ data: obj }),
         options: jest.fn().mockResolvedValue({}),
         post: jest.fn().mockResolvedValue({}),
         put: jest.fn().mockResolvedValue({}),
@@ -220,9 +222,13 @@ describe('moduleGenerator', () => {
       expect(http.post).toHaveBeenCalledWith(`${API_URL}items/`, payload)
     })
 
-    test('read action', () => {
+    test('read action', async () => {
       store.dispatch('items/readItem', 'HD 5980')
+      await flushPromises()
       expect(http.get).toHaveBeenCalledWith(`${API_URL}items/HD 5980/`)
+      expect(store.state.items.items[0]).toEqual(obj)
+      store.dispatch('items/readItem', 'HD 5980')
+      expect(store.state.items.items[0]).toEqual(obj)
     })
 
     test('update action', () => {
@@ -245,12 +251,12 @@ describe('moduleGenerator', () => {
 
   // describe('[module action-mutations commits - full lcrusd - no pages]', () => {
   //   let items = null
-  //   let store = null
+  //   let store
   //   let http = null
   //
   //   beforeEach(() => {
   //     http = {
-  //       get: jest.fn().mockResolvedValueOnce({ data: remoteObjects }),
+  //       get: jest.fn().mockResolvedValue({ data: remoteObjects }),
   //       options: jest.fn().mockResolvedValue({}),
   //       post: jest.fn().mockResolvedValue({}),
   //       put: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
@@ -260,6 +266,7 @@ describe('moduleGenerator', () => {
   //     items = makeStoreModule({
   //       http: http,
   //       baseURL: API_URL,
+  //       resourcePath: 'items/',
   //       rootName: 'item',
   //       lcrusd: 'lcrusd',
   //       idKey: 'uuid'
@@ -275,14 +282,12 @@ describe('moduleGenerator', () => {
   //     jest.resetAllMocks()
   //   })
   //
-  //   test('mutations for listItems', async (done) => {
+  //   test('mutations for listItems', async () => {
   //     store.dispatch('items/listItems')
+  //     await flushPromises()
   //     // expect.any(Object) is the vuex state object passed by vuex.
   //     expect(items.mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
-  //     setTimeout(() => {
-  //       expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
-  //       done()
-  //     }, 10)
+  //     expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
   //   })
   // })
 
