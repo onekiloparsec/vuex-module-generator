@@ -286,7 +286,7 @@ describe('moduleGenerator', () => {
   //   })
   // })
 
-  describe('[module select-mutations commits - full lcrusd - no pages]', () => {
+  describe('[module select-mutations commits - single selection]', () => {
     let items = null
     let store = null
 
@@ -341,7 +341,7 @@ describe('moduleGenerator', () => {
     })
   })
 
-  describe('[module select-mutations commits - full lcrusd - no pages - multiple selection]', () => {
+  describe('[module select-mutations commits - multiple selection]', () => {
     let items = null
     let store = null
 
@@ -394,6 +394,74 @@ describe('moduleGenerator', () => {
     test('select multiple items of the list', () => {
       expect(store._mutations['items/selectItem']).toBeDefined()
       expect(store._mutations['items/selectMultipleItems']).toBeDefined()
+    })
+  })
+
+  describe('[module attach/detach-mutations commits]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      const http = {
+        get: jest.fn().mockResolvedValue({}),
+        options: jest.fn().mockResolvedValue({}),
+        post: jest.fn().mockResolvedValue({}),
+        put: jest.fn().mockResolvedValue({}),
+        patch: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({})
+      }
+      items = makeStoreModule({
+        http: http,
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        rootName: 'item',
+        lcrusd: 'lcrusd',
+        idKey: 'uuid'
+      })
+      store = new Vuex.Store({ modules: { items } })
+      store.commit('items/updateItemsList', remoteObjects)
+    })
+
+    test('initial state of data map', () => {
+      expect(store.state.items.itemsDataMap).toEqual({})
+    })
+
+    test('attach item data valid payload', () => {
+      store.commit('items/attachItemData', { uuid: remoteObjects[0]['uuid'], data: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
+      expect(store.state.items.itemsDataMap[remoteObjects[1]['uuid']]).toBeUndefined()
+    })
+
+    test('attach item data unknown id in payload', () => {
+      store.commit('items/attachItemData', { uuid: 'dummy', data: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toBeUndefined()
+      expect(store.state.items.itemsDataMap[remoteObjects[1]['uuid']]).toBeUndefined()
+    })
+
+    test('attach item data invalid id in payload', () => {
+      store.commit('items/attachItemData', { wrong_id: remoteObjects[0]['uuid'], data: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toBeUndefined()
+      expect(store.state.items.itemsDataMap[remoteObjects[1]['uuid']]).toBeUndefined()
+    })
+
+    test('attach item data invalid data in payload', () => {
+      store.commit('items/attachItemData', { wrong_id: remoteObjects[0]['uuid'], data2: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toBeUndefined()
+      expect(store.state.items.itemsDataMap[remoteObjects[1]['uuid']]).toBeUndefined()
+    })
+
+    test('detach item data valid objID', () => {
+      store.commit('items/attachItemData', { uuid: remoteObjects[0]['uuid'], data: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
+      store.commit('items/detachItemData', remoteObjects[0]['uuid'])
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toBeUndefined()
+    })
+
+    test('detach item data invalid objID', () => {
+      store.commit('items/attachItemData', { uuid: remoteObjects[0]['uuid'], data: { notes: 'some notes' } })
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
+      store.commit('items/detachItemData', 'dummy')
+      expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
     })
   })
 })

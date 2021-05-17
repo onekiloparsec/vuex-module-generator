@@ -122,6 +122,17 @@ export const configureMutations = (activatedActionNames, moduleNames, idKey, lcr
 
   /** Special mutations ****************************************************************************************************************************/
 
+  mutations[moduleNames.mutations.attachData] = (state, payload) => {
+    const objID = payload[idKey]
+    if (objID && payload['data']) {
+      state[moduleNames.state.dataMap][objID] = payload['data']
+    }
+  }
+
+  mutations[moduleNames.mutations.detachData] = (state, objID) => {
+    delete state[moduleNames.state.dataMap][objID]
+  }
+
   // Directly update list of items.
   mutations[moduleNames.mutations.updateList] = (state, newList) => {
     state[moduleNames.state.selection] = null
