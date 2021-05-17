@@ -39,6 +39,8 @@ export const createModuleNames = (root) => {
       select: `select${singularCapitalized}`,
       selectMultiple: `selectMultiple${pluralCapitalized}`,
       clearSelection: `clear${pluralCapitalized}Selection`,
+      attachData: `attach${singularCapitalized}Data`,
+      detachData: `detach${singularCapitalized}Data`,
       updateList: `update${pluralCapitalized}List`
     },
 

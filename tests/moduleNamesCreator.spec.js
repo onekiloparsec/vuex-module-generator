@@ -14,7 +14,7 @@ describe('test moduleNamesCreator', () => {
     expect(items.state.pageTotal).toEqual('totalItemsPageCount')
   })
 
-  test('mutations names for items', () => {
+  test('crud mutations names for items', () => {
     const items = createModuleNames('item')
     expect(items.mutations.crud.list).toEqual('listItems')
     expect(items.mutations.crud.create).toEqual('createItem')
@@ -22,9 +22,19 @@ describe('test moduleNamesCreator', () => {
     expect(items.mutations.crud.update).toEqual('updateItem')
     expect(items.mutations.crud.swap).toEqual('swapItem')
     expect(items.mutations.crud.delete).toEqual('deleteItem')
+  })
+
+  test('selection mutations names for items', () => {
+    const items = createModuleNames('item')
     expect(items.mutations.select).toEqual('selectItem')
     expect(items.mutations.selectMultiple).toEqual('selectMultipleItems')
     expect(items.mutations.clearSelection).toEqual('clearItemsSelection')
+  })
+
+  test('other mutations names for items', () => {
+    const items = createModuleNames('item')
+    expect(items.mutations.attachData).toEqual('attachItemData')
+    expect(items.mutations.detachData).toEqual('detachItemData')
     expect(items.mutations.updateList).toEqual('updateItemsList')
   })
 
