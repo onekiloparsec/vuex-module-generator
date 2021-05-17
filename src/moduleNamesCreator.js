@@ -1,4 +1,14 @@
-import { capitalizeFirstChar, pluralize } from '@/utils'
+const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
+
+const pluralize = (singular) => {
+  let plural = singular + 's'
+  if (singular.slice(-1) === 'y') {
+    plural = singular.substr(0, singular.length - 1) + 'ies'
+  } else if (singular.slice(-2) === 'is') {
+    plural = singular.substr(0, singular.length - 21) + 'des' // ephemeris -> ephemerides
+  }
+  return plural
+}
 
 export const createModuleNames = (root) => {
   const singular = root.toLowerCase()
@@ -12,7 +22,7 @@ export const createModuleNames = (root) => {
       dataMap: `${plural}DataMap`,
       status: `${plural}LoadingStatus`,
       selection: `selected${singularCapitalized}`,
-      selections: `selected${pluralCapitalized}`,
+      multipleSelection: `selected${pluralCapitalized}`,
       pageCurrent: `current${pluralCapitalized}Page`,
       pageTotal: `total${pluralCapitalized}PageCount`
     },

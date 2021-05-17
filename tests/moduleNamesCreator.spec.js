@@ -1,6 +1,5 @@
 import { createModuleNames } from '@/moduleNamesCreator'
 
-
 describe('test moduleNamesCreator', () => {
 
   test('state names for items', () => {
@@ -10,7 +9,7 @@ describe('test moduleNamesCreator', () => {
     expect(items.state.dataMap).toEqual('itemsDataMap')
     expect(items.state.status).toEqual('itemsLoadingStatus')
     expect(items.state.selection).toEqual('selectedItem')
-    expect(items.state.selections).toEqual('selectedItems')
+    expect(items.state.multipleSelection).toEqual('selectedItems')
     expect(items.state.pageCurrent).toEqual('currentItemsPage')
     expect(items.state.pageTotal).toEqual('totalItemsPageCount')
   })

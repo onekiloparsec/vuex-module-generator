@@ -41,7 +41,7 @@ export const makeStoreModule = ({ http, baseURL, resourcePath, rootName, lcrusd,
   // Selection, single or multiple is handled by a list *and* an object.
   state[moduleNames.state.selection] = null
   if (allowMultipleSelection) {
-    state[moduleNames.state.selections] = []
+    state[moduleNames.state.multipleSelection] = []
   }
 
   if (includes(lcrusd, 'p')) {

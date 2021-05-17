@@ -3,26 +3,30 @@ import concat from 'lodash/concat'
 import includes from 'lodash/includes'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
-export const configureSuccessMutations = (listName, selectionsKey, selectionKey, idKey) => ({
+export const configureSuccessMutations = (listName, idKey, selectionKey, multipleSelectionKey) => ({
   list: (state, itemsList) => {
     // list is list, no need of idOrData here.
     state[listName] = itemsList
-    // filter out items that are not known anymore. do not use IDs! objects may have changed
-    state[selectionsKey] = state[selectionsKey].filter(item => includes(itemsList, item))
     // also clear single selection if necessary
     if (itemsList && includes(itemsList, state[selectionKey]) === false) {
       state[selectionKey] = null
+    }
+    if (multipleSelectionKey) {
+      // filter out items that are not known anymore. do not use IDs! objects may have changed
+      state[multipleSelectionKey] = state[multipleSelectionKey].filter(item => includes(itemsList, item))
     }
   },
 
   partialList: (state, itemsList) => {
     // Append new items inside list
     state[listName].push(...itemsList)
-    // filter out items that are not known anymore. do not use IDs! objects may have changed
-    state[selectionsKey] = state[selectionsKey].filter(item => includes(itemsList, item))
     // also clear single selection if necessary
     if (includes(state[listName], state[selectionKey]) === false) {
       state[selectionKey] = null
+    }
+    if (multipleSelectionKey) {
+      // filter out items that are not known anymore. do not use IDs! objects may have changed
+      state[multipleSelectionKey] = state[multipleSelectionKey].filter(item => includes(itemsList, item))
     }
   },
 
@@ -69,23 +73,23 @@ export const configureSuccessMutations = (listName, selectionsKey, selectionKey,
     // Object being used by reference shouldn't require to update selection(s) container & pointer.
   },
 
-  // DELETE mutation will remove object from list container, (multiple) list selections container
+  // DELETE mutation will remove object from list container, (multiple) list multipleSelection container
   // and single selection.
   delete: (state, objID) => {
     const listIndex = state[listName].findIndex(item => item[idKey] === objID)
-    const selectionsIndex = state[selectionsKey].findIndex(item => item[idKey] === objID)
-
     if (listIndex > -1) {
       state[listName].splice(listIndex, 1)
       Vue.set(state, listName, new Array(...state[listName]))
     }
-    if (selectionsIndex > -1) {
-      state[selectionsKey].splice(selectionsIndex, 1)
-      Vue.set(state, selectionsKey, new Array(...state[selectionsKey]))
-    }
-
     if (state[selectionKey] && state[selectionKey][idKey] === objID) {
       state[selectionKey] = null
+    }
+    if (multipleSelectionKey) {
+      const multipleSelectionIndex = state[multipleSelectionKey].findIndex(item => item[idKey] === objID)
+      if (multipleSelectionIndex > -1) {
+        state[multipleSelectionKey].splice(multipleSelectionIndex, 1)
+        Vue.set(state, multipleSelectionKey, new Array(...state[multipleSelectionKey]))
+      }
     }
   }
 })
