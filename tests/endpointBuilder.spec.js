@@ -88,6 +88,18 @@ describe('test endpointURLBuilder', () => {
       expect(items).not.toBeNull()
     })
 
+    test('base url', () => {
+      expect(items.url()).toEqual(`${API_URL}items/`)
+    })
+
+    test('base url with arg', () => {
+      expect(items.url('5-6-7')).toEqual(`${API_URL}items/5-6-7/`)
+    })
+
+    test('single url', () => {
+      expect(items.single('2-3-4-5').url()).toEqual(`${API_URL}items/2-3-4-5/`)
+    })
+
     test('single subresource url', () => {
       expect(items.single('2-3-4-5').images.url()).toEqual(`${API_URL}items/2-3-4-5/images/`)
     })
@@ -99,6 +111,54 @@ describe('test endpointURLBuilder', () => {
     test('list method without params', () => {
       items.single('2-3-4-5').images.list()
       expect(http.get).toHaveBeenCalledWith(API_URL + 'items/2-3-4-5/images/')
+    })
+  })
+
+  describe('[Double Subresource]', () => {
+    let items = null
+    let http = null
+
+    beforeEach(() => {
+      http = {
+        get: jest.fn(),
+        options: jest.fn(),
+        post: jest.fn(),
+        put: jest.fn(),
+        patch: jest.fn(),
+        delete: jest.fn()
+      }
+      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
+        .addSubresource('images/', 'pk')
+        .addSubresource('updates/', 'uuid')
+    })
+
+    test('items constructor', () => {
+      expect(items).not.toBeNull()
+    })
+
+    test('base url', () => {
+      expect(items.url()).toEqual(`${API_URL}items/`)
+    })
+
+    test('base url with arg', () => {
+      expect(items.url('5-6-7')).toEqual(`${API_URL}items/5-6-7/`)
+    })
+
+    test('single url', () => {
+      expect(items.single('2-3-4-5').url()).toEqual(`${API_URL}items/2-3-4-5/`)
+    })
+
+    test('single subresource url', () => {
+      expect(items.single('2-3-4-5').updates.url()).toEqual(`${API_URL}items/2-3-4-5/updates/`)
+    })
+
+    test('single subresource url for detail', () => {
+      expect(items.single('2-3-4-5').updates.url('9876')).toEqual(`${API_URL}items/2-3-4-5/updates/9876/`)
+    })
+
+    test('list method without params', () => {
+      items.single('2-3-4-5').updates.list()
+      expect(http.get).toHaveBeenCalledWith(API_URL + 'items/2-3-4-5/updates/')
     })
   })
 })

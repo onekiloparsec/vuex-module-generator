@@ -3,16 +3,26 @@ import isNumber from 'lodash/isNumber'
 import isObject from 'lodash/isObject'
 import forEach from 'lodash/forEach'
 
-export const makeURLBuilder = (baseURL, resourcePath, parent = null) => {
+export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = null }) => {
   return function (uuid, params) {
-    let path = baseURL
+    let path = baseURL + resourcePath
 
     if (parent && parent._singleResourceId) {
       path += parent._singleResourceId + '/'
       parent._singleResourceId = null
+    } else if (this._singleResourceId) {
+      path += this._singleResourceId + '/'
+      this._singleResourceId = null
     }
 
-    path += resourcePath
+    if (path.slice(-1) !== '/') {
+      path += '/'
+    }
+
+    if (subPath) {
+      path += subPath
+    }
+
     if (path.slice(-1) !== '/') {
       path += '/'
     }
