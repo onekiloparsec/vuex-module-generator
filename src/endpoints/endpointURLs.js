@@ -1,13 +1,13 @@
 import { isNumber, isObject, isString } from '@/utils'
 
-export const makeURLBuilder = function ({ baseURL, resourcePath, subPath = '', parent = null }) {
+export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = null }) => {
   return function (uuid, params) {
     let path = baseURL + resourcePath
 
     if (parent && parent._singleResourceId) {
       path += parent._singleResourceId + '/'
       parent._singleResourceId = null
-    } else if (this._singleResourceId) {
+    } else if (this && this._singleResourceId) {
       path += this._singleResourceId + '/'
       this._singleResourceId = null
     }

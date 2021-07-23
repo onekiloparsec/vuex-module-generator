@@ -3,7 +3,7 @@ import { buildAPIEndpoint } from '@/endpoints/endpoints'
 const API_URL = 'http://localhost:8080/'
 
 describe('test buildAPIEndpoint', () => {
-  describe('[Basics]', () => {
+  describe('[Basics URLs]', () => {
     let items = null
     let http = null
 
@@ -44,16 +44,16 @@ describe('test buildAPIEndpoint', () => {
       expect(http.get).toHaveBeenCalledWith(API_URL + 'items/1-2-3-4/')
     })
 
-    test('swap method', () => {
-      const payload = { toto: 'tata' }
-      items.swap({ uuid: '1-2-3-4', data: payload })
-      expect(http.put).toHaveBeenCalledWith(API_URL + 'items/1-2-3-4/', payload)
-    })
-
     test('update method', () => {
       const payload = { toto: 'tata' }
       items.update({ uuid: '1-2-3-4', data: payload })
       expect(http.patch).toHaveBeenCalledWith(API_URL + 'items/1-2-3-4/', payload)
+    })
+    
+    test('swap method', () => {
+      const payload = { toto: 'tata' }
+      items.swap({ uuid: '1-2-3-4', data: payload })
+      expect(http.put).toHaveBeenCalledWith(API_URL + 'items/1-2-3-4/', payload)
     })
 
     test('delete method', () => {
@@ -67,7 +67,7 @@ describe('test buildAPIEndpoint', () => {
     })
   })
 
-  describe('[Subresource]', () => {
+  describe('[Subresource URLs]', () => {
     let items = null
     let http = null
 
@@ -114,7 +114,7 @@ describe('test buildAPIEndpoint', () => {
     })
   })
 
-  describe('[Double Subresource]', () => {
+  describe('[Double Subresource URLs]', () => {
     let items = null
     let http = null
 
