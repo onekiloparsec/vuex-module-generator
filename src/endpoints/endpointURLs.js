@@ -34,9 +34,9 @@ export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = n
 
     if (params && isObject(params)) {
       let index = 0
-      params.forEach(function (value, key) {
+      Object.keys(params).forEach((key) => {
         const letter = (index === 0) ? '?' : '&'
-        path += letter + key + '=' + value
+        path += letter + key + '=' + params[key]
         index += 1
       })
     }

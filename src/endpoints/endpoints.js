@@ -1,4 +1,4 @@
-import { makeURLBuilder } from './endpointURLBuilder'
+import { makeURLBuilder } from './endpointURLs'
 
 // Create an object fully set up to make HTTP requests to a REST endpoint.
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
@@ -47,14 +47,14 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, subPath = '
   // Deprecated. Allow to use things like api.observingsites.single(<_id>).images.list()...
   // when a subresource 'images/' has been added to the object.
   endpoint.addSubresource = (subPath, subIdKey) => {
-    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint({
-      http: endpoint._http,
-      baseURL: endpoint._baseURL,
-      resourcePath: endpoint._resourcePath,
-      subPath: subPath,
-      idKey: subIdKey,
-      parent: endpoint
-    })
+    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint(
+      endpoint._http,
+      endpoint._baseURL,
+      endpoint._resourcePath,
+      subIdKey,
+      subPath,
+      endpoint
+    )
     return endpoint
   }
 

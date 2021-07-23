@@ -1,7 +1,7 @@
 import { getStateObject } from '@/state'
 import { getGettersObject } from '@/getters'
 import { getMutationsObject } from '@/mutations'
-import { buildAPIEndpoint } from '@/endpoint'
+import { buildAPIEndpoint } from '@/endpoints'
 import { getActionsObject } from '@/actions'
 
 export const makeStoreModule = (rootName, idKey) => {

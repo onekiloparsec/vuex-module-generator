@@ -1,8 +1,8 @@
-import { buildAPIEndpoint } from '@/endpointsBuilder'
+import { buildAPIEndpoint } from '@/endpoints/endpoints'
 
 const API_URL = 'http://localhost:8080/'
 
-describe('test endpointURLBuilder', () => {
+describe('test buildAPIEndpoint', () => {
   describe('[Basics]', () => {
     let items = null
     let http = null
@@ -16,7 +16,7 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
+      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid')
     })
 
     test('items constructor', () => {
@@ -80,7 +80,7 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
+      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid')
         .addSubresource('images/', 'pk')
     })
 
@@ -127,7 +127,7 @@ describe('test endpointURLBuilder', () => {
         patch: jest.fn(),
         delete: jest.fn()
       }
-      items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
+      items = buildAPIEndpoint(http, API_URL, 'items/', 'uuid')
         .addSubresource('images/', 'pk')
         .addSubresource('updates/', 'uuid')
     })
