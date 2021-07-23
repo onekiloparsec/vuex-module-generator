@@ -21,7 +21,7 @@ export const getCrudMutationNames = (root) => {
 export const getCrudMutationsObject = (root, idKey, lcrusd) => {
   const stateNames = getStateNames(root)
   const mutationNames = getCrudMutationNames(root)
-  const mutationSuccesses = getMutationsSuccesses()
+  const mutationSuccesses = getMutationsSuccesses(root, idKey)
   const activatedActionKeys = getActivatedActionKeys(lcrusd)
 
   // Actions not associated with an ID, for which loading status is simply a boolean.
