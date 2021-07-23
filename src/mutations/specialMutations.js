@@ -6,9 +6,9 @@ const getSpecialMutationNames = (root) => {
   const singularCapitalized = capitalizeFirstChar(singular)
   const pluralCapitalized = capitalizeFirstChar(pluralize(singular))
   return {
-    select: `select${singularCapitalized}`,
-    selectMultiple: `selectMultiple${pluralCapitalized}`,
-    clearSelection: `clear${pluralCapitalized}Selection`
+    attachData: `attach${singularCapitalized}Data`,
+    detachData: `detach${singularCapitalized}Data`,
+    updateList: `update${pluralCapitalized}List`
   }
 }
 
@@ -46,9 +46,11 @@ export const getSpecialMutationsObject = (root, idKey) => {
 
   // Directly update list of items. Can be useful...
   mutations[mutationNames.updateList] = (state, newList) => {
+    state[stateNames.list] = newList
+    state[stateNames.status] = { 'create': false, 'delete': null, 'list': false, 'read': null, 'swap': null, 'update': null }
     state[stateNames.selection] = null
     state[stateNames.multipleSelection] = []
-    state[stateNames.list] = newList
+    state[stateNames.dataMap] = {}
   }
 
   return mutations

@@ -22,5 +22,9 @@ describe('test getMutationsObject', () => {
     expect(items.selectMultipleItems).toBeUndefined()
     expect(items.deselectItem).toEqual(expect.any(Function))
     expect(items.clearItemsSelection).toEqual(expect.any(Function))
+
+    expect(items.attachItemData).toEqual(expect.any(Function))
+    expect(items.detachItemData).toEqual(expect.any(Function))
+    expect(items.updateItemsList).toEqual(expect.any(Function))
   })
 })
