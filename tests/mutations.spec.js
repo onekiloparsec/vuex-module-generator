@@ -17,5 +17,10 @@ describe('test getMutationsObject', () => {
       expect(items[`${action}ItemSuccess`]).toEqual(expect.any(Function))
       expect(items[`${action}ItemFailure`]).toEqual(expect.any(Function))
     }
+
+    expect(items.selectItem).toEqual(expect.any(Function))
+    expect(items.selectMultipleItems).toBeUndefined()
+    expect(items.deselectItem).toEqual(expect.any(Function))
+    expect(items.clearItemsSelection).toEqual(expect.any(Function))
   })
 })
