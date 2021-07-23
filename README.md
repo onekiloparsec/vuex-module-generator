@@ -27,10 +27,10 @@ const satellites = makeStoreModule('satellite', 'norad_catalog_number')
 ...this state (automatically updated and managed):
 
 * a `satellites` array (initial = `[]`)
-* a `satelliteLoadingStatus` object for each activated LCRUSD action (see below): (initial
+* a `satellitesLoadingStatus` object for each activated LCRUSD action (see below): (initial
   = `{ list: false, create: false, read: null, update: null, swap: null, delete: null }`)
 * a `selectedSatellite` property (initial = `null`) to hold a single selection
-* a `lastSatelliteError` property (initial = `null`) to hold a single selection
+* a `lastSatellitesError` property (initial = `null`) to hold a single selection
 
 ### Getters 
 

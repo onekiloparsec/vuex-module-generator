@@ -13,7 +13,7 @@ export const getStateNames = (root) => {
     multipleSelection: `selected${pluralCapitalized}`,
     pageCurrent: `current${pluralCapitalized}Page`,
     pageTotal: `total${pluralCapitalized}PageCount`,
-    lastError: `last${singularCapitalized}Error`
+    lastError: `last${pluralCapitalized}Error`
   }
 }
 

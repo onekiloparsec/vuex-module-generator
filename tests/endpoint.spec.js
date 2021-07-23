@@ -49,7 +49,7 @@ describe('test buildAPIEndpoint', () => {
       items.update({ uuid: '1-2-3-4', data: payload })
       expect(http.patch).toHaveBeenCalledWith(API_URL + 'items/1-2-3-4/', payload)
     })
-    
+
     test('swap method', () => {
       const payload = { toto: 'tata' }
       items.swap({ uuid: '1-2-3-4', data: payload })
