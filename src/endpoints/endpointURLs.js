@@ -1,6 +1,6 @@
 import { isNumber, isObject, isString } from '@/utils'
 
-export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = null }) => {
+export const makeURLBuilder = function ({ baseURL, resourcePath, subPath = '', parent = null }) {
   return function (uuid, params) {
     let path = baseURL + resourcePath
 

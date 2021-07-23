@@ -1,4 +1,4 @@
-import { makeURLBuilder } from '@/endpointURLBuilder'
+import { makeURLBuilder } from '@/endpoints/endpointURLs'
 
 const API_URL = 'http://localhost:8080/'
 
@@ -7,7 +7,7 @@ describe('test endpointURLBuilder', () => {
     let urlBuilder = null
 
     beforeEach(() => {
-      urlBuilder = makeURLBuilder(API_URL, 'items/')
+      urlBuilder = makeURLBuilder({ baseURL: API_URL, resourcePath: 'items/' })
     })
 
     test('URL builder constructor', () => {
@@ -35,7 +35,12 @@ describe('test endpointURLBuilder', () => {
     let urlBuilder = null
 
     beforeEach(() => {
-      urlBuilder = makeURLBuilder(API_URL, 'items/', { _singleResourceId: '6-7-8-9' })
+      urlBuilder = makeURLBuilder({
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        subPath: null,
+        parent: { _singleResourceId: '6-7-8-9' }
+      })
     })
 
     test('URL builder constructor', () => {
