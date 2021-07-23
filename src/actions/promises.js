@@ -1,5 +1,3 @@
-import isArray from 'lodash/isArray'
-
 export const makeDefaultFetchPromise = function (mutationName, endpointMethodFunc, notifyCallback, idOrData) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
@@ -10,13 +8,13 @@ export const makeDefaultFetchPromise = function (mutationName, endpointMethodFun
       // Doing the actual fetch request to API endpoint
       const response = await endpointMethodFunc(idOrData)
       // Committing mutation of success state for current action
-      const payload = response.body || response.data
-      if (isArray(payload)) {
-        notifyCallback(mutationName + 'Success', payload.map(item => Object.freeze(item)))
+      const data = response.body || response.data
+      if (Array.isArray(data)) {
+        notifyCallback(mutationName + 'Success', data.map(item => Object.freeze(item)))
       } else {
-        notifyCallback(mutationName + 'Success', payload ? Object.freeze(payload) : deleteId)
+        notifyCallback(mutationName + 'Success', data ? Object.freeze(data) : deleteId)
       }
-      resolve(payload)
+      resolve(data)
     } catch (error) {
       // Committing mutation of failure state for current action
       notifyCallback(mutationName + 'Failure', error)

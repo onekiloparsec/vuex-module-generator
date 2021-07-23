@@ -4,7 +4,7 @@ import { makeURLBuilder } from './endpointURLBuilder'
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 // WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subPath = '', parent = null }) => {
+export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, subPath = '', parent = null) => {
   if (http == null) {
     throw Error('Missing http module to make requests!')
   }

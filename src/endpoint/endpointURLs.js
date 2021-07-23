@@ -1,7 +1,4 @@
-import isString from 'lodash/isString'
-import isNumber from 'lodash/isNumber'
-import isObject from 'lodash/isObject'
-import forEach from 'lodash/forEach'
+import { isNumber, isObject, isString } from '@/utils'
 
 export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = null }) => {
   return function (uuid, params) {
@@ -37,7 +34,7 @@ export const makeURLBuilder = ({ baseURL, resourcePath, subPath = '', parent = n
 
     if (params && isObject(params)) {
       let index = 0
-      forEach(params, function (value, key) {
+      params.forEach(function (value, key) {
         const letter = (index === 0) ? '?' : '&'
         path += letter + key + '=' + value
         index += 1

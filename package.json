@@ -17,7 +17,6 @@
     "prepare": "npm run build"
   },
   "peerDependencies": {
-    "lodash": "^4.17.21",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -33,9 +32,9 @@
     "eslint": "^7.26.0",
     "eslint-plugin-vue": "^7.9.0",
     "flush-promises": "^1.0.2",
-    "vue": "^2.6.10",
+    "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.10",
-    "vuex": "^3.1.2",
+    "vuex": "^3.6.2",
     "webpack-bundle-analyzer": "^4.4.1"
   },
   "publishConfig": {
