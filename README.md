@@ -1,12 +1,13 @@
 # vuex-module-generator
 
-Generate a full-featured [Vuex 3](https://vuex.vuejs.org) module linked to a REST endpoint.
-Especially useful for large Single-Page Applications using more than 50+ endpoints and
-choosing Vuex as state management. 
+Generate a full-featured [Vuex 3](https://vuex.vuejs.org) module linked to a REST endpoint. Especially useful for large
+Single-Page Applications using more than 50+ endpoints and choosing Vuex as state management.
+
+This lib has no dependencies apart from vuex.
 
 ## Basic Usage
 
-### Intro 
+### Intro
 
 With this:
 
@@ -14,15 +15,16 @@ With this:
 import axios from 'axios'
 
 const satellites = makeStoreModule('satellite', 'norad_catalog_number')
-  .generateActions(axios, 'https://api.arcsecond.io', 'lcrusd')
+  .generateActions(axios, 'https://api.arcsecond.io/', 'lcrusd')
 ```
 
-(Note that `norad_catalog_number` is simply the name of the id property returned by the backend. It simply shows that you can put anything: `pk`, `id`
+(Note that `norad_catalog_number` is simply the name of the id property returned by the backend. It simply shows that
+you can put anything: `pk`, `id`
 , `dummy`, whatever.)
 
 ...you get a **namespaced vuex store module** with...
 
-### State 
+### State
 
 ...this state (automatically updated and managed):
 
@@ -30,9 +32,9 @@ const satellites = makeStoreModule('satellite', 'norad_catalog_number')
 * a `satellitesLoadingStatus` object for each activated LCRUSD action (see below): (initial
   = `{ list: false, create: false, read: null, update: null, swap: null, delete: null }`)
 * a `selectedSatellite` property (initial = `null`) to hold a single selection
-* a `lastSatellitesError` property (initial = `null`) to hold a single selection
+* a `lastSatellitesError` property (initial = `null`) to hold the last action error.
 
-### Getters 
+### Getters
 
 ... this getter:
 
@@ -46,8 +48,8 @@ const satellites = makeStoreModule('satellite', 'norad_catalog_number')
 * `[list|create|read|update|swap|delete]SatelliteSuccess`
 * `[list|create|read|update|swap|delete]SatelliteFailure`
 
-which correspondingly update the `satelliteLoadingStatus` object property (with a boolean for `list` and `create`
-and the object id for the other.)
+which correspondingly updates the `satelliteLoadingStatus` object property (with a boolean for `list` and `create`
+and the object id for the other actions.)
 
 ...but also this mutation:
 
@@ -55,7 +57,8 @@ and the object id for the other.)
 
 ### Actions
 
-...these actions, which **both update the store module and return the request body** (making the use of them very flexible, trust me):
+...these actions, which **both update the store module and return the request body** (making the use of them very
+flexible):
 
 * a `listSatellites()` (which can receive search parameters like this: `listSatellites({key1: value1, key2: value2}`)
 * a `createSatellite(payload)` with a `payload` object
@@ -66,9 +69,10 @@ and the object id for the other.)
 
 ## LCRUSD ?
 
-It is a simple way to make more meaningful action names based on a HTTP verbs, often referred to as `CRUD` in a pure RESTful backend. Making a `POST`
-request to a `list` endpoint creates an object, while a `GET` fetches the list of all these objects. It is more readable, at the functional app code
-level, to easily distinguish them.
+It is a simple way to distinguish actions made on a RESTful backend, because names based on a HTTP verbs, or the usual
+`CRUD` acronym aren't sophisticated enough. For instance, a `POST` request to a `list` endpoint creates an object, while
+a `GET` fetches the list of all these objects. It is more readable, at the functional app code level, to distinguish
+them.
 
 Hence, quite logically:
 
@@ -79,11 +83,22 @@ Hence, quite logically:
 * `s` means **swap** and performs a `PUT` request (= full update) on the `detail` endpoint
 * `d` means **delete** and performs a `DELETE` request on the `detail` endpoint
 
-## Management
+## Typical workflow
 
-* If a read is successful, it will update the list and **replace** the object inside it if it is present. If not, it will be appended to the list.
-* If an update is successful, it will update the list and **update** the object inside it if it is present. If not, it will be appended to the list.
-* If an swap is successful, it will update the list and **replace** the object inside it if it is present. If not, it will be appended to the list.
+In a Vue.js component, you can have a table displaying the `satellites` array. At the beginning it is empty, but you
+trigger a `listSatellites` action, during which the `satellitesLoadingStatus.list` is `true`. Once successful
+the `satellites` array is filled with the request response, while the loading status is back to `false`. Clicking on a
+row of the table triggers `selectSatellite` which allow other Vue components to see a non-null
+`selectedSatellite`.
+
+## Items Data Management
+
+* If a read is successful, it will update the list and **replace** the object inside it if it is present. If not, it
+  will be appended to the list.
+* If an update is successful, it will update the list and **update** the object inside it if it is present. If not, it
+  will be appended to the list.
+* If an swap is successful, it will update the list and **replace** the object inside it if it is present. If not, it
+  will be appended to the list.
 * If a delete is successful, it will update the list and **remove** the object inside it if it is present.
 
 Of course, the `selection` state is always updated accordingly.
@@ -100,20 +115,24 @@ Then...
 
 *(Just a way to explain why the above.)*
 
-**Say**, you have an Vue.js (v2) Single-Page Application (SPA) for the browser, that is heavily relying on a pure RESTful backend,...
+**Say**, you have an Vue.js (v2) Single-Page Application (SPA) for the browser, that is heavily relying on a pure
+RESTful backend,...
 
-**Say**, you choose to develop your large SPA with Vuex, the Vue.js module with Redux principles, as a state management library...
+**Say**, you choose to develop your large SPA with Vuex, the Vue.js module with Redux principles, as a state management
+library...
 
 **Say**, you need to easily retrieve and store list of items, possibly paged, and supporting search query parameters...
 
-**Say**, you need to also fetch details of items, and easily managed the introduction in your module of new items, update of items, deletion of items...
+**Say**, you need to also fetch details of items, and easily managed the introduction in your module of new items,
+update of items, deletion of items...
 
-**Say**, you regularly need to also handle the selection of an item in a list, or even the selection of multiple items of that list...
+**Say**, you regularly need to also handle the selection of an item in a list, or even the selection of multiple items
+of that list...
 
 **Say**, you need this a dozen times, maybe a dozen dozen dozen times... all the same basic way...
 
-**Say**, of course, that for all these actions, you need to correctly handle the request failures, the succeses and the famous loading status to display that little
-spinning wheel...
+**Say**, of course, that for all these actions, you need to correctly handle the request failures, the succeses and the
+famous loading status to display that little spinning wheel...
 
 ## Advanced Use Case
 
@@ -125,12 +144,6 @@ spinning wheel...
 
 ```
 npm install
-```
-
-### Compiles and hot-reloads for development
-
-```
-npm run serve
 ```
 
 ### Compiles and minifies for production
