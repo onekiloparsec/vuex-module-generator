@@ -1,4 +1,4 @@
-import { buildAPIEndpoint } from '@/endpoints/endpoints'
+import { buildAPIEndpoint } from '@/endpoints'
 
 const API_URL = 'http://localhost:8080/'
 
