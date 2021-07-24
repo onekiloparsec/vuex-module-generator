@@ -27,15 +27,8 @@ describe('moduleGenerator', () => {
         patch: jest.fn().mockResolvedValue({}),
         delete: jest.fn().mockResolvedValue({})
       }
-      items = makeStoreModule({
-        rootName: 'item',
-        idKey: 'uuid'
-      }).generateActions({
-        http: http,
-        baseURL: API_URL,
-        resourcePath: 'items/',
-        lcrusd: 'lcrusd'
-      })
+      items = makeStoreModule({ rootName: 'item', idKey: 'uuid' })
+        .generateActions({ http, baseURL: API_URL, resourcePath: 'items/', lcrusd: 'lcrusd' })
       store = new Vuex.Store({ modules: { items } })
     })
 
@@ -47,8 +40,8 @@ describe('moduleGenerator', () => {
       expect(items._endpoint).toBeDefined()
     })
 
-    test('list action', () => {
-      store.dispatch('items/listItems')
+    test('list action', async () => {
+      await store.dispatch('items/listItems')
       expect(http.get).toHaveBeenCalledWith(`${API_URL}items/`)
     })
 
@@ -178,15 +171,13 @@ describe('moduleGenerator', () => {
         patch: jest.fn().mockResolvedValue({}),
         delete: jest.fn().mockResolvedValue({})
       }
-      items = makeStoreModule({
-        rootName: 'item',
-        idKey: 'uuid'
-      }).generateActions({
-        http: http,
-        baseURL: API_URL,
-        resourcePath: 'items/',
-        lcrusd: 'lcrusd'
-      })
+      items = makeStoreModule({ rootName: 'item', idKey: 'uuid' })
+        .generateActions({
+          http: http,
+          baseURL: API_URL,
+          resourcePath: 'items/',
+          lcrusd: 'lcrusd'
+        })
       store = new Vuex.Store({ modules: { items } })
       store.commit('items/updateItemsList', remoteObjects)
     })
@@ -195,15 +186,13 @@ describe('moduleGenerator', () => {
       expect(store.state.items.items).toEqual(remoteObjects)
     })
 
-    test('select an item of the list', () => {
-      store.commit('items/selectItem', remoteObjects[1])
-      expect(store.state.items.selectedItems).toEqual([])
+    test('select an item of the list', async () => {
+      await store.commit('items/selectItem', remoteObjects[1])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
     })
 
     test('select a null at cold start', () => {
       store.commit('items/selectItem', null)
-      expect(store.state.items.selectedItems).toEqual([])
       expect(store.state.items.selectedItem).toEqual(null)
     })
 
@@ -211,7 +200,6 @@ describe('moduleGenerator', () => {
       // Ok that may be strange, as it doesn't change the selection at all.
       store.commit('items/selectItem', remoteObjects[1])
       store.commit('items/selectItem', null)
-      expect(store.state.items.selectedItems).toEqual([])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
     })
 
@@ -234,16 +222,13 @@ describe('moduleGenerator', () => {
         patch: jest.fn().mockResolvedValue({}),
         delete: jest.fn().mockResolvedValue({})
       }
-      items = makeStoreModule({
-        rootName: 'item',
-        idKey: 'uuid',
-        multiSelection: true
-      }).generateActions({
-        http: http,
-        baseURL: API_URL,
-        resourcePath: 'items/',
-        lcrusd: 'lcrusd'
-      })
+      items = makeStoreModule({ rootName: 'item', idKey: 'uuid', multiSelection: true })
+        .generateActions({
+          http: http,
+          baseURL: API_URL,
+          resourcePath: 'items/',
+          lcrusd: 'lcrusd'
+        })
       store = new Vuex.Store({ modules: { items } })
       store.commit('items/updateItemsList', remoteObjects)
     })
