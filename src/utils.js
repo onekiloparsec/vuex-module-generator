@@ -1,5 +1,3 @@
-import includes from 'lodash/includes'
-
 export const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
 
 export const pluralize = (singular) => {
@@ -19,7 +17,7 @@ const defaultActionKeys = ['list', 'create', 'read', 'update', 'swap', 'delete']
 
 // The 'p' letter is understood as "paged list"
 export const getActivatedActionKeys = (lcrusd) => {
-  return defaultActionKeys.filter(a => includes(lcrusd.replace('p', 'l'), a.charAt(0)))
+  return defaultActionKeys.filter(a => lcrusd.replace('p', 'l').includes(a.charAt(0)))
 }
 
 // https://youmightnotneed.com/lodash/ ...
