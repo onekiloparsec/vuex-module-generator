@@ -2,7 +2,7 @@
   "name": "@onekiloparsec/vuex-module-generator",
   "version": "2.2.2",
   "scripts": {
-    "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
+    "build": "vue-cli-service build --target lib ./src/index.ts --name vuex-module-generator",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "build-ts": "tsc",
