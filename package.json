@@ -53,6 +53,5 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/onekiloparsec/vuex-module-generator.git"
-  },
-  "style": "dist/vuex-module-generator.css"
+  }
 }
