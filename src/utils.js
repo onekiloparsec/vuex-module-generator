@@ -18,7 +18,7 @@ export const pluralize = (singular) => {
 const defaultActionKeys = ['list', 'create', 'read', 'update', 'swap', 'delete']
 
 // The 'p' letter is understood as "paged list"
-export const getActivatedActionKeys = (lcrusd) => {
+export const getActivatedActionKeys = (lcrusd = 'lcrusd') => {
   return defaultActionKeys.filter(a => lcrusd.replace('p', 'l').includes(a.charAt(0)))
 }
 
