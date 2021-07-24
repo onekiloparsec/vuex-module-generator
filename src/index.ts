@@ -29,7 +29,7 @@ export type VuexModule = {
   generateActions?: Function
 }
 
-export const makeStoreModule = (basicParams: BasicStoreModuleParams): VuexModule => {
+const makeStoreModule = (basicParams: BasicStoreModuleParams): VuexModule => {
   const state = getStateObject(basicParams.rootName)
   const getters = getGettersObject(basicParams.rootName, basicParams.idKey)
 
@@ -64,3 +64,5 @@ export const makeStoreModule = (basicParams: BasicStoreModuleParams): VuexModule
 
   return storeModule
 }
+
+export default makeStoreModule
