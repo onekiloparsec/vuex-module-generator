@@ -12,7 +12,7 @@ const getSelectionMutationNames = (root) => {
   }
 }
 
-export const getSelectionsMutationsObject = (root, idKey, allowMultipleSelection) => {
+export const getSelectionsMutationsObject = (root, idKey, multiSelection) => {
   const mutations = {}
   const stateNames = getStateNames(root)
   const mutationNames = getSelectionMutationNames(root)
@@ -23,14 +23,14 @@ export const getSelectionsMutationsObject = (root, idKey, allowMultipleSelection
     }
     // Select the item
     state[stateNames.selection] = selectedItem
-    if (allowMultipleSelection && !state[stateNames.multipleSelection].includes(selectedItem)) {
+    if (multiSelection && !state[stateNames.multipleSelection].includes(selectedItem)) {
       // Append to selection, if not yet inside it.
       state[stateNames.multipleSelection].push(selectedItem)
     }
   }
 
   // Do not create this mutation if not allowed.
-  if (allowMultipleSelection) {
+  if (multiSelection) {
     // Select multiple items at once. Very important to avoid triggering multiple updates.
     mutations[mutationNames.selectMultiple] = (state, selectedItems) => {
       if (selectedItems.length === 0) {
@@ -56,7 +56,7 @@ export const getSelectionsMutationsObject = (root, idKey, allowMultipleSelection
     if (state[stateNames.selection] && state[stateNames.selection][idKey] === selectedItem[idKey]) {
       state[stateNames.selection] = null
     }
-    if (allowMultipleSelection) {
+    if (multiSelection) {
       const index = state[stateNames.multipleSelection].findIndex(item => item[idKey] === selectedItem[idKey])
       if (index !== -1) {
         state[stateNames.multipleSelection].splice(index, 1)

@@ -7,6 +7,7 @@ import { getActionsObject } from '@/actions'
 export type BasicStoreModuleParams = {
   rootName: string,
   idKey: string,
+  multiSelection: boolean
 }
 
 export type ActionsStoreModuleParams = {
@@ -52,7 +53,8 @@ export const makeStoreModule = (basicParams: BasicStoreModuleParams): VuexModule
       _endpoint = _endpoint.addSubresource(subPath, 'pk')
     }
 
-    const mutations = getMutationsObject(basicParams.rootName, basicParams.idKey, actionsParams.lcrusd)
+    const multiSelection = basicParams.multiSelection || false
+    const mutations = getMutationsObject(basicParams.rootName, basicParams.idKey, multiSelection, actionsParams.lcrusd)
     const actions = getActionsObject(_endpoint, basicParams.rootName, actionsParams.lcrusd, actionsParams.subresourcePaths)
 
     Object.assign(storeModule, { mutations, actions, _endpoint })

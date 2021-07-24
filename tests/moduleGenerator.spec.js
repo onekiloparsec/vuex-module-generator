@@ -11,179 +11,16 @@ const remoteObjects = [{ uuid: '123', name: 'obj1' }, { uuid: '234', name: 'obj2
 Vue.use(Vuex)
 
 describe('moduleGenerator', () => {
-  afterEach(() => {
-    jest.clearAllMocks()
-  })
-
-  describe('[module definitions - full lcrusd - no pages]', () => {
-    let items = null
-
-    beforeEach(() => {
-      const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
-      }
-
-      items = makeStoreModule({
-        http: http, baseURL: API_URL, resourcePath: 'items/', rootName: 'item', lcrusd: 'lcrusd', idKey: 'uuid'
-      })
-    })
-
-    test('test module state', () => {
-      expect(items.state).not.toBeNull()
-      expect(items.state.items).toEqual([])
-      expect(items.state.itemsDataMap).toEqual({})
-      expect(items.state.itemsLoadingStatus).toEqual({ 'create': false, 'delete': null, 'list': false, 'read': null, 'swap': null, 'update': null })
-      expect(items.state.selectedItem).toEqual(null)
-      expect(items.state.selectedItems).toBeUndefined()
-      expect(items.state.currentItemsPage).toBeUndefined()
-      expect(items.state.totalItemsPageCount).toBeUndefined()
-    })
-
-    test('test module getters', () => {
-      expect(items.getters).toEqual({})
-    })
-
-    test('test module list mutations', () => {
-      expect(items.mutations.listItemsPending).toBeDefined()
-      expect(items.mutations.listItemsSuccess).toBeDefined()
-      expect(items.mutations.listItemsPartialSuccess).toBeUndefined()
-      expect(items.mutations.listItemsFailure).toBeDefined()
-    })
-
-    test('test module create mutations', () => {
-      expect(items.mutations.createItemPending).toBeDefined()
-      expect(items.mutations.createItemSuccess).toBeDefined()
-      expect(items.mutations.createItemFailure).toBeDefined()
-    })
-
-    test('test module read mutations', () => {
-      expect(items.mutations.readItemPending).toBeDefined()
-      expect(items.mutations.readItemSuccess).toBeDefined()
-      expect(items.mutations.readItemFailure).toBeDefined()
-    })
-
-    test('test module update mutations', () => {
-      expect(items.mutations.updateItemPending).toBeDefined()
-      expect(items.mutations.updateItemSuccess).toBeDefined()
-      expect(items.mutations.updateItemFailure).toBeDefined()
-    })
-
-    test('test module swap mutations', () => {
-      expect(items.mutations.swapItemPending).toBeDefined()
-      expect(items.mutations.swapItemSuccess).toBeDefined()
-      expect(items.mutations.swapItemFailure).toBeDefined()
-    })
-
-    test('test module delete mutations', () => {
-      expect(items.mutations.deleteItemPending).toBeDefined()
-      expect(items.mutations.deleteItemSuccess).toBeDefined()
-      expect(items.mutations.deleteItemFailure).toBeDefined()
-    })
-
-    test('test module actions', () => {
-      expect(items.actions.listItems).toBeDefined()
-      expect(items.actions.createItem).toBeDefined()
-      expect(items.actions.readItem).toBeDefined()
-      expect(items.actions.updateItem).toBeDefined()
-      expect(items.actions.swapItem).toBeDefined()
-      expect(items.actions.deleteItem).toBeDefined()
-    })
-  })
-
-  describe('[module definitions - partial lcrusd - with pages]', () => {
-    let items = null
-
-    beforeEach(() => {
-      const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
-      }
-
-      items = makeStoreModule({
-        http: http, baseURL: API_URL, resourcePath: 'items/', rootName: 'item', lcrusd: 'pr', idKey: 'uuid'
-      })
-    })
-
-    test('test module state', () => {
-      expect(items.state).not.toBeNull()
-      expect(items.state.items).toEqual([])
-      expect(items.state.itemsDataMap).toEqual({})
-      expect(items.state.itemsLoadingStatus).toEqual({ 'create': false, 'delete': null, 'list': false, 'read': null, 'swap': null, 'update': null })
-      expect(items.state.selectedItem).toEqual(null)
-      expect(items.state.selectedItems).toBeUndefined()
-      expect(items.state.currentItemsPage).toBeDefined()
-      expect(items.state.totalItemsPageCount).toBeDefined()
-    })
-
-    test('test module getters', () => {
-      expect(items.getters).toEqual({})
-    })
-
-    test('test module list mutations', () => {
-      expect(items.mutations.listItemsPending).toBeDefined()
-      expect(items.mutations.listItemsSuccess).toBeDefined()
-      expect(items.mutations.listItemsPartialSuccess).toBeDefined()
-      expect(items.mutations.listItemsFailure).toBeDefined()
-    })
-
-    test('test module create mutations', () => {
-      expect(items.mutations.createItemPending).toBeUndefined()
-      expect(items.mutations.createItemSuccess).toBeUndefined()
-      expect(items.mutations.createItemFailure).toBeUndefined()
-    })
-
-    test('test module read mutations', () => {
-      expect(items.mutations.readItemPending).toBeDefined()
-      expect(items.mutations.readItemSuccess).toBeDefined()
-      expect(items.mutations.readItemFailure).toBeDefined()
-    })
-
-    test('test module update mutations', () => {
-      expect(items.mutations.updateItemPending).toBeUndefined()
-      expect(items.mutations.updateItemSuccess).toBeUndefined()
-      expect(items.mutations.updateItemFailure).toBeUndefined()
-    })
-
-    test('test module swap mutations', () => {
-      expect(items.mutations.swapItemPending).toBeUndefined()
-      expect(items.mutations.swapItemSuccess).toBeUndefined()
-      expect(items.mutations.swapItemFailure).toBeUndefined()
-    })
-
-    test('test module delete mutations', () => {
-      expect(items.mutations.deleteItemPending).toBeUndefined()
-      expect(items.mutations.deleteItemSuccess).toBeUndefined()
-      expect(items.mutations.deleteItemFailure).toBeUndefined()
-    })
-
-    test('test module actions', () => {
-      expect(items.actions.listItems).toBeDefined()
-      expect(items.actions.createItem).toBeUndefined()
-      expect(items.actions.readItem).toBeDefined()
-      expect(items.actions.updateItem).toBeUndefined()
-      expect(items.actions.swapItem).toBeUndefined()
-      expect(items.actions.deleteItem).toBeUndefined()
-    })
-  })
-
-  describe('[module actions dispatch - full lcrusd - no pages]', () => {
+  describe('[actions - list]', () => {
     let items = null
     let store = null
     let http = null
-    let obj = { uuid: '123', name: 'HD 5980' }
+    let obj1 = { uuid: '123', name: 'HD 5980' }
+    let obj2 = { uuid: '765', name: 'HD 5981' }
 
     beforeEach(() => {
       http = {
-        get: jest.fn().mockResolvedValue({ data: obj }),
+        get: jest.fn().mockResolvedValue({ data: [obj1, obj2] }),
         options: jest.fn().mockResolvedValue({}),
         post: jest.fn().mockResolvedValue({}),
         put: jest.fn().mockResolvedValue({}),
@@ -191,14 +28,19 @@ describe('moduleGenerator', () => {
         delete: jest.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
         http: http,
         baseURL: API_URL,
         resourcePath: 'items/',
-        rootName: 'item',
-        lcrusd: 'lcrusd',
-        idKey: 'uuid'
+        lcrusd: 'lcrusd'
       })
       store = new Vuex.Store({ modules: { items } })
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks()
     })
 
     test('access to endpoint', () => {
@@ -214,6 +56,38 @@ describe('moduleGenerator', () => {
       const payload = { search: 'toto' }
       store.dispatch('items/listItems', payload)
       expect(http.get).toHaveBeenCalledWith(`${API_URL}items/?search=toto`)
+    })
+  })
+
+  describe('[actions - detail]', () => {
+    let items = null
+    let store = null
+    let http = null
+    let obj = { uuid: '123', name: 'HD 5980' }
+
+    beforeEach(() => {
+      http = {
+        get: jest.fn().mockResolvedValue({ data: obj }),
+        options: jest.fn().mockResolvedValue({}),
+        post: jest.fn().mockResolvedValue({}),
+        put: jest.fn().mockResolvedValue({}),
+        patch: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({})
+      }
+      items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
+        http: http,
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        lcrusd: 'lcrusd'
+      })
+      store = new Vuex.Store({ modules: { items } })
+    })
+
+    afterEach(() => {
+      jest.resetAllMocks()
     })
 
     test('create action', () => {
@@ -305,12 +179,13 @@ describe('moduleGenerator', () => {
         delete: jest.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
         http: http,
         baseURL: API_URL,
         resourcePath: 'items/',
-        rootName: 'item',
-        lcrusd: 'lcrusd',
-        idKey: 'uuid'
+        lcrusd: 'lcrusd'
       })
       store = new Vuex.Store({ modules: { items } })
       store.commit('items/updateItemsList', remoteObjects)
@@ -322,13 +197,13 @@ describe('moduleGenerator', () => {
 
     test('select an item of the list', () => {
       store.commit('items/selectItem', remoteObjects[1])
-      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItems).toEqual([])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
     })
 
     test('select a null at cold start', () => {
       store.commit('items/selectItem', null)
-      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItems).toEqual([])
       expect(store.state.items.selectedItem).toEqual(null)
     })
 
@@ -336,7 +211,7 @@ describe('moduleGenerator', () => {
       // Ok that may be strange, as it doesn't change the selection at all.
       store.commit('items/selectItem', remoteObjects[1])
       store.commit('items/selectItem', null)
-      expect(store.state.items.selectedItems).toBeUndefined()
+      expect(store.state.items.selectedItems).toEqual([])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
     })
 
@@ -360,13 +235,14 @@ describe('moduleGenerator', () => {
         delete: jest.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid',
+        multiSelection: true
+      }).generateActions({
         http: http,
         baseURL: API_URL,
         resourcePath: 'items/',
-        rootName: 'item',
-        lcrusd: 'lcrusd',
-        idKey: 'uuid',
-        allowMultipleSelection: true
+        lcrusd: 'lcrusd'
       })
       store = new Vuex.Store({ modules: { items } })
       store.commit('items/updateItemsList', remoteObjects)
@@ -416,12 +292,13 @@ describe('moduleGenerator', () => {
         delete: jest.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
         http: http,
         baseURL: API_URL,
         resourcePath: 'items/',
-        rootName: 'item',
-        lcrusd: 'lcrusd',
-        idKey: 'uuid'
+        lcrusd: 'lcrusd'
       })
       store = new Vuex.Store({ modules: { items } })
       store.commit('items/updateItemsList', remoteObjects)
@@ -467,6 +344,40 @@ describe('moduleGenerator', () => {
       expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
       store.commit('items/detachItemData', 'dummy')
       expect(store.state.items.itemsDataMap[remoteObjects[0]['uuid']]).toEqual({ notes: 'some notes' })
+    })
+  })
+
+  describe('[module definitions - partial lcrusd - with pages]', () => {
+    let items = null
+
+    beforeEach(() => {
+      const http = {
+        get: jest.fn().mockResolvedValue({}),
+        options: jest.fn().mockResolvedValue({}),
+        post: jest.fn().mockResolvedValue({}),
+        put: jest.fn().mockResolvedValue({}),
+        patch: jest.fn().mockResolvedValue({}),
+        delete: jest.fn().mockResolvedValue({})
+      }
+
+      items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
+        http: http,
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        lcrusd: 'pr'
+      })
+    })
+
+    test('test module actions', () => {
+      expect(items.actions.listItems).toBeDefined()
+      expect(items.actions.createItem).toBeUndefined()
+      expect(items.actions.readItem).toBeDefined()
+      expect(items.actions.updateItem).toBeUndefined()
+      expect(items.actions.swapItem).toBeUndefined()
+      expect(items.actions.deleteItem).toBeUndefined()
     })
   })
 })

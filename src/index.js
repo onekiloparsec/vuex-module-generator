@@ -22,7 +22,8 @@ export const makeStoreModule = (basicParams) => {
             // @ts-ignore
             _endpoint = _endpoint.addSubresource(subPath, 'pk');
         }
-        const mutations = getMutationsObject(basicParams.rootName, basicParams.idKey, actionsParams.lcrusd);
+        const multiSelection = basicParams.multiSelection || false;
+        const mutations = getMutationsObject(basicParams.rootName, basicParams.idKey, multiSelection, actionsParams.lcrusd);
         const actions = getActionsObject(_endpoint, basicParams.rootName, actionsParams.lcrusd, actionsParams.subresourcePaths);
         Object.assign(storeModule, { mutations, actions, _endpoint });
         return storeModule;
