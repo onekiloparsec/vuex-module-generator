@@ -2,12 +2,10 @@
   "name": "@onekiloparsec/vuex-module-generator",
   "version": "2.2.2",
   "scripts": {
-    "build": "vue-cli-service build --target lib ./src/index.ts --name vuex-module-generator",
+    "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "build-ts": "tsc",
-    "prepare": "npm run build",
-    "watch-ts": "tsc -w"
+    "prepare": "npm run build"
   },
   "main": "dist/vuex-module-generator.common.js",
   "module": "dist/vuex-module-generator.esm.js",
@@ -31,12 +29,10 @@
     "eslint": "^7.26.0",
     "eslint-plugin-vue": "^7.9.0",
     "flush-promises": "^1.0.2",
-    "source-map-loader": "^3.0.0",
-    "ts-jest": "^24.3.0",
-    "ts-loader": "^9.2.3",
     "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.10",
     "vuex": "^3.6.2",
+    "webpack": "^4.46.0",
     "webpack-bundle-analyzer": "^4.4.1"
   },
   "peerDependencies": {
