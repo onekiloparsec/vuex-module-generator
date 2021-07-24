@@ -1,6 +1,8 @@
-export const capitalizeFirstChar = str => str.charAt(0).toUpperCase() + str.substring(1)
+export const capitalizeFirstChar = function (str: string): string {
+  return str.charAt(0).toUpperCase() + str.substring(1)
+}
 
-export const pluralize = (singular) => {
+export const pluralize = (singular: string): string => {
   let plural = singular + 's'
   if (singular.slice(-1) === 'y') {
     plural = singular.substr(0, singular.length - 1) + 'ies'
@@ -16,14 +18,23 @@ export const pluralize = (singular) => {
 const defaultActionKeys = ['list', 'create', 'read', 'update', 'swap', 'delete']
 
 // The 'p' letter is understood as "paged list"
-export const getActivatedActionKeys = (lcrusd) => {
+export const getActivatedActionKeys = (lcrusd: string): string[] => {
   return defaultActionKeys.filter(a => lcrusd.replace('p', 'l').includes(a.charAt(0)))
 }
 
 // https://youmightnotneed.com/lodash/ ...
 
-export const isObject = a => a instanceof Object
+// @ts-ignore
+export const isObject: boolean = function (a: any) {
+  return a instanceof Object
+}
 
-export const isNumber = a => typeof a === 'number'
+// @ts-ignore
+export const isNumber: boolean = function (a: any) {
+  return typeof a === 'number'
+}
 
-export const isString = a => typeof a === 'string'
+// @ts-ignore
+export const isString: boolean = function (a: any) {
+  return typeof a === 'string'
+}
