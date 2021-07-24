@@ -11,9 +11,7 @@ module.exports = {
     //   new BundleAnalyzerPlugin({ analyzerPort: 8787 })
     // ],
     externals: {
-      lodash: 'lodash',
       vuex: 'vuex'
     }
   }
 }
-
