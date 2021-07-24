@@ -5,7 +5,7 @@ export const pluralize = (singular) => {
   if (singular.slice(-1) === 'y') {
     plural = singular.substr(0, singular.length - 1) + 'ies'
   } else if (singular.slice(-2) === 'is') {
-    plural = singular.substr(0, singular.length - 21) + 'des' // ephemeris -> ephemerides
+    plural = singular.substr(0, singular.length - 1) + 'des' // ephemeris -> ephemerides
   }
   return plural
 }
