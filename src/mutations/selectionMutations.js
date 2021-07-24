@@ -1,21 +1,24 @@
 import { getStateNames } from '@/state'
 import { capitalizeFirstChar, pluralize } from '@/utils'
 
-const getSelectionMutationNames = (root) => {
+const getSelectionMutationNames = (root, multiSelection) => {
   const singular = root.toLowerCase()
   const singularCapitalized = capitalizeFirstChar(singular)
   const pluralCapitalized = capitalizeFirstChar(pluralize(singular))
-  return {
+  const names = {
     select: `select${singularCapitalized}`,
-    selectMultiple: `selectMultiple${pluralCapitalized}`,
     clearSelection: `clear${pluralCapitalized}Selection`
   }
+  if (multiSelection) {
+    names.selectMultiple = `selectMultiple${pluralCapitalized}`
+  }
+  return names
 }
 
-export const getSelectionsMutationsObject = (root, idKey, multiSelection) => {
+export const getSelectionsMutationsObject = (root, idKey, multiSelection = false) => {
   const mutations = {}
   const stateNames = getStateNames(root)
-  const mutationNames = getSelectionMutationNames(root)
+  const mutationNames = getSelectionMutationNames(root, multiSelection)
 
   mutations[mutationNames.select] = (state, selectedItem) => {
     if (!selectedItem) {
@@ -29,7 +32,7 @@ export const getSelectionsMutationsObject = (root, idKey, multiSelection) => {
     }
   }
 
-  // Do not create this mutation if not allowed.
+  // Create this mutation only of multiSelection is enabled.
   if (multiSelection) {
     // Select multiple items at once. Very important to avoid triggering multiple updates.
     mutations[mutationNames.selectMultiple] = (state, selectedItems) => {
@@ -67,7 +70,9 @@ export const getSelectionsMutationsObject = (root, idKey, multiSelection) => {
   // Clear all selection.
   mutations[mutationNames.clearSelection] = (state) => {
     state[stateNames.selection] = null
-    state[stateNames.multipleSelection] = []
+    if (multiSelection) {
+      state[stateNames.multipleSelection] = []
+    }
   }
 
   return mutations

@@ -5,7 +5,7 @@ import { buildAPIEndpoint } from '@/endpoints'
 import { getActionsObject } from '@/actions'
 
 const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
-  const state = getStateObject(rootName)
+  const state = getStateObject(rootName, multiSelection)
   const getters = getGettersObject(rootName, idKey)
 
   const storeModule = { namespaced: true, state, getters }

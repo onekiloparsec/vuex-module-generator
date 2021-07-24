@@ -17,7 +17,7 @@ export const getMutationsSuccesses = (root, idKey) => {
         state[stateNames.selection] = null
       }
       // if there are multiple selected items that couldn't be found in new items list, remove them from selection list
-      if (state[stateNames.multipleSelection].length) {
+      if (stateNames.multipleSelection && state[stateNames.multipleSelection].length) {
         // filter out items that are not known anymore.
         state[stateNames.multipleSelection] = state[stateNames.multipleSelection].filter(item => itemIds.includes(item[idKey]))
       }
@@ -34,7 +34,7 @@ export const getMutationsSuccesses = (root, idKey) => {
         state[stateNames.selection] = null
       }
       // if there are multiple selected items that couldn't be found in new items list, remove them from selection list
-      if (state[stateNames.multipleSelection].length) {
+      if (stateNames.multipleSelection && state[stateNames.multipleSelection].length) {
         // filter out items that are not known anymore.
         state[stateNames.multipleSelection] = state[stateNames.multipleSelection].filter(item => itemIds.includes(item[idKey]))
       }
@@ -99,7 +99,7 @@ export const getMutationsSuccesses = (root, idKey) => {
         state[stateNames.selection] = null
       }
       // Remove from multiple selection of deleted itemm was part of it.
-      if (state[stateNames.multipleSelection].length) {
+      if (stateNames.multipleSelection && state[stateNames.multipleSelection].length) {
         const multipleSelectionIndex = state[stateNames.multipleSelection].findIndex(item => item[idKey] === itemId)
         if (multipleSelectionIndex > -1) {
           state[stateNames.multipleSelection].splice(multipleSelectionIndex, 1)
