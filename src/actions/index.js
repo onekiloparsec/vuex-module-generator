@@ -11,7 +11,8 @@ const makePagedStoreAction = (mutationName, endpointMethodFunc) => ({ commit }, 
   return makePagedFetchPromise(mutationName, endpointMethodFunc, commit, idOrData)
 }
 
-export const getActionsObject = (endpoint, lcrusd, root, subresources) => {
+export const getActionsObject = (endpoint, root, lcrusd, subresources) => {
+  subresources = subresources || []
   const actionNames = getActionsNames(root, subresources)
   const crudMutationNames = getCrudMutationNames(root)
   const activatedActionKeys = getActivatedActionKeys(lcrusd)
