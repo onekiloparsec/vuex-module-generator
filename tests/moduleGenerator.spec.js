@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import flushPromises from 'flush-promises'
 
-import { makeStoreModule } from '@/moduleGenerator'
+import { makeStoreModule } from '@/index'
 
 const API_URL = 'http://localhost:8080/'
 
