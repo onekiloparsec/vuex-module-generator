@@ -4,7 +4,7 @@ import { makeURLBuilder } from './endpointURLs'
 // Start with obj = buildAPIEndpoint(...). Then, obj.get(), obj.put() etc work.
 // WARNING: the list(), create(), read() etc methods MUST have only ONE argument.
 
-export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, subPath = '', parent = null) => {
+export const buildAPIEndpoint = ({ http, baseURL, resourcePath, idKey, subresourcePath = '', parent = null }) => {
   if (http == null) {
     throw Error('Missing http module to make requests!')
   }
@@ -22,12 +22,12 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, subPath = '
     _http: http,
     _baseURL: baseURL,
     _resourcePath: resourcePath,
-    _subPath: subPath,
+    _subresourcePath: subresourcePath,
     _idKey: idKey,
     _parent: parent
   }
 
-  endpoint.url = makeURLBuilder({ baseURL, resourcePath, subPath, parent })
+  endpoint.url = makeURLBuilder({ baseURL, resourcePath, subresourcePath, parent })
 
   // l
   endpoint.list = (params) => endpoint._http.get(endpoint.url(null, params))
@@ -44,17 +44,17 @@ export const buildAPIEndpoint = (http, baseURL, resourcePath, idKey, subPath = '
 
   endpoint.options = (_id) => endpoint._http.options(endpoint.url(_id))
 
-  // Deprecated. Allow to use things like api.observingsites.single(<_id>).images.list()...
+  // Allow to use things like api.observingsites.single(<_id>).images.list()...
   // when a subresource 'images/' has been added to the object.
-  endpoint.addSubresource = (subPath, subIdKey) => {
-    endpoint[subPath.slice(0, -1)] = buildAPIEndpoint(
-      endpoint._http,
-      endpoint._baseURL,
-      endpoint._resourcePath,
-      subIdKey,
-      subPath,
-      endpoint
-    )
+  endpoint.addSubresource = (subresourcePath, subIdKey) => {
+    endpoint[subresourcePath.slice(0, -1)] = buildAPIEndpoint({
+      http: endpoint._http,
+      baseURL: endpoint._baseURL,
+      resourcePath: endpoint._resourcePath,
+      idKey: subIdKey,
+      subresourcePath: subresourcePath,
+      parent: endpoint
+    })
     return endpoint
   }
 

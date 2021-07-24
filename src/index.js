@@ -4,7 +4,7 @@ import { getMutationsObject } from '@/mutations'
 import { buildAPIEndpoint } from '@/endpoints'
 import { getActionsObject } from '@/actions'
 
-export const makeStoreModule = (rootName, idKey) => {
+export const makeStoreModule = ({ rootName, idKey }) => {
   const state = getStateObject(rootName)
   const getters = getGettersObject(rootName, idKey)
 
@@ -15,8 +15,8 @@ export const makeStoreModule = (rootName, idKey) => {
     return storeModule
   }
 
-  storeModule.generateActions = (http, baseURL, lcrusd, resourcePath, subresourcePaths) => {
-    let _endpoint = buildAPIEndpoint(http, baseURL, resourcePath, idKey)
+  storeModule.generateActions = ({ http, baseURL, lcrusd, resourcePath, subresourcePaths = [] }) => {
+    let _endpoint = buildAPIEndpoint({ http, baseURL, resourcePath, idKey })
     for (let subPath of subresourcePaths) {
       _endpoint = _endpoint.addSubresource(subPath, 'pk')
     }
