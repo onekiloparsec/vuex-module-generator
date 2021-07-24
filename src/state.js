@@ -1,4 +1,4 @@
-import { capitalizeFirstChar, pluralize } from '@/utils';
+import { capitalizeFirstChar, pluralize } from './utils';
 export const getStateNames = (root) => {
     const singular = root.toLowerCase();
     const plural = pluralize(singular);

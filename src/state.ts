@@ -1,4 +1,4 @@
-import { capitalizeFirstChar, pluralize } from '@/utils'
+import { capitalizeFirstChar, pluralize } from './utils'
 
 export type VuexModuleState = {
   list: string,
