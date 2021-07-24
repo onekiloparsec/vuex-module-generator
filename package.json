@@ -12,7 +12,9 @@
   ],
   "scripts": {
     "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
-    "test:unit": "vue-cli-service test:unit",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "test:unit": "jest tests",
     "lint": "vue-cli-service lint",
     "prepare": "npm run build"
   },
@@ -29,10 +31,12 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/test-utils": "1.2.0",
     "babel-eslint": "^10.1.0",
+    "babel-types": "^6.26.0",
     "eslint": "^7.26.0",
     "eslint-plugin-vue": "^7.9.0",
     "flush-promises": "^1.0.2",
     "source-map-loader": "^3.0.0",
+    "ts-jest": "^24.3.0",
     "ts-loader": "^9.2.3",
     "vue": "^2.6.14",
     "vue-template-compiler": "^2.6.10",

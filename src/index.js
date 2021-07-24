@@ -1,33 +1,32 @@
-import { getStateObject } from '@/state'
-import { getGettersObject } from '@/getters'
-import { getMutationsObject } from '@/mutations'
-import { buildAPIEndpoint } from '@/endpoints'
-import { getActionsObject } from '@/actions'
-
-export const makeStoreModule = ({ rootName, idKey }) => {
-  const state = getStateObject(rootName)
-  const getters = getGettersObject(rootName, idKey)
-
-  const storeModule = { namespaced: true, state, getters }
-
-  storeModule.attachCustomGetters = (customGetters) => {
-    Object.assign(getters, customGetters || {})
-    return storeModule
-  }
-
-  storeModule.generateActions = ({ http, baseURL, lcrusd, resourcePath, subresourcePaths = [] }) => {
-    let _endpoint = buildAPIEndpoint({ http, baseURL, resourcePath, idKey })
-    for (let subPath of subresourcePaths) {
-      _endpoint = _endpoint.addSubresource(subPath, 'pk')
-    }
-
-    const mutations = getMutationsObject(rootName, idKey, lcrusd)
-    const actions = getActionsObject(_endpoint, lcrusd, rootName, subresourcePaths)
-
-    Object.assign(storeModule, { mutations, actions, _endpoint })
-
-    return storeModule
-  }
-
-  return storeModule
-}
+import { getStateObject } from '@/state';
+import { getGettersObject } from '@/getters';
+import { getMutationsObject } from '@/mutations';
+import { buildAPIEndpoint } from '@/endpoints';
+import { getActionsObject } from '@/actions';
+export const makeStoreModule = (basicParams) => {
+    const state = getStateObject(basicParams.rootName);
+    const getters = getGettersObject(basicParams.rootName, basicParams.idKey);
+    const storeModule = { namespaced: true, state, getters };
+    storeModule.attachCustomGetters = (customGetters = {}) => {
+        Object.assign(getters, customGetters || {});
+        return storeModule;
+    };
+    storeModule.generateActions = (actionsParams) => {
+        let _endpoint = buildAPIEndpoint({
+            http: actionsParams.http,
+            baseURL: actionsParams.baseURL,
+            resourcePath: actionsParams.resourcePath,
+            idKey: basicParams.idKey
+        });
+        for (let subPath of actionsParams.subresourcePaths || []) {
+            // @ts-ignore
+            _endpoint = _endpoint.addSubresource(subPath, 'pk');
+        }
+        const mutations = getMutationsObject(basicParams.rootName, basicParams.idKey, actionsParams.lcrusd);
+        const actions = getActionsObject(_endpoint, basicParams.rootName, actionsParams.lcrusd, actionsParams.subresourcePaths);
+        Object.assign(storeModule, { mutations, actions, _endpoint });
+        return storeModule;
+    };
+    return storeModule;
+};
+//# sourceMappingURL=index.js.map

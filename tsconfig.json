@@ -16,8 +16,6 @@
       "node_modules/@types"
     ],
     "types": [
-      "youtube",
-      "webpack-env",
       "jest"
     ],
     "paths": {

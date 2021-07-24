@@ -4,16 +4,24 @@ module.exports = {
     'js',
     'jsx',
     'json',
-    'vue'
+    'vue',
+    'ts'
   ],
+  globals: {
+    'ts-jest': {
+      tsConfig: 'tsconfig.json'
+    }
+  },
   transform: {
     '^.+\\.vue$': 'vue-jest',
     '.+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
-    '^.+\\.jsx?$': 'babel-jest'
+    '^.+\\.jsx?$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest'
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
   },
+  testEnvironment: 'node',
   snapshotSerializers: [
     'jest-serializer-vue'
   ],
