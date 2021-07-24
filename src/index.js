@@ -10,11 +10,6 @@ const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
 
   const storeModule = { namespaced: true, state, getters }
 
-  storeModule.attachCustomGetters = (customGetters) => {
-    Object.assign(getters, customGetters || {})
-    return storeModule
-  }
-
   storeModule.generateActions = ({ http, baseURL, resourcePath, lcrusd, subresourcePaths = [] }) => {
     let _endpoint = buildAPIEndpoint({ http, baseURL, resourcePath, idKey })
 
@@ -28,6 +23,11 @@ const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
     // Include the _endpoint object inside the module to play using the endpoint directly.
     Object.assign(storeModule, { mutations, actions, _endpoint })
 
+    return storeModule
+  }
+
+  storeModule.attachCustomGetters = (customGetters) => {
+    Object.assign(getters, customGetters || {})
     return storeModule
   }
 
