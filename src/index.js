@@ -17,7 +17,7 @@ const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
       _endpoint = _endpoint.addSubresource(subPath, 'pk')
     }
 
-    const mutations = getMutationsObject(rootName, idKey, multiSelection, lcrusd)
+    const mutations = getMutationsObject(rootName, idKey, lcrusd, multiSelection)
     const actions = getActionsObject(_endpoint, rootName, lcrusd, subresourcePaths)
 
     // Include the _endpoint object inside the module to play using the endpoint directly.
