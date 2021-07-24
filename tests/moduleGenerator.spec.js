@@ -233,20 +233,22 @@ describe('moduleGenerator', () => {
       store.commit('items/updateItemsList', remoteObjects)
     })
 
-    test('update the list', () => {
+    test('has correct initial state', () => {
       expect(store.state.items.items).toEqual(remoteObjects)
+      expect(store.state.items.selectedItem).toBeNull()
+      expect(store.state.items.selectedItems).toEqual([])
     })
 
     test('select an item of the list', () => {
       store.commit('items/selectItem', remoteObjects[1])
-      expect(store.state.items.selectedItems).toEqual([remoteObjects[1]])
       expect(store.state.items.selectedItem).toEqual(remoteObjects[1])
+      expect(store.state.items.selectedItems).toEqual([remoteObjects[1]])
     })
 
     test('select a null at cold start', () => {
       store.commit('items/selectItem', null)
+      expect(store.state.items.selectedItem).toBeNull()
       expect(store.state.items.selectedItems).toEqual([])
-      expect(store.state.items.selectedItem).toEqual(null)
     })
 
     test('select a null after a select of an object in the list', () => {

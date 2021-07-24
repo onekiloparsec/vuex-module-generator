@@ -21,7 +21,7 @@ export const getStateNames = (root, multiSelection) => {
 }
 
 export const getStateObject = (root, multiSelection = false) => {
-  const stateNames = getStateNames(root)
+  const stateNames = getStateNames(root, multiSelection)
   const obj = {
     [stateNames.list]: [],
     [stateNames.dataMap]: {},
