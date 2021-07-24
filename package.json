@@ -16,6 +16,7 @@
     "src"
   ],
   "devDependencies": {
+    "@babel/core": "^7.14.8",
     "@babel/preset-env": "^7.7.4",
     "@vue/cli-plugin-babel": "^4.5.13",
     "@vue/cli-plugin-eslint": "^4.5.13",
@@ -25,6 +26,7 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/test-utils": "1.2.0",
     "babel-eslint": "^10.1.0",
+    "babel-jest": "^27.0.6",
     "babel-types": "^6.26.0",
     "eslint": "^7.26.0",
     "eslint-plugin-vue": "^7.9.0",
