@@ -17,7 +17,7 @@ const getSelectionMutationNames = (root, multiSelection) => {
 
 export const getSelectionsMutationsObject = (root, idKey, multiSelection = false) => {
   const mutations = {}
-  const stateNames = getStateNames(root)
+  const stateNames = getStateNames(root, multiSelection)
   const mutationNames = getSelectionMutationNames(root, multiSelection)
 
   mutations[mutationNames.select] = (state, selectedItem) => {
