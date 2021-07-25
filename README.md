@@ -1,3 +1,5 @@
+![build](https://github.com/onekiloparsec/vuex-module-generator/actions/workflows/nodejs.yml/badge.svg)
+
 # vuex-module-generator
 
 Generate a full-featured [Vuex 3](https://vuex.vuejs.org) module linked to a REST endpoint. Especially useful for large
