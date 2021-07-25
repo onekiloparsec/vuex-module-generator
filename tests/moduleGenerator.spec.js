@@ -62,9 +62,9 @@ describe('moduleGenerator', () => {
       http = {
         get: jest.fn().mockResolvedValue({ data: obj }),
         options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
+        post: jest.fn().mockResolvedValue({ data: obj }),
+        put: jest.fn().mockResolvedValue({ data: obj }),
+        patch: jest.fn().mockResolvedValue({ data: obj }),
         delete: jest.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
