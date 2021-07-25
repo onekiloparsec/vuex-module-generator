@@ -14,7 +14,7 @@ This lib has no dependencies apart from vuex.
 
 ### Intro
 
-With this:
+With this simple declaration:
 
 ```js
 import axios from 'axios'
@@ -23,9 +23,12 @@ const satellites = makeStoreModule('satellite', 'norad_catalog_number')
   .generateActions(axios, 'https://api.arcsecond.io/', 'lcrusd')
 ```
 
-(Note that `norad_catalog_number` is simply the name of the id property returned by the backend. It simply shows that
-you can put anything: `pk`, `id`
-, `dummy`, whatever.)
+* `satellite` is the **singular** root name for the module
+* `norad_catalog_number` is the name of the id property. Check what the backend use for these resources (usually `id`
+  , `pk`, or `uuid`).
+* `axios` is a HTTP requests library. You can use any lib you choose with the same basic APIs.
+* `https://api.arcsecond.io/` is the base URL of the backend resources.
+* `lcrusd` is a custom strings indicating we want to generate all the mutations & actions (see "LCRUSD ?" below).
 
 ...you get a **namespaced vuex store module** with...
 
@@ -43,11 +46,11 @@ you can put anything: `pk`, `id`
 
 ... this getter:
 
-* a `getSatellite(norad_catalog_number)`
+* a `getSatellite(norad_catalog_number)` returning the object if found, and null otherwise.
 
 ### Mutations
 
-...these fetch / LCRUSD mutations (automatically handled by the module):
+...these fetch / LCRUSD mutations (automatically handled by the module actions, you don't need to call them yourself):
 
 * `[list|create|read|update|swap|delete]SatellitePending`
 * `[list|create|read|update|swap|delete]SatelliteSuccess`
@@ -62,8 +65,8 @@ and the object id for the other actions.)
 
 ### Actions
 
-...these actions, which **both update the store module and return the request body** (making the use of them very
-flexible):
+...these (async) actions, which **both update the module state and return the request body** (making the use of them
+very flexible):
 
 * a `listSatellites()` (which can receive search parameters like this: `listSatellites({key1: value1, key2: value2}`)
 * a `createSatellite(payload)` with a `payload` object
@@ -74,10 +77,10 @@ flexible):
 
 ## LCRUSD ?
 
-It is a simple way to distinguish actions made on a RESTful backend, because names based on a HTTP verbs, or the usual
-`CRUD` acronym aren't sophisticated enough. For instance, a `POST` request to a `list` endpoint creates an object, while
-a `GET` fetches the list of all these objects. It is more readable, at the functional app code level, to distinguish
-them.
+It is a simple way to distinguish actions made on a RESTful backend, because names based on HTTP verbs, or the usual
+`CRUD` acronym aren't sophisticated enough. For instance, a `GET` request to a `list` endpoint fetches an object, while
+a `GET` on the list endpoint returns all the resource objects. It is more readable, at the functional app code level, to
+distinguish these two "reads".
 
 Hence, quite logically:
 
@@ -87,6 +90,10 @@ Hence, quite logically:
 * `u` means **update** and peforms a `PATCH` request (= partial update) on the `detail` endpoint
 * `s` means **swap** and performs a `PUT` request (= full update) on the `detail` endpoint
 * `d` means **delete** and performs a `DELETE` request on the `detail` endpoint
+
+Depending on the `lcrusd` string passed as parameter, not all actions are generated. For instance, for a read-only REST
+endpoint, simply pass `lr`. There will be no `create...`, `update...`, `swap...` nor `delete...` mutations and actions
+generated in the module.
 
 ## Typical workflow
 
@@ -109,12 +116,6 @@ row of the table triggers `selectSatellite` which allow other Vue components to 
 Of course, the `selection` state is always updated accordingly.
 
 Moreover, If an action is called on an unknown item, it does nothing silently.
-
-## Advanced Usage
-
-In fact, you get a lot more with this lib. But make sure to read what's above first, and let flow it inside your head.
-
-Then...
 
 ## Base Use Case
 
@@ -139,9 +140,11 @@ of that list...
 **Say**, of course, that for all these actions, you need to correctly handle the request failures, the succeses and the
 famous loading status to display that little spinning wheel...
 
-## Advanced Use Case
+## Advanced Usage
 
-(subresources + data attaching)
+In fact, you get a lot more with this lib. But make sure to read what's above first, and let flow it inside your head.
+
+Then... (TODO, write about paged-list endpoints, subresources & data attaching)
 
 ## Developers
 
