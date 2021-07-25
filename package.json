@@ -1,6 +1,6 @@
 {
   "name": "@onekiloparsec/vuex-module-generator",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "scripts": {
     "build": "vue-cli-service build --target lib ./src/index.js --name vuex-module-generator",
     "test:unit": "vue-cli-service test:unit",
