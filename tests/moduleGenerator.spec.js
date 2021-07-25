@@ -359,13 +359,15 @@ describe('moduleGenerator', () => {
     })
 
     test('test module mutations', () => {
-      expect(items.mutations.listItemsPartialPending).toBeDefined()
+      expect(items.mutations.listItemsPending).toBeDefined()
       expect(items.mutations.listItemsPartialSuccess).toBeDefined()
-      expect(items.mutations.listItemsPartialFailure).toBeDefined()
-      expect(items.mutations.createItemPending).toBeUndefined()
+      expect(items.mutations.listItemsSuccess).toBeDefined()
+      expect(items.mutations.listItemsFailure).toBeDefined()
       expect(items.mutations.readItemPending).toBeDefined()
       expect(items.mutations.readItemSuccess).toBeDefined()
       expect(items.mutations.readItemFailure).toBeDefined()
+
+      expect(items.mutations.createItemPending).toBeUndefined()
       expect(items.mutations.updateItemPending).toBeUndefined()
       expect(items.mutations.swapItemPending).toBeUndefined()
       expect(items.mutations.deleteItemPending).toBeUndefined()
@@ -373,8 +375,9 @@ describe('moduleGenerator', () => {
 
     test('test module actions', () => {
       expect(items.actions.listItems).toBeDefined()
-      expect(items.actions.createItem).toBeUndefined()
       expect(items.actions.readItem).toBeDefined()
+
+      expect(items.actions.createItem).toBeUndefined()
       expect(items.actions.updateItem).toBeUndefined()
       expect(items.actions.swapItem).toBeUndefined()
       expect(items.actions.deleteItem).toBeUndefined()
