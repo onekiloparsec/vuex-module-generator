@@ -1,4 +1,7 @@
-![build](https://github.com/onekiloparsec/vuex-module-generator/actions/workflows/nodejs.yml/badge.svg)
+![build](https://img.shields.io/github/workflow/status/onekiloparsec/vuex-module-generator/Node%20CI/master)
+![npm bundle min size](https://img.shields.io/bundlephobia/minzip/vuex-module-generator)
+![licence](https://img.shields.io/github/license/onekiloparsec/vuex-module-generator)
+![version](https://img.shields.io/github/package-json/v/onekiloparsec/vuex-module-generator)
 
 # vuex-module-generator
 
