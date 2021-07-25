@@ -69,6 +69,21 @@ export const getCrudMutationsObject = (root, idKey, lcrusd) => {
         state[stateNames.lastError] = payload
       }
     })
+
+    if (lcrusd.includes('p')) {
+      // Add a partial success mutation when dealing with paged-list action.
+      mutations[mutationNames['list'] + 'PartialSuccess'] = (state, payload) => {
+        const { data, page, total } = payload
+        state[stateNames.pageCurrent] = page
+        state[stateNames.pageTotal] = total || page
+        if (page === 1) { // At start, clear list and selection
+          mutationSuccesses['list'](state, [])
+        }
+        // Then, update list/tree and selection(s) state
+        mutationSuccesses['partialList'](state, data)
+        // Do not update CRUD state object, since request sequence is still on going...
+      }
+    }
   })
 
   return mutations
