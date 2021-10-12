@@ -4,8 +4,6 @@ import { getMutationsObject } from '@/mutations'
 import { buildAPIEndpoint } from '@/endpoints'
 import { getActionsObject } from '@/actions'
 
-export { buildAPIEndpoint }
-
 const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
   const state = getStateObject(rootName, multiSelection)
   const getters = getGettersObject(rootName, idKey)
@@ -36,4 +34,4 @@ const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
   return storeModule
 }
 
-export default makeStoreModule
+export default { buildAPIEndpoint, makeStoreModule }
