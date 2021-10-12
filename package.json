@@ -1,13 +1,15 @@
 {
   "name": "@onekiloparsec/vuex-module-generator",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
     "test": "jest"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "./dist/vuex-module-generator.umd.js",
   "module": "./dist/vuex-module-generator.es.js",
   "exports": {
