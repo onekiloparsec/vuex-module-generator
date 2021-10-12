@@ -7,6 +7,15 @@
     "serve": "vite preview",
     "test": "jest"
   },
+  "files": ["dist"],
+  "main": "./dist/vuex-module-generator.umd.js",
+  "module": "./dist/vuex-module-generator.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vuex-module-generator.es.js",
+      "require": "./dist/vuex-module-generator.umd.js"
+    }
+  },
   "devDependencies": {
     "babel-jest": "^27.0.6",
     "babel-preset-vite": "^1.0.4",
