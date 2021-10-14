@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import { getStateNames } from '@/state'
 
 // idKey is a string such as 'pk', or 'uuid' or 'identifier' etc.
@@ -51,8 +50,6 @@ export const getMutationsSuccesses = (root, idKey) => {
       const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
       if (index > -1) {
         state[stateNames.list].splice(index, 1, item)
-        // Make sure to trigger Vue's reactivity
-        Vue.set(state, stateNames.list, new Array(...state[stateNames.list]))
       } else {
         state[stateNames.list].push(item)
       }
@@ -65,8 +62,6 @@ export const getMutationsSuccesses = (root, idKey) => {
       if (index > -1) {
         const newItem = { ...state[stateNames.list][index], ...item }
         state[stateNames.list].splice(index, 1, newItem)
-        // Make sure to trigger Vue's reactivity
-        Vue.set(state, stateNames.list, new Array(...state[stateNames.list]))
       } else {
         state[stateNames.list].push(item)
       }
@@ -78,8 +73,6 @@ export const getMutationsSuccesses = (root, idKey) => {
       const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
       if (index > -1) {
         state[stateNames.list].splice(index, 1, item)
-        // Make sure to trigger Vue's reactivity
-        Vue.set(state, stateNames.list, new Array(...state[stateNames.list]))
       } else {
         state[stateNames.list].push(item)
       }
@@ -91,8 +84,6 @@ export const getMutationsSuccesses = (root, idKey) => {
       const listIndex = state[stateNames.list].findIndex(item => item[idKey] === itemId)
       if (listIndex > -1) {
         state[stateNames.list].splice(listIndex, 1)
-        // Make sure to trigger Vue's reactivity
-        Vue.set(state, stateNames.list, new Array(...state[stateNames.list]))
       }
       // Nullish selection of deleted item was the selected one.
       if (state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
@@ -103,8 +94,6 @@ export const getMutationsSuccesses = (root, idKey) => {
         const multipleSelectionIndex = state[stateNames.multipleSelection].findIndex(item => item[idKey] === itemId)
         if (multipleSelectionIndex > -1) {
           state[stateNames.multipleSelection].splice(multipleSelectionIndex, 1)
-          // Make sure to trigger Vue's reactivity
-          Vue.set(state, stateNames.multipleSelection, new Array(...state[stateNames.multipleSelection]))
         }
       }
     }
