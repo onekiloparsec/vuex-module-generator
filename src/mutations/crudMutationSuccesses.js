@@ -41,7 +41,7 @@ export const getMutationsSuccesses = (root, idKey) => {
 
     // The success mutation for a post/create action will append object to list.
     create: (state, item) => {
-      state[stateNames.list] = state[stateNames.list].push(item)
+      state[stateNames.list].push(item)
     },
 
     // The read mutation will replace the object content if it exists already, or push it inside list if not yet present.
