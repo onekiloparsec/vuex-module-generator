@@ -8,6 +8,7 @@ const getSpecialMutationNames = (root) => {
   return {
     attachData: `attach${singularCapitalized}Data`,
     detachData: `detach${singularCapitalized}Data`,
+    appendToList: `appendTo${pluralCapitalized}List`,
     updateList: `update${pluralCapitalized}List`
   }
 }
@@ -44,6 +45,15 @@ export const getSpecialMutationsObject = (root, idKey) => {
 
   mutations[mutationNames.detachData] = (state, objID) => {
     delete state[stateNames.dataMap][objID]
+  }
+
+  mutations[mutationNames.appendToList] = (state, newItem) => {
+    const index = state[stateNames.list].find(item => item[idKey] === newItem[idKey])
+    if (index === -1) {
+      state[stateNames.list].push(newItem)
+      return true
+    }
+    return false
   }
 
   // Directly update list of items. Can be useful...
