@@ -34,4 +34,4 @@ const makeStoreModule = ({ rootName, idKey, multiSelection = false }) => {
   return storeModule
 }
 
-export default { buildAPIEndpoint, makeStoreModule }
+export { buildAPIEndpoint, makeStoreModule }

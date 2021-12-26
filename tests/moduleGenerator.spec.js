@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest'
 
 import Vuex from 'vuex'
 
-import makeStoreModule from '@/index'
+import { makeStoreModule } from '@/index'
 
 const API_URL = 'http://localhost:8080/'
 
