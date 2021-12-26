@@ -37,7 +37,9 @@ export const getSpecialMutationsObject = (root, idKey) => {
         // Attach data to the object
         state[stateNames.dataMap][itemId] = data
       }
+      return true
     }
+    return false
   }
 
   mutations[mutationNames.detachData] = (state, objID) => {
