@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { getGettersObject } from '@/getters'
 import { getStateObject } from '@/state'
 

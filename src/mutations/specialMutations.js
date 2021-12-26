@@ -9,6 +9,7 @@ const getSpecialMutationNames = (root) => {
     attachData: `attach${singularCapitalized}Data`,
     detachData: `detach${singularCapitalized}Data`,
     appendToList: `appendTo${pluralCapitalized}List`,
+    removeFromList: `removeFrom${pluralCapitalized}List`,
     updateList: `update${pluralCapitalized}List`
   }
 }
@@ -51,6 +52,15 @@ export const getSpecialMutationsObject = (root, idKey) => {
     const index = state[stateNames.list].find(item => item[idKey] === newItem[idKey])
     if (index === -1) {
       state[stateNames.list].push(newItem)
+      return true
+    }
+    return false
+  }
+
+  mutations[mutationNames.removeFromList] = (state, obsoleteItem) => {
+    const index = state[stateNames.list].find(item => item[idKey] === obsoleteItem[idKey])
+    if (index !== -1) {
+      state[stateNames.list].splice(index, 1)
       return true
     }
     return false

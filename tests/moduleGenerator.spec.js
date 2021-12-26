@@ -1,6 +1,6 @@
-import Vue from 'vue'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+
 import Vuex from 'vuex'
-import flushPromises from 'flush-promises'
 
 import makeStoreModule from '@/index'
 
@@ -8,7 +8,6 @@ const API_URL = 'http://localhost:8080/'
 
 const remoteObjects = [{ uuid: '123', name: 'obj1' }, { uuid: '234', name: 'obj2' }]
 
-Vue.use(Vuex)
 
 describe('moduleGenerator', () => {
   describe('[actions - list]', () => {
@@ -20,20 +19,16 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       http = {
-        get: jest.fn().mockResolvedValue({ data: [obj1, obj2] }),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({ data: [obj1, obj2] }),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
       }
       items = makeStoreModule({ rootName: 'item', idKey: 'uuid' })
         .generateActions({ http, baseURL: API_URL, resourcePath: 'items/', lcrusd: 'lcrusd' })
       store = new Vuex.Store({ modules: { items } })
-    })
-
-    afterEach(() => {
-      jest.resetAllMocks()
     })
 
     test('access to endpoint', () => {
@@ -60,12 +55,12 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       http = {
-        get: jest.fn().mockResolvedValue({ data: obj }),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({ data: obj }),
-        put: jest.fn().mockResolvedValue({ data: obj }),
-        patch: jest.fn().mockResolvedValue({ data: obj }),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({ data: obj }),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({ data: obj }),
+        put: vi.fn().mockResolvedValue({ data: obj }),
+        patch: vi.fn().mockResolvedValue({ data: obj }),
+        delete: vi.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
         rootName: 'item',
@@ -79,10 +74,6 @@ describe('moduleGenerator', () => {
       store = new Vuex.Store({ modules: { items } })
     })
 
-    afterEach(() => {
-      jest.resetAllMocks()
-    })
-
     test('create action', () => {
       const payload = { name: 'toto' }
       store.dispatch('items/createItem', payload)
@@ -90,8 +81,7 @@ describe('moduleGenerator', () => {
     })
 
     test('read action', async () => {
-      store.dispatch('items/readItem', 'HD 5980')
-      await flushPromises()
+      await store.dispatch('items/readItem', 'HD 5980')
       expect(http.get).toHaveBeenCalledWith(`${API_URL}items/HD 5980/`)
       expect(store.state.items.items[0]).toEqual(obj)
       store.dispatch('items/readItem', 'HD 5980')
@@ -123,12 +113,12 @@ describe('moduleGenerator', () => {
   //
   //   beforeEach(() => {
   //     http = {
-  //       get: jest.fn().mockResolvedValue({ data: remoteObjects }),
-  //       options: jest.fn().mockResolvedValue({}),
-  //       post: jest.fn().mockResolvedValue({}),
-  //       put: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
-  //       patch: jest.fn().mockResolvedValue({ data: remoteObjects[0] }),
-  //       delete: jest.fn().mockResolvedValue({})
+  //       get: vi.fn().mockResolvedValue({ data: remoteObjects }),
+  //       options: vi.fn().mockResolvedValue({}),
+  //       post: vi.fn().mockResolvedValue({}),
+  //       put: vi.fn().mockResolvedValue({ data: remoteObjects[0] }),
+  //       patch: vi.fn().mockResolvedValue({ data: remoteObjects[0] }),
+  //       delete: vi.fn().mockResolvedValue({})
   //     }
   //     items = makeStoreModule({
   //       http: http,
@@ -139,19 +129,13 @@ describe('moduleGenerator', () => {
   //       idKey: 'uuid'
   //     })
   //     for (let key of Object.keys(items.mutations)) {
-  //       items.mutations[key] = jest.fn()
+  //       items.mutations[key] = vi.fn()
   //     }
   //     store = new Vuex.Store({ modules: { items } })
   //   })
   //
-  //   afterEach(() => {
-  //     jest.clearAllMocks()
-  //     jest.resetAllMocks()
-  //   })
-  //
   //   test('mutations for listItems', async () => {
   //     store.dispatch('items/listItems')
-  //     await flushPromises()
   //     // expect.any(Object) is the vuex state object passed by vuex.
   //     expect(items.mutations.listItemsPending).toHaveBeenCalledWith(expect.any(Object), undefined)
   //     expect(items.mutations.listItemsSuccess).toHaveBeenCalledWith(expect.any(Object), remoteObjects)
@@ -164,12 +148,12 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({}),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
       }
       items = makeStoreModule({ rootName: 'item', idKey: 'uuid' })
         .generateActions({
@@ -215,12 +199,12 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({}),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
       }
       items = makeStoreModule({ rootName: 'item', idKey: 'uuid', multiSelection: true })
         .generateActions({
@@ -271,12 +255,12 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({}),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
       }
       items = makeStoreModule({
         rootName: 'item',
@@ -339,12 +323,12 @@ describe('moduleGenerator', () => {
 
     beforeEach(() => {
       const http = {
-        get: jest.fn().mockResolvedValue({}),
-        options: jest.fn().mockResolvedValue({}),
-        post: jest.fn().mockResolvedValue({}),
-        put: jest.fn().mockResolvedValue({}),
-        patch: jest.fn().mockResolvedValue({}),
-        delete: jest.fn().mockResolvedValue({})
+        get: vi.fn().mockResolvedValue({}),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
       }
 
       items = makeStoreModule({

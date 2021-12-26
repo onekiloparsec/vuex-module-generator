@@ -1,3 +1,4 @@
+import { describe, expect, test, beforeEach, vi } from 'vitest'
 import { buildAPIEndpoint } from '@/endpoints'
 
 const API_URL = 'http://localhost:8080/'
@@ -9,12 +10,12 @@ describe('test buildAPIEndpoint', () => {
 
     beforeEach(() => {
       http = {
-        get: jest.fn(),
-        options: jest.fn(),
-        post: jest.fn(),
-        put: jest.fn(),
-        patch: jest.fn(),
-        delete: jest.fn()
+        get: vi.fn(),
+        options: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        patch: vi.fn(),
+        delete: vi.fn()
       }
       items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
     })
@@ -73,12 +74,12 @@ describe('test buildAPIEndpoint', () => {
 
     beforeEach(() => {
       http = {
-        get: jest.fn(),
-        options: jest.fn(),
-        post: jest.fn(),
-        put: jest.fn(),
-        patch: jest.fn(),
-        delete: jest.fn()
+        get: vi.fn(),
+        options: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        patch: vi.fn(),
+        delete: vi.fn()
       }
       items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
         .addSubresource('images/', 'pk')
@@ -120,12 +121,12 @@ describe('test buildAPIEndpoint', () => {
 
     beforeEach(() => {
       http = {
-        get: jest.fn(),
-        options: jest.fn(),
-        post: jest.fn(),
-        put: jest.fn(),
-        patch: jest.fn(),
-        delete: jest.fn()
+        get: vi.fn(),
+        options: vi.fn(),
+        post: vi.fn(),
+        put: vi.fn(),
+        patch: vi.fn(),
+        delete: vi.fn()
       }
       items = buildAPIEndpoint({ http, baseURL: API_URL, resourcePath: 'items/', idKey: 'uuid' })
         .addSubresource('images/', 'pk')

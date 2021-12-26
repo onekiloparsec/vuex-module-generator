@@ -1,3 +1,4 @@
+import { describe, expect, test } from 'vitest'
 import { getStateObject } from '@/state'
 
 describe('test getStateObject', () => {

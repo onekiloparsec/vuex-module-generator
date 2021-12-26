@@ -5,7 +5,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "test": "vite-jest"
+    "test": "vitest",
+    "coverage": "vitest --coverage"
   },
   "files": [
     "dist"
@@ -19,13 +20,9 @@
     }
   },
   "devDependencies": {
-    "@vue/vue3-jest": "^27.0.0-alpha.3",
-    "babel-jest": "^27.0.6",
     "babel-preset-vite": "^1.0.4",
-    "jest": "^27.4.3",
-    "ts-jest": "^27.0.5",
     "vite": "^2.7.1",
-    "vite-jest": "^0.1.4"
+    "vitest": "^0.0.114"
   },
   "peerDependencies": {
     "vuex": "^4.0.2"
