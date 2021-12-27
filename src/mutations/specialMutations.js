@@ -39,9 +39,7 @@ export const getSpecialMutationsObject = (root, idKey) => {
         // Attach data to the object
         state[stateNames.dataMap][itemId] = data
       }
-      return true
     }
-    return false
   }
 
   mutations[mutationNames.detachData] = (state, objID) => {
@@ -52,18 +50,14 @@ export const getSpecialMutationsObject = (root, idKey) => {
     const index = state[stateNames.list].find(item => item[idKey] === newItem[idKey])
     if (index === -1) {
       state[stateNames.list].push(newItem)
-      return true
     }
-    return false
   }
 
   mutations[mutationNames.removeFromList] = (state, obsoleteItem) => {
     const index = state[stateNames.list].find(item => item[idKey] === obsoleteItem[idKey])
     if (index !== -1) {
       state[stateNames.list].splice(index, 1)
-      return true
     }
-    return false
   }
 
   // Directly update list of items. Can be useful...
