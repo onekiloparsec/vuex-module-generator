@@ -47,14 +47,14 @@ export const getSpecialMutationsObject = (root, idKey) => {
   }
 
   mutations[mutationNames.appendToList] = (state, newItem) => {
-    const index = state[stateNames.list].find(item => item[idKey] === newItem[idKey])
+    const index = state[stateNames.list].findIndex(item => item[idKey] === newItem[idKey])
     if (index === -1) {
       state[stateNames.list].push(newItem)
     }
   }
 
   mutations[mutationNames.removeFromList] = (state, obsoleteItem) => {
-    const index = state[stateNames.list].find(item => item[idKey] === obsoleteItem[idKey])
+    const index = state[stateNames.list].findIndex(item => item[idKey] === obsoleteItem[idKey])
     if (index !== -1) {
       state[stateNames.list].splice(index, 1)
     }

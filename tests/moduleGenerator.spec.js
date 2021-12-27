@@ -318,6 +318,45 @@ describe('moduleGenerator', () => {
     })
   })
 
+  describe('[module append/remove-mutations commits]', () => {
+    let items = null
+    let store = null
+
+    beforeEach(() => {
+      const http = {
+        get: vi.fn().mockResolvedValue({}),
+        options: vi.fn().mockResolvedValue({}),
+        post: vi.fn().mockResolvedValue({}),
+        put: vi.fn().mockResolvedValue({}),
+        patch: vi.fn().mockResolvedValue({}),
+        delete: vi.fn().mockResolvedValue({})
+      }
+      items = makeStoreModule({
+        rootName: 'item',
+        idKey: 'uuid'
+      }).generateActions({
+        http: http,
+        baseURL: API_URL,
+        resourcePath: 'items/',
+        lcrusd: 'lcrusd'
+      })
+      store = new Vuex.Store({ modules: { items } })
+    })
+
+    test('append to the list with a valid item', () => {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/appendToItemsList', remoteObjects[0])
+      expect(store.state.items.items).toEqual([remoteObjects[0]])
+    })
+
+    test('do not append twice the same object in the list', () => {
+      expect(store.state.items.items).toEqual([])
+      store.commit('items/appendToItemsList', remoteObjects[0])
+      store.commit('items/appendToItemsList', remoteObjects[0])
+      expect(store.state.items.items).toEqual([remoteObjects[0]])
+    })
+  })
+
   describe('[module definitions - partial lcrusd - with pages]', () => {
     let items = null
 
