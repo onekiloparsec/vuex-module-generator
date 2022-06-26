@@ -10,8 +10,8 @@ export const getStateNames = (root, multiSelection) => {
     dataMap: `${plural}DataMap`,
     status: `${plural}LoadingStatus`,
     selection: `selected${singularCapitalized}`,
-    pageSize: `${pluralCapitalized}PageSize`,
-    totalCount: `${pluralCapitalized}TotalCount`,
+    pageSize: `${plural}PageSize`,
+    totalCount: `${plural}TotalCount`,
     pageCurrent: `current${pluralCapitalized}Page`,
     pageTotal: `total${pluralCapitalized}PageCount`,
     lastError: `last${pluralCapitalized}Error`
