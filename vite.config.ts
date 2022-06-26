@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 const path = require('path')
 import { defineConfig } from 'vite'
 
