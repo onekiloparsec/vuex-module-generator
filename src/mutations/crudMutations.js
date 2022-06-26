@@ -80,7 +80,7 @@ export const getCrudMutationsObject = (root, idKey, lcrusd) => {
         state[stateNames.totalCount] = totalCount
         state[stateNames.pageCurrent] = pageCurrent
         state[stateNames.pageTotal] = pageTotal || pageCurrent
-        if (page === 1) { // At start, clear list and selection
+        if (pageCurrent === 1) { // At start, clear list and selection
           mutationSuccesses['list'](state, [])
         }
         // Then, update list/tree and selection(s) state

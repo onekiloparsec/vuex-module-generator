@@ -56,7 +56,7 @@ export const makePagedFetchPromise = function (mutationName, endpointListMethodF
       }
 
       const data = response.body || response.data
-      if (page === 1) {
+      if (pageCurrent === 1) {
         totalCount = data.count
         pageSize = data.results.length
         pageTotal = Math.ceil(data.count / data.results.length)
