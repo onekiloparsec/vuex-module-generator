@@ -47,6 +47,8 @@ export const getCrudMutationsObject = (root, idKey, lcrusd) => {
 
         // If we have a pages-list action, reset page status.
         if (actionKey === 'list' && lcrusd.includes('p')) {
+          state[stateNames.pageSize] = 0
+          state[stateNames.totalCount] = 0
           state[stateNames.pageCurrent] = 0
           state[stateNames.pageTotal] = 0
         }
@@ -73,9 +75,11 @@ export const getCrudMutationsObject = (root, idKey, lcrusd) => {
     if (lcrusd.includes('p')) {
       // Add a partial success mutation when dealing with paged-list action.
       mutations[mutationNames['list'] + 'PartialSuccess'] = (state, payload) => {
-        const { data, page, total } = payload
-        state[stateNames.pageCurrent] = page
-        state[stateNames.pageTotal] = total || page
+        const { data, pageSize, totalCount, pageCurrent, pageTotal } = payload
+        state[stateNames.pageSize] = pageSize
+        state[stateNames.totalCount] = totalCount
+        state[stateNames.pageCurrent] = pageCurrent
+        state[stateNames.pageTotal] = pageTotal || pageCurrent
         if (page === 1) { // At start, clear list and selection
           mutationSuccesses['list'](state, [])
         }

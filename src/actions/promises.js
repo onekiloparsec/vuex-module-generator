@@ -26,7 +26,7 @@ export const makeDefaultFetchPromise = function (mutationName, endpointMethodFun
 export const makePagedFetchPromise = function (mutationName, endpointListMethodFunc, notifyCallback, idOrData) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    let [page, total, results, keepGoing, maxPage] = [1, 1, [], true, 0]
+    let [pageSize, totalCount, pageCurrent, pageTotal, results, keepGoing, maxPage] = [10, 0, 1, 1, [], true, 0]
 
     // Be careful, checking for idOrData['maxPage'] will return false when maxPage = 0
     if (idOrData && 'maxPage' in idOrData) {
@@ -45,7 +45,7 @@ export const makePagedFetchPromise = function (mutationName, endpointListMethodF
       let response
       try {
         // Doing the actual fetch request to API endpoint
-        response = await endpointListMethodFunc({ ...idOrData, page })
+        response = await endpointListMethodFunc({ ...idOrData, page: pageCurrent })
       } catch (error) {
         keepGoing = false
         if (notifyCallback) {
@@ -57,17 +57,26 @@ export const makePagedFetchPromise = function (mutationName, endpointListMethodF
 
       const data = response.body || response.data
       if (page === 1) {
-        total = Math.ceil(data.count / data.results.length)
+        totalCount = data.count
+        pageSize = data.results.length
+        pageTotal = Math.ceil(data.count / data.results.length)
       }
       results.push(...data.results)
       if (notifyCallback) {
-        notifyCallback(mutationName + 'PartialSuccess', { data: data.results.map(item => Object.freeze(item)), page, total })
+        const payload = {
+          data: data.results.map(item => Object.freeze(item)),
+          pageSize,
+          totalCount,
+          pageCurrent,
+          pageTotal
+        }
+        notifyCallback(mutationName + 'PartialSuccess', payload)
       }
 
-      if (!data.next || (maxPage > 0 && page === maxPage)) {
+      if (!data.next || (maxPage > 0 && pageCurrent === maxPage)) {
         keepGoing = false
       } else {
-        page += 1
+        pageCurrent += 1
       }
     }
 
