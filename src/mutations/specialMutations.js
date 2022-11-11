@@ -9,8 +9,7 @@ const getSpecialMutationNames = (root) => {
     attachData: `attach${singularCapitalized}Data`,
     detachData: `detach${singularCapitalized}Data`,
     appendToList: `appendTo${pluralCapitalized}List`,
-    removeFromList: `removeFrom${pluralCapitalized}List`,
-    updateList: `update${pluralCapitalized}List`
+    emptyList: `empty${pluralCapitalized}List`
   }
 }
 
@@ -60,9 +59,8 @@ export const getSpecialMutationsObject = (root, idKey) => {
     }
   }
 
-  // Directly update list of items. Can be useful...
-  mutations[mutationNames.updateList] = (state, newList) => {
-    state[stateNames.list] = newList
+  mutations[mutationNames.emptyList] = (state) => {
+    state[stateNames.list] = []
     state[stateNames.status] = { 'create': false, 'delete': null, 'list': false, 'read': null, 'swap': null, 'update': null }
     state[stateNames.selection] = null
     state[stateNames.multipleSelection] = []

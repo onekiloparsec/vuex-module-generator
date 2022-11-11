@@ -36,34 +36,8 @@ export const getSelectionsMutationsObject = (root, idKey, multiSelection = false
   if (multiSelection) {
     // Select multiple items at once. Very important to avoid triggering multiple updates.
     mutations[mutationNames.selectMultiple] = (state, selectedItems) => {
-      if (selectedItems.length === 0) {
-        return
-      }
-      const multipleSelectionSet = new Set(state[stateNames.multipleSelection])
-      // Append/merge selection of multiple items.
-      for (let item of selectedItems) {
-        multipleSelectionSet.add(item)
-      }
-      // back to an array
-      state[stateNames.multipleSelection] = [...multipleSelectionSet]
-      // get first, if total is 1
+      state[stateNames.multipleSelection] = [...new Set(selectedItems)]
       state[stateNames.selection] = (state[stateNames.multipleSelection].length === 1) ? state[stateNames.multipleSelection][0] : null
-    }
-  }
-
-  // Deselect an item.
-  mutations['de' + mutationNames.select] = (state, selectedItem) => {
-    if (!selectedItem) {
-      return
-    }
-    if (state[stateNames.selection] && state[stateNames.selection][idKey] === selectedItem[idKey]) {
-      state[stateNames.selection] = null
-    }
-    if (multiSelection) {
-      const index = state[stateNames.multipleSelection].findIndex(item => item[idKey] === selectedItem[idKey])
-      if (index !== -1) {
-        state[stateNames.multipleSelection].splice(index, 1)
-      }
     }
   }
 

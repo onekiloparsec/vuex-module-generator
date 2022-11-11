@@ -163,7 +163,9 @@ describe('moduleGenerator', () => {
           lcrusd: 'lcrusd'
         })
       store = new Vuex.Store({ modules: { items } })
-      store.commit('items/updateItemsList', remoteObjects)
+      remoteObjects.forEach((obj) => {
+        store.commit('items/appendToItemsList', obj)
+      })
     })
 
     test('update the list', () => {
@@ -214,7 +216,9 @@ describe('moduleGenerator', () => {
           lcrusd: 'lcrusd'
         })
       store = new Vuex.Store({ modules: { items } })
-      store.commit('items/updateItemsList', remoteObjects)
+      remoteObjects.forEach((obj) => {
+        store.commit('items/appendToItemsList', obj)
+      })
     })
 
     test('has correct initial state', () => {
@@ -272,7 +276,9 @@ describe('moduleGenerator', () => {
         lcrusd: 'lcrusd'
       })
       store = new Vuex.Store({ modules: { items } })
-      store.commit('items/updateItemsList', remoteObjects)
+      remoteObjects.forEach((obj) => {
+        store.commit('items/appendToItemsList', obj)
+      })
     })
 
     test('initial state of data map', () => {
