@@ -1,6 +1,6 @@
 {
   "name": "@onekiloparsec/vuex-module-generator",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
