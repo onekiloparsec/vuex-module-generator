@@ -163,9 +163,7 @@ describe('moduleGenerator', () => {
           lcrusd: 'lcrusd'
         })
       store = new Vuex.Store({ modules: { items } })
-      remoteObjects.forEach((obj) => {
-        store.commit('items/appendToItemsList', obj)
-      })
+      store.commit('items/updateItemsList', remoteObjects)
     })
 
     test('update the list', () => {
