@@ -62,7 +62,7 @@ export const getMutationsSuccesses = (root, idKey) => {
       if (index > -1) {
         const newItem = { ...state[stateNames.list][index], ...item }
         state[stateNames.list].splice(index, 1, newItem)
-        if (state[stateNames.selection][idKey] === itemId) {
+        if (!!state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
           state[stateNames.selection] = newItem
         }
       } else {
@@ -76,7 +76,7 @@ export const getMutationsSuccesses = (root, idKey) => {
       const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
       if (index > -1) {
         state[stateNames.list].splice(index, 1, item)
-        if (state[stateNames.selection][idKey] === itemId) {
+        if (!!state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
           state[stateNames.selection] = newItem
         }
       } else {
