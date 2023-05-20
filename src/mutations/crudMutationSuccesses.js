@@ -47,9 +47,11 @@ export const getMutationsSuccesses = (root, idKey) => {
     // The read mutation will replace the object content if it exists already, or push it inside list if not yet present.
     read: (state, item) => {
       const itemId = item[idKey]
-      const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
-      if (index > -1) {
-        state[stateNames.list].splice(index, 1, item)
+      const listIndex = state[stateNames.list].findIndex(item => item[idKey] === itemId)
+      if (listIndex > -1) {
+        const newList = [...state[stateNames.list]]
+        newList.splice(listIndex, 1, item)
+        state[stateNames.list] = newList
       } else {
         state[stateNames.list].push(item)
       }
@@ -58,10 +60,12 @@ export const getMutationsSuccesses = (root, idKey) => {
     // The success mutation of a patch/update action will merge new obj with existing one
     update: (state, item) => {
       const itemId = item[idKey]
-      const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
-      if (index > -1) {
-        const newItem = { ...state[stateNames.list][index], ...item }
-        state[stateNames.list].splice(index, 1, newItem)
+      const listIndex = state[stateNames.list].findIndex(item => item[idKey] === itemId)
+      if (listIndex > -1) {
+        const newItem = { ...state[stateNames.list][listIndex], ...item }
+        const newList = [...state[stateNames.list]]
+        newList.splice(listIndex, 1, newItem)
+        state[stateNames.list] = newList
         if (!!state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
           state[stateNames.selection] = newItem
         }
@@ -73,9 +77,11 @@ export const getMutationsSuccesses = (root, idKey) => {
     // The success mutation of a put/swap will do the same as a read mutation success.
     swap: (state, item) => {
       const itemId = item[idKey]
-      const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
-      if (index > -1) {
-        state[stateNames.list].splice(index, 1, item)
+      const listIndex = state[stateNames.list].findIndex(item => item[idKey] === itemId)
+      if (listIndex > -1) {
+        const newList = [...state[stateNames.list]]
+        newList.splice(listIndex, 1, item)
+        state[stateNames.list] = newList
         if (!!state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
           state[stateNames.selection] = newItem
         }
@@ -89,7 +95,9 @@ export const getMutationsSuccesses = (root, idKey) => {
     delete: (state, itemId) => {
       const listIndex = state[stateNames.list].findIndex(item => item[idKey] === itemId)
       if (listIndex > -1) {
-        state[stateNames.list].splice(listIndex, 1)
+        const newList = [...state[stateNames.list]]
+        newList.splice(listIndex, 1)
+        state[stateNames.list] = newList
       }
       // Nullish selection of deleted item was the selected one.
       if (state[stateNames.selection] && state[stateNames.selection][idKey] === itemId) {
