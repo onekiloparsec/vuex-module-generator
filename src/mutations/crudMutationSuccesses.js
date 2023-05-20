@@ -70,7 +70,7 @@ export const getMutationsSuccesses = (root, idKey) => {
       }
     },
 
-    // The success mutation of an put/swap will do the same as a read mutation success.
+    // The success mutation of a put/swap will do the same as a read mutation success.
     swap: (state, item) => {
       const itemId = item[idKey]
       const index = state[stateNames.list].findIndex(item => item[idKey] === itemId)
