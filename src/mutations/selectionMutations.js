@@ -26,9 +26,8 @@ export const getSelectionsMutationsObject = (root, idKey, multiSelection = false
     }
     // Select the item
     state[stateNames.selection] = selectedItem
-    if (multiSelection && !state[stateNames.multipleSelection].includes(selectedItem)) {
-      // Append to selection, if not yet inside it.
-      state[stateNames.multipleSelection].push(selectedItem)
+    if (multiSelection) {
+      state[stateNames.multipleSelection] = [selectedItem]
     }
   }
 
@@ -36,8 +35,8 @@ export const getSelectionsMutationsObject = (root, idKey, multiSelection = false
   if (multiSelection) {
     // Select multiple items at once. Very important to avoid triggering multiple updates.
     mutations[mutationNames.selectMultiple] = (state, selectedItems) => {
-      state[stateNames.multipleSelection] = [...new Set(selectedItems)]
-      state[stateNames.selection] = (state[stateNames.multipleSelection].length === 1) ? state[stateNames.multipleSelection][0] : null
+      state[stateNames.multipleSelection] = selectedItems
+      state[stateNames.selection] = (selectedItems.length > 0) ? selectedItems[0] : null
     }
   }
 
