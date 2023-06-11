@@ -4,7 +4,7 @@ export const capitalizeFirstChar = function (str) {
 
 export const pluralize = (singular) => {
   let plural = singular + 's'
-  if (singular.slice(-1) === 'y') {
+  if (singular.slice(-1) === 'y' && singular.slice(-2) !== 'ey') {
     plural = singular.substr(0, singular.length - 1) + 'ies'
   } else if (singular.slice(-2) === 'is') {
     plural = singular.substr(0, singular.length - 1) + 'des' // ephemeris -> ephemerides
